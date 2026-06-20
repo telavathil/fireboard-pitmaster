@@ -62,8 +62,10 @@ def push_raw_history(device_id: str, channel_id: int, temp: float, timestamp: fl
     client = get_redis_client()
     key = f"telemetry:history:{device_id}:{channel_id}"
     
-    # Add point with score as timestamp
-    client.zadd(key, {str(temp): timestamp})
+    # Add point with unique member value combining temperature and timestamp
+    # to prevent duplicate values from overwriting each other in the ZSET.
+    member = f"{temp}:{timestamp}"
+    client.zadd(key, {member: timestamp})
     
     # Prune elements older than 30 minutes (current timestamp - 1800)
     cutoff = timestamp - 1800
@@ -78,5 +80,17 @@ def get_raw_history(device_id: str, channel_id: int) -> list:
     
     # Retrieve all items in the sorted set with their scores (timestamps)
     results = client.zrange(key, 0, -1, withscores=True)
+    
     # Map back to tuples: (temperature, timestamp)
-    return [(float(value), float(score)) for value, score in results]
+    history = []
+    for value, score in results:
+        try:
+            if ":" in value:
+                temp_str, _ = value.split(":", 1)
+                temp = float(temp_str)
+            else:
+                temp = float(value)
+            history.append((temp, float(score)))
+        except (ValueError, TypeError):
+            continue
+    return history

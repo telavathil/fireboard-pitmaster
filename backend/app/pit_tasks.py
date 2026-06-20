@@ -13,7 +13,9 @@ from app.cache import (
     set_cached_token,
     set_latest_telemetry,
     push_raw_history,
+    get_raw_history,
 )
+from app.math_engine.kalman import CookingKalmanFilter
 
 logger = get_task_logger(__name__)
 
@@ -148,18 +150,51 @@ def run_predictions(session_id: str, device_id: str, core_temp: float, ambient_t
     """
     logger.info(f"Pit Boss: Calculating predictions for cook session {session_id}...")
     
-    # Stub Kalman Filter (direct pass-through for raw)
-    core_temp_filtered = core_temp
+    # Fetch raw telemetry history to replay
+    history = get_raw_history(device_id, 1)
     
-    # Stub Prediction Algorithm (Linear approximation)
-    # Target completion calculations
-    diff = target_temp - core_temp
+    # Sort history chronologically by timestamp
+    history = sorted(history, key=lambda x: x[1])
+    
+    # Instantiate the Kalman Filter
+    kf = CookingKalmanFilter()
+    
+    core_temp_filtered = core_temp
+    heating_rate_c_per_sec = 0.0
+    
+    # Replay all historical readings to restore filter state
+    last_ts = None
+    for temp_val, ts in history:
+        if last_ts is None:
+            # First point in history
+            core_temp_filtered, heating_rate_c_per_sec = kf.update(temp_val, 0.0)
+        else:
+            dt = ts - last_ts
+            core_temp_filtered, heating_rate_c_per_sec = kf.update(temp_val, dt)
+        last_ts = ts
+        
+    # Ensure current point is processed if newer than last timestamp in history
+    if last_ts is not None and timestamp > last_ts:
+        dt = timestamp - last_ts
+        core_temp_filtered, heating_rate_c_per_sec = kf.update(core_temp, dt)
+        
+    # Scale heating rate to C/minute for display and payload
+    heating_rate_c_per_min = heating_rate_c_per_sec * 60.0
+    
+    # Calculate linear remaining ETA based on target temperature and filtered rate
+    diff = target_temp - core_temp_filtered
     if diff <= 0:
         eta_seconds = 0
+        confidence = "complete"
     else:
-        # Dummy rate of change: 0.1C every 20 seconds
-        heating_rate_c_per_sec = 0.005
-        eta_seconds = int(diff / heating_rate_c_per_sec)
+        # If rate is positive, use it. Otherwise, use a default rate of 0.005 C/sec (0.3 C/min)
+        if heating_rate_c_per_sec > 0.00001:
+            eta_seconds = int(diff / heating_rate_c_per_sec)
+            confidence = "high"
+        else:
+            fallback_rate = 0.005
+            eta_seconds = int(diff / fallback_rate)
+            confidence = "low"
 
     # Compile result payload
     payload = {
@@ -167,10 +202,10 @@ def run_predictions(session_id: str, device_id: str, core_temp: float, ambient_t
         "core_temp_raw": round(core_temp, 2),
         "core_temp_filtered": round(core_temp_filtered, 2),
         "ambient_temp": round(ambient_temp, 2) if ambient_temp else None,
-        "heating_rate": 0.3, # C/minute representation
+        "heating_rate": round(heating_rate_c_per_min, 4), # C/minute representation
         "stall_detected": False,
         "eta_seconds": eta_seconds,
-        "confidence": "high" if eta_seconds > 0 else "complete",
+        "confidence": confidence,
         "timestamp": datetime.fromtimestamp(timestamp).isoformat()
     }
     

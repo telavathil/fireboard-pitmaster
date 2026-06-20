@@ -6,9 +6,9 @@ This document tracks the current execution state of the **FireBoard Pitmaster** 
 
 ## Current Status Summary
 
-* **Active Phase**: Sprint 2 (Filtering & Estimation)
-* **Current Focus**: Sprint 2 Planning & Specification Design
-* **Project State**: `Sprint 1 Completed` (Ready to plan Sprint 2 mathematical filtering)
+* **Active Phase**: Sprint 3 (Predictive Solver Integration)
+* **Current Focus**: Sprint 3 Planning & Specification Design
+* **Project State**: `Sprint 2 Completed` (Mathematical filtering & state estimation active, ready to plan thermodynamic solver)
 
 ---
 
@@ -37,12 +37,13 @@ Goal: Establish rate-limit compliant FireBoard polling, cache live data in Redis
 
 ---
 
-### [In Progress] Sprint 2: Filtering & Estimation
+### [Completed] Sprint 2: Filtering & Estimation
 Goal: Smooth discretization steps and extract differentiable rate of change ($dT/dt$).
 * [x] Define Sprint 2 Technical Specification and design parameters ([docs/sprint2_specification.md](docs/sprint2_specification.md))
-* [ ] Implement digital 1D Kalman Filter state estimator
-* [ ] Write unit tests for step-discretization noise filtering using mock inputs
-* [ ] Connect Kalman filter to the Pit Boss worker ingestion pipeline
+* [x] Implement digital 1D Kalman Filter state estimator
+* [x] Write unit tests for step-discretization noise filtering using mock inputs
+* [x] Connect Kalman filter to the Pit Boss worker ingestion pipeline
+
 
 ---
 
