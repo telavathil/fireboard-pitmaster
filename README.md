@@ -40,13 +40,25 @@ All technical specifications, architectural decisions, and research are stored i
 
 ## Getting Started (Local Development)
 
-The project runs containerized using Docker Compose:
+The project includes a **[Makefile](Makefile)** to simplify development and testing inside Docker:
 
-1. Copy `.env.example` to `.env` and fill in your FireBoard credentials and Turso database connection strings.
-2. Build and start the services:
+1. **Setup Environment**: Copy `.env.example` to `.env` and fill in your credentials:
    ```bash
-   docker-compose up --build
+   cp .env.example .env
    ```
-3. Access the services:
-   - **Frontend**: `http://localhost:3000`
-   - **Backend API**: `http://localhost:8000/docs`
+
+2. **Run Tests**: Execute the test suite inside the container:
+   ```bash
+   make test
+   ```
+
+3. **Start Application**: Build and start all services (FastAPI, Redis, Stoker, Pit Boss):
+   ```bash
+   make up
+   ```
+   *(Or run `make up-d` to launch in the background and `make down` to stop).*
+
+4. **Access Endpoints**:
+   * **Backend API Swagger docs**: `http://localhost:8000/docs`
+   * **SSE Telemetry stream**: `http://localhost:8000/api/telemetry/stream/{device_id}/{channel_id}`
+

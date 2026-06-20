@@ -6,15 +6,15 @@ This document tracks the current execution state of the **FireBoard Pitmaster** 
 
 ## Current Status Summary
 
-* **Active Phase**: Sprint 1 (Ingestion & Storage)
-* **Current Focus**: Sprint 1 Setup & Backend Initialization
-* **Project State**: `Planning & Spec Approved` (Ready to begin implementation of Sprint 1)
+* **Active Phase**: Sprint 2 (Filtering & Estimation)
+* **Current Focus**: Sprint 2 Planning & Specification Design
+* **Project State**: `Sprint 1 Completed` (Ready to plan Sprint 2 mathematical filtering)
 
 ---
 
 ## Roadmap & Execution Checklist
 
-### [In Progress] Sprint 1: Ingestion & Storage
+### [Completed] Sprint 1: Ingestion & Storage
 Goal: Establish rate-limit compliant FireBoard polling, cache live data in Redis, and persist logs to Turso.
 
 * [x] **Phase 1A: Architectural Design & Decisions**
@@ -23,17 +23,17 @@ Goal: Establish rate-limit compliant FireBoard polling, cache live data in Redis
   * [x] Select Server-Sent Events (SSE) for client updates ([ADR 3](docs/adrs/0003-server-sent-events-streaming.md))
   * [x] Opt for ingestion-triggered predictions ([ADR 4](docs/adrs/0004-event-driven-predictions.md))
   * [x] Draft and approve Sprint 1 Technical Specification ([docs/project_specification.md](docs/project_specification.md))
-* [ ] **Phase 1B: Backend Infrastructure Setup**
-  * [ ] Create backend directory layout and configure dependencies (`requirements.txt`, Dockerfile)
-  * [ ] Implement Turso schema definition and database configuration
-* [ ] **Phase 1C: Poller and Cache Pipelines**
-  * [ ] Implement Pit Boss worker and periodic Stoker scheduler (20s intervals)
-  * [ ] Build FireBoard authentication agent and API polling client
-  * [ ] Build Redis ingestion pipeline (storing raw/latest telemetry states)
-* [ ] **Phase 1D: API Endpoints & SSE Streaming**
-  * [ ] Implement FastAPI server endpoints (login, active session mapping, config)
-  * [ ] Implement SSE route to stream raw temperature telemetry to clients
-  * [ ] Verify containerized multi-service local environment
+* [x] **Phase 1B: Backend Infrastructure Setup**
+  * [x] Create backend directory layout and configure dependencies (`requirements.txt`, Dockerfile)
+  * [x] Implement Turso schema definition and database configuration
+* [x] **Phase 1C: Poller and Cache Pipelines**
+  * [x] Implement Pit Boss worker and periodic Stoker scheduler (20s intervals)
+  * [x] Build FireBoard authentication agent and API polling client
+  * [x] Build Redis ingestion pipeline (storing raw/latest telemetry states)
+* [x] **Phase 1D: API Endpoints & SSE Streaming**
+  * [x] Implement FastAPI server endpoints (login, active session mapping, config)
+  * [x] Implement SSE route to stream raw temperature telemetry to clients
+  * [x] Verify containerized multi-service local environment
 
 ---
 

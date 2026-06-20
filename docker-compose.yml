@@ -1,0 +1,75 @@
+version: '3.8'
+
+services:
+  # Redis cache and task queue broker
+  redis:
+    image: redis:7-alpine
+    restart: always
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+
+  # FastAPI Web Application Server
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    restart: always
+    ports:
+      - "8000:8000"
+    environment:
+      - REDIS_URL=redis://redis:6379/0
+      - DB_URL=${DB_URL:-sqlite:///docs/research/local.db}
+      - DB_AUTH_TOKEN=${DB_AUTH_TOKEN}
+      - FIREBOARD_USERNAME=${FIREBOARD_USERNAME}
+      - FIREBOARD_PASSWORD=${FIREBOARD_PASSWORD}
+      - JWT_SECRET=${JWT_SECRET:-supersecretjwttokenkey}
+      - ENVIRONMENT=${ENVIRONMENT:-development}
+    depends_on:
+      - redis
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+
+  # Pit Boss Worker (Calculates Kalman smoothing and ETAs)
+  pit_boss:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    command: celery -A app.worker.celery_app worker --loglevel=info -c 1
+    restart: always
+    environment:
+      - REDIS_URL=redis://redis:6379/0
+      - DB_URL=${DB_URL:-sqlite:///docs/research/local.db}
+      - DB_AUTH_TOKEN=${DB_AUTH_TOKEN}
+    depends_on:
+      - redis
+    deploy:
+      resources:
+        limits:
+          memory: 384M
+
+  # Stoker Scheduler (Polls FireBoard API strictly every 20 seconds)
+  stoker:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    command: celery -A app.worker.celery_app beat --loglevel=info
+    restart: always
+    environment:
+      - REDIS_URL=redis://redis:6379/0
+    depends_on:
+      - redis
+    deploy:
+      resources:
+        limits:
+          memory: 128M
+
+volumes:
+  redis_data:
