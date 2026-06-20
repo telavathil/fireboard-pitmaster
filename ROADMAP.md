@@ -37,9 +37,9 @@ Goal: Establish rate-limit compliant FireBoard polling, cache live data in Redis
 
 ---
 
-### [Not Started] Sprint 2: Filtering & Estimation
+### [In Progress] Sprint 2: Filtering & Estimation
 Goal: Smooth discretization steps and extract differentiable rate of change ($dT/dt$).
-* [ ] Define Sprint 2 Technical Specification and design parameters
+* [x] Define Sprint 2 Technical Specification and design parameters ([docs/sprint2_specification.md](docs/sprint2_specification.md))
 * [ ] Implement digital 1D Kalman Filter state estimator
 * [ ] Write unit tests for step-discretization noise filtering using mock inputs
 * [ ] Connect Kalman filter to the Pit Boss worker ingestion pipeline

@@ -14,7 +14,8 @@ A predictive cooking web application leveraging thermodynamic simulation, state 
 
 All technical specifications, architectural decisions, and research are stored in the `docs/` folder:
 
-- **[Technical Specification](docs/project_specification.md)**: The core system blueprint covering frontend, backend, workers, and mathematical solvers.
+- **[Sprint 1 Technical Specification](docs/project_specification.md)**: The core system blueprint covering frontend, backend, workers, and database.
+- **[Sprint 2 Technical Specification](docs/sprint2_specification.md)**: The state estimation and Kalman Filter integration specifications.
 - **[Architecture Decision Records (ADRs)](docs/adrs/)**: Log of architectural choices:
   1. [ADR 1: AWS Lightsail Single VPS Deployment](docs/adrs/0001-minimized-aws-lightsail-vps-deployment.md)
   2. [ADR 2: Turso Serverless SQLite Database](docs/adrs/0002-turso-database-integration.md)
@@ -23,6 +24,7 @@ All technical specifications, architectural decisions, and research are stored i
   5. [ADR 5: Thematic Pitmaster Naming Conventions](docs/adrs/0005-thematic-pitmaster-naming-conventions.md)
 - **[Research Material](docs/research/)**:
   - [Thermodynamic Modeling & API Integration Study](docs/research/Predictive Cooking and FireBoard API Integration S....md)
+  - [Kalman Filter Theory & Cooking Telemetry](docs/research/kalman_filter.md)
   - [AWS Monthly Cost Estimation](docs/research/cost_estimate.md)
 
 ---
