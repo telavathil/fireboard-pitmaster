@@ -104,6 +104,8 @@ def test_simulated_ingestion_and_predictions(mock_get_redis):
     assert payload["channel"] == 1
     assert payload["core_temp_raw"] == 4.0  # Initial simulation starting temperature
     assert payload["eta_seconds"] > 0
+    assert "carryover_rise" in payload
+    assert payload["carryover_rise"] >= 0.0
     
     # 4. Verify telemetry logs were written in Turso database
     conn = get_db_connection()
@@ -169,6 +171,8 @@ def test_kalman_prediction_with_history(mock_get_redis):
     assert payload["confidence"] == "high"
     # ETA seconds should be positive and logical
     assert payload["eta_seconds"] > 0
+    assert "carryover_rise" in payload
+    assert payload["carryover_rise"] > 0.0
     
     # 6. Verify telemetry logs were written to the database
     conn = get_db_connection()

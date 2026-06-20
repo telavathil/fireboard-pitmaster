@@ -6,9 +6,10 @@ This document tracks the current execution state of the **FireBoard Pitmaster** 
 
 ## Current Status Summary
 
-* **Active Phase**: Sprint 3 (Predictive Solver Integration)
-* **Current Focus**: Sprint 3 Planning & Specification Design
-* **Project State**: `Sprint 2 Completed` (Mathematical filtering & state estimation active, ready to plan thermodynamic solver)
+* **Active Phase**: Sprint 4 (UI Dashboard & Streaming)
+* **Current Focus**: Sprint 4 Planning & Specification Design
+* **Project State**: `Sprint 3 Completed` (1D Crank-Nicolson thermodynamic solver & carryover resting simulation implemented, ready for Next.js frontend implementation)
+
 
 ---
 
@@ -47,12 +48,13 @@ Goal: Smooth discretization steps and extract differentiable rate of change ($dT
 
 ---
 
-### [Not Started] Sprint 3: Predictive Solver Integration
+### [Completed] Sprint 3: Predictive Solver Integration
 Goal: Implement Crank-Nicolson thermodynamic equations and evaporative stall parameters.
-* [ ] Define Sprint 3 Technical Specification
-* [ ] Write 1D Crank-Nicolson heat equation solver using NumPy/SciPy
-* [ ] Implement boundary conditions for standard heat transfer and evaporative stall plateaus (65 °C - 75 °C)
-* [ ] Integrate baseline statistical ML model for standard cook durations
+* [x] Define Sprint 3 Technical Specification ([docs/sprint3_specification.md](docs/sprint3_specification.md))
+* [x] Write 1D Crank-Nicolson heat equation solver using NumPy/SciPy ([backend/app/math_engine/solver.py](backend/app/math_engine/solver.py))
+* [x] Implement boundary conditions for standard heat transfer and evaporative stall plateaus (65 °C - 75 °C)
+* [x] Integrate baseline statistical ML model for standard cook durations
+
 
 ---
 

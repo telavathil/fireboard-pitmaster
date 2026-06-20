@@ -53,5 +53,7 @@ class TelemetryPayload(BaseModel):
     heating_rate: Optional[float] = None
     stall_detected: bool = False
     eta_seconds: Optional[int] = None
+    carryover_rise: Optional[float] = None
     confidence: str = "low"
     timestamp: datetime
+

@@ -16,6 +16,8 @@ from app.cache import (
     get_raw_history,
 )
 from app.math_engine.kalman import CookingKalmanFilter
+from app.math_engine.solver import CookingSolver
+
 
 logger = get_task_logger(__name__)
 
@@ -181,20 +183,46 @@ def run_predictions(session_id: str, device_id: str, core_temp: float, ambient_t
     # Scale heating rate to C/minute for display and payload
     heating_rate_c_per_min = heating_rate_c_per_sec * 60.0
     
-    # Calculate linear remaining ETA based on target temperature and filtered rate
-    diff = target_temp - core_temp_filtered
-    if diff <= 0:
-        eta_seconds = 0
+    # Fetch session details for solver parameters
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    weight_kg = 2.0
+    thickness_mm = 75.0
+    cooker_type = "pellet"
+    try:
+        cursor.execute("SELECT weight_kg, thickness_mm, cooker_type FROM cook_sessions WHERE id = ?", (session_id,))
+        row = cursor.fetchone()
+        if row:
+            weight_kg, thickness_mm, cooker_type = row
+    except Exception as e:
+        logger.error(f"Failed to fetch session details from DB: {e}")
+    finally:
+        conn.close()
+
+    # Instantiate CookingSolver
+    solver = CookingSolver(
+        thickness_mm=thickness_mm,
+        weight_kg=weight_kg,
+        cooker_type=cooker_type,
+        target_temp_c=target_temp
+    )
+    
+    ambient_val = ambient_temp if ambient_temp is not None else 110.0
+    eta_seconds, carryover_rise = solver.simulate_cook(
+        initial_core=core_temp_filtered,
+        ambient_temp=ambient_val,
+        heating_rate_c_per_sec=heating_rate_c_per_sec
+    )
+    
+    # Determine confidence and stall detection
+    if core_temp_filtered >= target_temp:
         confidence = "complete"
+    elif eta_seconds == -1:
+        confidence = "low"
     else:
-        # If rate is positive, use it. Otherwise, use a default rate of 0.005 C/sec (0.3 C/min)
-        if heating_rate_c_per_sec > 0.00001:
-            eta_seconds = int(diff / heating_rate_c_per_sec)
-            confidence = "high"
-        else:
-            fallback_rate = 0.005
-            eta_seconds = int(diff / fallback_rate)
-            confidence = "low"
+        confidence = "high"
+        
+    stall_detected = (65.0 <= core_temp_filtered <= 75.0) and (heating_rate_c_per_min < 0.01)
 
     # Compile result payload
     payload = {
@@ -203,11 +231,13 @@ def run_predictions(session_id: str, device_id: str, core_temp: float, ambient_t
         "core_temp_filtered": round(core_temp_filtered, 2),
         "ambient_temp": round(ambient_temp, 2) if ambient_temp else None,
         "heating_rate": round(heating_rate_c_per_min, 4), # C/minute representation
-        "stall_detected": False,
+        "stall_detected": stall_detected,
         "eta_seconds": eta_seconds,
+        "carryover_rise": round(carryover_rise, 2),
         "confidence": confidence,
         "timestamp": datetime.fromtimestamp(timestamp).isoformat()
     }
+
     
     # Write to Redis Cache for FastAPI SSE Router
     set_latest_telemetry(device_id, 1, payload)
