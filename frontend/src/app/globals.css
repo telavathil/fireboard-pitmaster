@@ -126,17 +126,17 @@ body {
   box-shadow: inset 0 0 12px rgba(255, 77, 0, 0.4);
 }
 
-.forge-surface {
+@utility forge-surface {
   background-color: #121214;
   border: 1px solid #262626;
   position: relative;
-}
-
-.forge-surface::before {
-  content: "";
-  position: absolute;
-  top: 0; left: 0; right: 0; height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.05), transparent);
+  
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0; left: 0; right: 0; height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.05), transparent);
+  }
 }
 
 .forge-texture {
@@ -200,4 +200,147 @@ body {
     linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
     linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
   background-size: 40px 40px;
+}
+
+@utility dashboard-sidebar {
+  @apply flex flex-col py-md bg-surface-container h-screen w-64 fixed left-0 top-0 border-r border-outline-variant z-50;
+}
+
+@utility dashboard-header {
+  @apply flex justify-between items-center px-margin-desktop w-[calc(100%-16rem)] ml-64 bg-surface h-20 border-b border-outline-variant z-40 fixed top-0 left-0 right-0;
+}
+
+@utility nav-item {
+  @apply px-4 py-3 flex items-center gap-3 cursor-pointer transition-colors text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface;
+}
+
+@utility nav-item-active {
+  @apply bg-primary-container text-on-primary-container font-bold border-l-4 border-primary;
+}
+
+@utility forge-input {
+  width: 100%;
+  background-color: var(--color-surface-container-high);
+  border: 1px solid rgba(92, 64, 55, 0.6);
+  padding-inline: var(--spacing-sm);
+  padding-block: var(--spacing-xs);
+  font-size: var(--font-size-body-md);
+  color: var(--color-on-surface);
+  font-family: var(--font-label-mono);
+  transition: border-color 0.15s;
+  
+  &:focus {
+    outline: none;
+    border-color: var(--color-primary);
+  }
+}
+
+@utility forge-select {
+  width: 100%;
+  background-color: var(--color-surface-container-high);
+  border: 1px solid var(--color-outline-variant);
+  padding-inline: var(--spacing-sm);
+  padding-block: var(--spacing-xs);
+  font-size: var(--font-size-body-md);
+  color: var(--color-on-surface);
+  font-family: var(--font-label-mono);
+  transition: border-color 0.15s;
+  
+  &:focus {
+    outline: none;
+    border-color: var(--color-primary);
+  }
+}
+
+@utility forge-btn {
+  font-family: var(--font-label-mono);
+  padding-inline: var(--spacing-md);
+  padding-block: var(--spacing-xs);
+  border: 1px solid var(--color-outline-variant);
+  font-size: var(--font-size-label-mono);
+  cursor: pointer;
+  background-color: var(--color-surface-container-high);
+  color: var(--color-on-surface-variant);
+  transition: border-color 0.15s, color 0.15s, background-color 0.15s;
+  
+  &:hover {
+    border-color: var(--color-primary);
+  }
+}
+
+@utility forge-btn-active {
+  background-color: var(--color-primary-container);
+  color: var(--color-on-primary-container);
+  border-color: var(--color-primary);
+  font-weight: 700;
+}
+
+@utility action-btn {
+  width: 100%;
+  padding-block: var(--spacing-md);
+  font-family: var(--font-headline-md);
+  font-size: var(--font-size-headline-md);
+  letter-spacing: 0.05em;
+  transition: all 0.1s;
+  text-transform: uppercase;
+  cursor: pointer;
+  border: none;
+  
+  &:active {
+    transform: scale(0.98);
+  }
+  &:hover {
+    filter: brightness(1.05);
+  }
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+@utility action-btn-primary {
+  background-color: var(--color-primary-container);
+  color: var(--color-on-primary-container);
+  box-shadow: 0 10px 15px -3px rgba(255, 87, 26, 0.1), 0 4px 6px -4px rgba(255, 87, 26, 0.1);
+  
+  &:hover {
+    box-shadow: 0 20px 25px -5px rgba(255, 87, 26, 0.2), 0 8px 10px -6px rgba(255, 87, 26, 0.2);
+  }
+}
+
+@utility action-btn-secondary {
+  background-color: var(--color-secondary-fixed);
+  color: var(--color-on-secondary-fixed);
+  box-shadow: 0 10px 15px -3px rgba(255, 225, 109, 0.1), 0 4px 6px -4px rgba(255, 225, 109, 0.1);
+  
+  &:hover {
+    box-shadow: 0 20px 25px -5px rgba(255, 225, 109, 0.2), 0 8px 10px -6px rgba(255, 225, 109, 0.2);
+  }
+}
+
+@utility action-btn-accent {
+  background-color: var(--color-primary);
+  color: var(--color-on-primary);
+  box-shadow: 0 10px 15px -3px rgba(255, 181, 158, 0.2);
+}
+
+@utility action-btn-outline {
+  border: 1px solid var(--color-outline-variant);
+  color: var(--color-on-surface);
+  font-family: var(--font-label-mono);
+  font-size: var(--font-size-label-mono);
+  letter-spacing: 0.05em;
+  padding-block: var(--spacing-sm);
+  text-transform: uppercase;
+  cursor: pointer;
+  background-color: transparent;
+  transition: all 0.1s;
+  
+  &:hover {
+    border-color: var(--color-outline);
+    background-color: var(--color-surface-container-low);
+  }
+  &:active {
+    transform: scale(0.95);
+  }
 }
