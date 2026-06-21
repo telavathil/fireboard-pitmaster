@@ -1,37 +1,46 @@
 "use client";
 
 import React from "react";
-import { CookSession } from "../types";
+import { useCookSession } from "../context/CookSessionContext";
 
-interface HeaderProps {
-  activeSession: CookSession | null;
-  handleEndCook: () => void;
-}
+export default function Header() {
+  const { activeSession, handleEndCook } = useCookSession();
 
-export default function Header({ activeSession, handleEndCook }: HeaderProps) {
   return (
     <header className="dashboard-header">
       <div className="flex items-center gap-gutter">
         <span className="font-headline-lg text-headline-lg uppercase tracking-tighter text-primary">EMBER & CHAR</span>
         <div className="h-6 w-[1px] bg-outline-variant mx-4"></div>
-        <span className="font-label-mono text-label-mono text-on-surface-variant uppercase">
-          SESSION ID: <span className="text-primary">#{activeSession ? activeSession.id.substring(0, 8).toUpperCase() : "BBQ-2026-0812"}</span>
-        </span>
-      </div>
-      <div className="flex items-center gap-md">
         {activeSession ? (
+          <div className="flex items-center gap-2">
+            <span className="w-2.5 h-2.5 rounded-full bg-red-500 animate-pulse"></span>
+            <span className="font-label-mono text-xs uppercase text-on-surface tracking-wider">
+              LIVE BROADCAST ACTIVE
+            </span>
+          </div>
+        ) : (
+          <div className="flex items-center gap-2">
+            <span className="w-2.5 h-2.5 rounded-full bg-outline-variant"></span>
+            <span className="font-label-mono text-xs uppercase text-on-surface-variant tracking-wider">
+              STANDBY
+            </span>
+          </div>
+        )}
+      </div>
+
+      <div className="flex items-center gap-sm">
+        {activeSession && (
           <button
             onClick={handleEndCook}
-            className="bg-primary-container text-on-primary-container font-headline-md px-6 py-2 tracking-wide active:scale-95 transition-transform uppercase cursor-pointer"
+            className="px-4 py-2 bg-error-container text-on-error-container hover:brightness-110 font-label-mono text-xs uppercase cursor-pointer"
           >
-            START NEW COOK
+            END SESSION
           </button>
-        ) : (
-          <div className="font-label-mono text-xs text-on-surface-variant uppercase">SYSTEM READY</div>
         )}
-        <div className="flex gap-4">
-          <span className="material-symbols-outlined text-on-surface-variant cursor-pointer hover:text-primary transition-colors">notifications</span>
-          <span className="material-symbols-outlined text-on-surface-variant cursor-pointer hover:text-primary transition-colors">account_circle</span>
+        <div className="h-10 w-[1px] bg-outline-variant mx-2"></div>
+        <div className="flex items-center gap-2">
+          <span className="material-symbols-outlined text-on-surface-variant text-xl">account_circle</span>
+          <span className="font-label-mono text-xs text-on-surface-variant font-bold">PITMASTER</span>
         </div>
       </div>
     </header>

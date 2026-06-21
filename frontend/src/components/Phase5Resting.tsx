@@ -2,22 +2,17 @@
 
 import React from "react";
 import WebGLShader from "./WebGLShader";
+import { useCookSession } from "../context/CookSessionContext";
 
-interface Phase5RestingProps {
-  coreTempF: number;
-  targetTempFDisplay: number;
-  peakRestTempC: number;
-  restDurationSeconds: number;
-  formatStopwatch: (s: number) => string;
-}
+export default function Phase5Resting() {
+  const {
+    coreTempF,
+    targetTempFDisplay,
+    peakRestTempC,
+    restDurationSeconds,
+    formatStopwatch,
+  } = useCookSession();
 
-export default function Phase5Resting({
-  coreTempF,
-  targetTempFDisplay,
-  peakRestTempC,
-  restDurationSeconds,
-  formatStopwatch,
-}: Phase5RestingProps) {
   const peakRestTempF = Math.round(peakRestTempC * 9/5 + 32);
 
   return (
@@ -120,7 +115,7 @@ export default function Phase5Resting({
           </div>
         </div>
 
-        {/* Carryover Delta */}
+        {/* Delta carryover details */}
         <div className="forge-surface p-md">
           <h3 className="font-label-mono text-xs text-on-surface-variant mb-4 uppercase">Carryover Thermodynamics</h3>
           <div className="space-y-sm text-xs font-label-mono">

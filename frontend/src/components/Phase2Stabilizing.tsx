@@ -1,14 +1,11 @@
 "use client";
 
 import React from "react";
-import { TelemetryPayload } from "../types";
+import { useCookSession } from "../context/CookSessionContext";
 
-interface Phase2StabilizingProps {
-  coreTempF: number;
-  telemetry: TelemetryPayload | null;
-}
+export default function Phase2Stabilizing() {
+  const { coreTempF } = useCookSession();
 
-export default function Phase2Stabilizing({ coreTempF, telemetry }: Phase2StabilizingProps) {
   return (
     <>
       {/* Left Column: Live Chart */}

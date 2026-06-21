@@ -1,23 +1,16 @@
 "use client";
 
 import React from "react";
-import { TelemetryPayload } from "../types";
+import { useCookSession } from "../context/CookSessionContext";
 
-interface Phase3StallProps {
-  coreTempF: number;
-  telemetry: TelemetryPayload | null;
-  moistureBudget: number;
-  spritzCount: number;
-  handleSpritz: () => void;
-}
+export default function Phase3Stall() {
+  const {
+    coreTempF,
+    moistureBudget,
+    spritzCount,
+    handleSpritz,
+  } = useCookSession();
 
-export default function Phase3Stall({
-  coreTempF,
-  telemetry,
-  moistureBudget,
-  spritzCount,
-  handleSpritz,
-}: Phase3StallProps) {
   return (
     <>
       {/* Left Column: Live Chart with Stall overlay */}

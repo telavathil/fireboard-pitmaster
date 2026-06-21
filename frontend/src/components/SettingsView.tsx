@@ -1,32 +1,22 @@
 "use client";
 
 import React from "react";
+import { useCookSession } from "../context/CookSessionContext";
 
-interface SettingsViewProps {
-  tempUnit: "F" | "C";
-  setTempUnit: (unit: "F" | "C") => void;
-  updateRate: number;
-  setUpdateRate: (rate: number) => void;
-  estimationModel: string;
-  setEstimationModel: (model: string) => void;
-  probeOffset: string;
-  setProbeOffset: (offset: string) => void;
-  alarmsEnabled: boolean;
-  setAlarmsEnabled: (enabled: boolean) => void;
-}
+export default function SettingsView() {
+  const {
+    tempUnit,
+    setTempUnit,
+    updateRate,
+    setUpdateRate,
+    estimationModel,
+    setEstimationModel,
+    probeOffset,
+    setProbeOffset,
+    alarmsEnabled,
+    setAlarmsEnabled,
+  } = useCookSession();
 
-export default function SettingsView({
-  tempUnit,
-  setTempUnit,
-  updateRate,
-  setUpdateRate,
-  estimationModel,
-  setEstimationModel,
-  probeOffset,
-  setProbeOffset,
-  alarmsEnabled,
-  setAlarmsEnabled,
-}: SettingsViewProps) {
   return (
     <>
       {/* Left Column - Configuration forms */}

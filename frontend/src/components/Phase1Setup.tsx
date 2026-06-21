@@ -1,52 +1,34 @@
 "use client";
 
 import React from "react";
+import { useCookSession } from "../context/CookSessionContext";
 
-interface Phase1SetupProps {
-  targetTempF: number;
-  setTargetTempF: (temp: number) => void;
-  meatType: string;
-  setMeatType: (type: string) => void;
-  cutType: string;
-  setCutType: (cut: string) => void;
-  cookerType: string;
-  setCookerType: (cooker: string) => void;
-  weightKg: string;
-  setWeightKg: (w: string) => void;
-  thicknessMm: string;
-  setThicknessMm: (t: string) => void;
-  deviceId: string;
-  setDeviceId: (d: string) => void;
-  deviceName: string;
-  setDeviceName: (n: string) => void;
-  sessionError: string | null;
-  isCreatingSession: boolean;
-  handleCreateSession: (e: React.FormEvent) => void;
-  applyPresetF: (meat: string, cut: string, targetF: number) => void;
-}
+export default function Phase1Setup() {
+  const {
+    targetTempF,
+    setTargetTempF,
+    meatType,
+    setMeatType,
+    cutType,
+    setCutType,
+    cookerType,
+    setCookerType,
+    weightKg,
+    setWeightKg,
+    thicknessMm,
+    setThicknessMm,
+    deviceId,
+    setDeviceId,
+    deviceName,
+    setDeviceName,
+    isCreatingSession,
+    handleCreateSession,
+    applyPresetF,
+  } = useCookSession();
 
-export default function Phase1Setup({
-  targetTempF,
-  setTargetTempF,
-  meatType,
-  setMeatType,
-  cutType,
-  setCutType,
-  cookerType,
-  setCookerType,
-  weightKg,
-  setWeightKg,
-  thicknessMm,
-  setThicknessMm,
-  deviceId,
-  setDeviceId,
-  deviceName,
-  setDeviceName,
-  sessionError,
-  isCreatingSession,
-  handleCreateSession,
-  applyPresetF,
-}: Phase1SetupProps) {
+  // Handle any local errors (simulated via props before, now we can keep empty or read context)
+  const sessionError = null;
+
   return (
     <>
       {/* Left Column (col-span-8) */}

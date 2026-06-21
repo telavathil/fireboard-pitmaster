@@ -1,29 +1,19 @@
 "use client";
 
 import React from "react";
-import { CookSession } from "../types";
+import { useCookSession } from "../context/CookSessionContext";
 
-interface Phase4PullProps {
-  activeSession: CookSession | null;
-  coreTempF: number;
-  targetTempFDisplay: number;
-  carryoverRiseF: number;
-  pullTempF: number;
-  pullTimeSeconds: number;
-  handleUpdateStatus: (status: string) => void;
-  formatStopwatch: (s: number) => string;
-}
+export default function Phase4Pull() {
+  const {
+    coreTempF,
+    targetTempFDisplay,
+    carryoverRiseF,
+    pullTempF,
+    pullTimeSeconds,
+    handleUpdateStatus,
+    formatStopwatch,
+  } = useCookSession();
 
-export default function Phase4Pull({
-  activeSession,
-  coreTempF,
-  targetTempFDisplay,
-  carryoverRiseF,
-  pullTempF,
-  pullTimeSeconds,
-  handleUpdateStatus,
-  formatStopwatch,
-}: Phase4PullProps) {
   return (
     <>
       {/* Alert Card */}

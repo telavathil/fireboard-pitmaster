@@ -1,43 +1,27 @@
 "use client";
 
 import React from "react";
-import { CookSession, TelemetryPayload } from "../types";
+import { useCookSession } from "../context/CookSessionContext";
 
-interface Phase6ActiveProps {
-  telemetry: TelemetryPayload | null;
-  history: TelemetryPayload[];
-  coreTempF: number;
-  targetTempFDisplay: number;
-  progressPercent: number;
-  moistureBudget: number;
-  carryoverRiseF: number;
-  pullTempF: number;
-  activeSession: CookSession | null;
-  formatEta: (s: number) => string;
-  getMeatLabel: (m: string) => string;
-  getSvgPathAmbientF: (h: TelemetryPayload[], min: number, max: number) => string;
-  getSvgPathF: (h: TelemetryPayload[], min: number, max: number) => string;
-  minTempF: number;
-  maxTempF: number;
-}
+export default function Phase6Active() {
+  const {
+    telemetry,
+    history,
+    coreTempF,
+    targetTempFDisplay,
+    progressPercent,
+    moistureBudget,
+    carryoverRiseF,
+    pullTempF,
+    activeSession,
+    formatEta,
+    getMeatLabel,
+    getSvgPathAmbientF,
+    getSvgPathF,
+    minTempF,
+    maxTempF,
+  } = useCookSession();
 
-export default function Phase6Active({
-  telemetry,
-  history,
-  coreTempF,
-  targetTempFDisplay,
-  progressPercent,
-  moistureBudget,
-  carryoverRiseF,
-  pullTempF,
-  activeSession,
-  formatEta,
-  getMeatLabel,
-  getSvgPathAmbientF,
-  getSvgPathF,
-  minTempF,
-  maxTempF,
-}: Phase6ActiveProps) {
   return (
     <>
       {/* Left Column: Live Chart */}

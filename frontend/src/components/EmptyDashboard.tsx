@@ -1,12 +1,12 @@
 "use client";
 
 import React from "react";
+import { useCookSession } from "../context/CookSessionContext";
 
-interface EmptyDashboardProps {
-  goToProbesSetup: () => void;
-}
+export default function EmptyDashboard() {
+  const { setActiveTab } = useCookSession();
+  const goToProbesSetup = () => setActiveTab("probes");
 
-export default function EmptyDashboard({ goToProbesSetup }: EmptyDashboardProps) {
   return (
     <div className="glass-card max-w-lg w-full p-lg text-center border border-outline-variant/30 relative overflow-hidden">
       <div className="absolute w-40 h-40 bg-primary/5 blur-[60px] -top-10 -right-10 rounded-full"></div>
