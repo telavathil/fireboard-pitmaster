@@ -1,14 +1,20 @@
 import type { Metadata } from "next";
-import { Outfit, Inter } from "next/font/google";
+import { Bebas_Neue, Source_Sans_3, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 
-const outfit = Outfit({
-  variable: "--font-outfit",
+const bebasNeue = Bebas_Neue({
+  weight: "400",
+  variable: "--font-bebas-neue",
   subsets: ["latin"],
 });
 
-const inter = Inter({
-  variable: "--font-inter",
+const sourceSans3 = Source_Sans_3({
+  variable: "--font-source-sans-3",
+  subsets: ["latin"],
+});
+
+const jetbrainsMono = JetBrains_Mono({
+  variable: "--font-jetbrains-mono",
   subsets: ["latin"],
 });
 
@@ -25,7 +31,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${outfit.variable} ${inter.variable} h-full antialiased dark`}
+      className={`${bebasNeue.variable} ${sourceSans3.variable} ${jetbrainsMono.variable} h-full antialiased dark`}
     >
       <head>
         <link
@@ -33,9 +39,10 @@ export default function RootLayout({
           rel="stylesheet"
         />
       </head>
-      <body className="min-h-full flex flex-col font-inter bg-[#0F0F10] text-[#e5e2e3]">
+      <body className="min-h-full flex flex-col font-source-sans bg-[#0E0E0F] text-[#e5e2e3]">
         {children}
       </body>
     </html>
   );
 }
+

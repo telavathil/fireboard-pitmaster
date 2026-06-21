@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>FireBoard Pitmaster - Resting &amp; Thermal Equilibrium</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&amp;family=Source+Sans+3:wght@400;700&amp;family=JetBrains+Mono:wght@500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+        .glow-ember {
+            box-shadow: 0 0 15px rgba(255, 77, 0, 0.3);
+        }
+        .heat-gradient {
+            background: linear-gradient(90deg, #ff571a 0%, #ffe16d 100%);
+        }
+        body {
+            background-color: #0e0e0f;
+            color: #e5e2e3;
+            -webkit-font-smoothing: antialiased;
+        }
+        .brushed-metal {
+            background-image: linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px);
+            background-size: 100% 2px;
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-primary-fixed-variant": "#852400",
+                        "surface": "#131314",
+                        "on-secondary-fixed": "#221b00",
+                        "secondary-fixed-dim": "#e9c400",
+                        "error": "#ffb4ab",
+                        "on-secondary": "#3a3000",
+                        "on-error": "#690005",
+                        "surface-dim": "#131314",
+                        "inverse-surface": "#e5e2e3",
+                        "tertiary-container": "#919090",
+                        "outline": "#ad897e",
+                        "surface-container-high": "#2a2a2b",
+                        "primary": "#ffb59e",
+                        "on-tertiary-container": "#292a2a",
+                        "background": "#131314",
+                        "secondary-fixed": "#ffe16d",
+                        "on-primary": "#5e1700",
+                        "secondary": "#fff9ef",
+                        "surface-bright": "#3a393a",
+                        "tertiary": "#c8c6c6",
+                        "primary-fixed-dim": "#ffb59e",
+                        "on-secondary-container": "#725f00",
+                        "on-primary-container": "#521300",
+                        "on-tertiary": "#303030",
+                        "on-primary-fixed": "#3a0b00",
+                        "on-tertiary-fixed": "#1b1c1c",
+                        "on-background": "#e5e2e3",
+                        "secondary-container": "#ffdb3c",
+                        "on-tertiary-fixed-variant": "#474747",
+                        "error-container": "#93000a",
+                        "inverse-primary": "#ae3200",
+                        "surface-container-highest": "#353436",
+                        "surface-variant": "#353436",
+                        "surface-container": "#201f20",
+                        "tertiary-fixed": "#e4e2e2",
+                        "on-error-container": "#ffdad6",
+                        "surface-tint": "#ffb59e",
+                        "tertiary-fixed-dim": "#c8c6c6",
+                        "on-surface": "#e5e2e3",
+                        "primary-fixed": "#ffdbd0",
+                        "on-surface-variant": "#e6beb2",
+                        "surface-container-lowest": "#0e0e0f",
+                        "on-secondary-fixed-variant": "#544600",
+                        "primary-container": "#ff571a",
+                        "surface-container-low": "#1c1b1c",
+                        "outline-variant": "#5c4037",
+                        "inverse-on-surface": "#313031"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "xl": "64px",
+                        "base": "4px",
+                        "xs": "8px",
+                        "sm": "16px",
+                        "md": "24px",
+                        "lg": "40px",
+                        "margin-mobile": "16px",
+                        "margin-desktop": "48px",
+                        "gutter": "20px"
+                    },
+                    "fontFamily": {
+                        "headline-lg": ["Bebas Neue"],
+                        "body-md": ["Source Sans 3"],
+                        "title-lg": ["Source Sans 3"],
+                        "body-lg": ["Source Sans 3"],
+                        "headline-lg-mobile": ["Bebas Neue"],
+                        "display-lg": ["Bebas Neue"],
+                        "headline-md": ["Bebas Neue"],
+                        "label-mono": ["JetBrains Mono"]
+                    },
+                    "fontSize": {
+                        "headline-lg": ["48px", {"lineHeight": "1.1", "fontWeight": "400"}],
+                        "body-md": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                        "title-lg": ["20px", {"lineHeight": "1.4", "fontWeight": "700"}],
+                        "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                        "headline-lg-mobile": ["36px", {"lineHeight": "1.1", "fontWeight": "400"}],
+                        "display-lg": ["72px", {"lineHeight": "1.0", "letterSpacing": "0.02em", "fontWeight": "400"}],
+                        "headline-md": ["32px", {"lineHeight": "1.2", "fontWeight": "400"}],
+                        "label-mono": ["14px", {"lineHeight": "1.4", "letterSpacing": "0.05em", "fontWeight": "500"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+</head>
+<body class="font-body-md text-on-surface bg-surface-container-lowest">
+<!-- Top Navigation -->
+<header class="flex justify-between items-center px-margin-mobile h-16 w-full fixed top-0 bg-surface border-b border-outline-variant z-50">
+<div class="flex items-center gap-sm">
+<div class="w-10 h-10 rounded-full bg-surface-container-high border border-outline-variant flex items-center justify-center overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="A gritty, professional pitmaster profile photo, featuring a bearded man in a dark canvas apron with leather straps, set against a dark, industrial kitchen background with subtle amber lighting and smoke textures." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCySNS7fGdZ6Hky1p8HmEpA81IIsW2C7GJOp7wU9GHCAGyFvybgVO5h-W1fMc21BZyoD3TUcK4sEb81o9V0li9xSmFlCmAiKJzzf98tlexu5e9HJyXNUIA2chkLTAQNa4iEWwFSBFAmmbCeTo9mzVglpgd8M-xxIGERqWW9A6AvY9PEgQBVP2S7aQn2-_v3y3ihlyBOLvSxhORPMHenUs9mNeL1oDnsCL383UYTGEs3H7IjTulNCfPpgQ_IZE78nQa8ts5WZRZdYKaY"/>
+</div>
+<h1 class="font-headline-md text-headline-md text-primary tracking-wider">RESTING ACTIVE</h1>
+</div>
+<button class="active:scale-95 duration-100 text-on-surface-variant">
+<span class="material-symbols-outlined text-2xl">notifications</span>
+</button>
+</header>
+<main class="pt-24 pb-32 px-margin-mobile max-w-md mx-auto space-y-md">
+<!-- Primary Hero Section -->
+<section class="flex flex-col items-center text-center space-y-sm">
+<div class="p-base bg-surface-container border border-outline-variant rounded-xl w-full brushed-metal relative overflow-hidden">
+<div class="absolute inset-0 bg-gradient-to-t from-primary/5 to-transparent pointer-events-none"></div>
+<p class="font-label-mono text-label-mono text-primary-container tracking-widest pt-sm uppercase">Elapsed Duration</p>
+<div class="font-display-lg text-[64px] leading-none py-md text-primary drop-shadow-[0_0_12px_rgba(255,181,158,0.3)]">
+                    RESTING: 18:24
+                </div>
+</div>
+<div class="flex items-center gap-xs bg-primary-container text-on-primary-container font-headline-md text-headline-md px-md py-sm rounded-lg glow-ember border border-primary/50">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+<span>PEAK CORE: 93.2°C</span>
+</div>
+<p class="font-label-mono text-label-mono text-on-surface-variant">TARGET MET (93.0°C)</p>
+</section>
+<!-- Animation Section -->
+<section class="space-y-xs">
+<h3 class="font-label-mono text-label-mono text-tertiary-fixed tracking-[0.2em] uppercase">Thermal Equalization</h3>
+<div class="relative w-full h-64 rounded-xl overflow-hidden border border-outline-variant bg-black">
+<!-- STITCH_SHADER_START:ANIMATION_22 class="absolute inset-0 w-full h-full" -->
+<div class="absolute inset-0 w-full h-full" style="display:block;">
+<canvas id="shader-canvas-ANIMATION_22" style="display:block;width:100%;height:100%"></canvas>
+<script>
+(function() {
+  const canvas = document.getElementById('shader-canvas-ANIMATION_22');
+
+  // Sync the WebGL drawing-buffer size with the CSS-driven layout size.
+  // This fires on initial layout and whenever the element is resized.
+  function syncSize() {
+    const w = canvas.clientWidth  || 1280;
+    const h = canvas.clientHeight || 720;
+    if (canvas.width !== w || canvas.height !== h) {
+      canvas.width  = w;
+      canvas.height = h;
+    }
+  }
+  if (typeof ResizeObserver !== 'undefined') {
+    new ResizeObserver(syncSize).observe(canvas);
+  }
+  syncSize();
+
+  const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+  if (!gl) return;
+  const vs = `attribute vec2 a_position;
+varying vec2 v_texCoord;
+void main() {
+  v_texCoord = a_position * 0.5 + 0.5;
+  gl_Position = vec4(a_position, 0.0, 1.0);
+}`;
+  const fs = `precision highp float;
+varying vec2 v_texCoord;
+uniform float u_time;
+uniform vec2 u_resolution;
+
+void main() {
+    vec2 uv = v_texCoord;
+    
+    // Define the "meat" boundaries (rounded slab shape)
+    float meatMask = smoothstep(0.45, 0.44, abs(uv.x - 0.5)) * smoothstep(0.35, 0.34, abs(uv.y - 0.5));
+    
+    // Core of the meat
+    float core = 1.0 - length((uv - 0.5) * vec2(1.2, 1.8));
+    core = smoothstep(0.0, 0.6, core);
+    
+    // Edge of the meat
+    float edge = 1.0 - meatMask;
+    
+    // Animation factor: Resting progress (0.0 to 1.0 over time)
+    // We'll loop this for the visualization
+    float progress = mod(u_time * 0.2, 1.0);
+    
+    // Colors based on Ember & Char palette
+    vec3 charcoal = vec3(0.05, 0.05, 0.06); // Surface color
+    vec3 hotOrange = vec3(1.0, 0.3, 0.0);  // Primary color
+    vec3 restingPink = vec3(0.8, 0.2, 0.2); // Warm meat pink
+    
+    // Gradient logic:
+    // At start (progress 0): Hot orange outside, cooler core.
+    // At end (progress 1): Uniform warmth.
+    
+    float outerHeat = smoothstep(0.3, 0.5, 1.0 - length(uv - 0.5));
+    float heatWave = (1.0 - outerHeat) * (1.0 - progress);
+    
+    // Core warming up
+    float coreHeat = core * (0.5 + 0.5 * progress);
+    
+    vec3 finalColor = mix(restingPink * 0.4, hotOrange, heatWave);
+    finalColor = mix(finalColor, restingPink, coreHeat);
+    
+    // Apply meat mask
+    finalColor *= meatMask;
+    
+    // Add a subtle "glow" to the hot parts
+    float glow = exp(-5.0 * (1.0 - heatWave)) * (1.0 - progress);
+    finalColor += hotOrange * glow * 0.3 * meatMask;
+    
+    // Background
+    vec3 background = charcoal;
+    
+    gl_FragColor = vec4(mix(background, finalColor, meatMask), 1.0);
+}`;
+  function cs(type, src) {
+    const s = gl.createShader(type);
+    gl.shaderSource(s, src);
+    gl.compileShader(s);
+    return s;
+  }
+  const prog = gl.createProgram();
+  gl.attachShader(prog, cs(gl.VERTEX_SHADER, vs));
+  gl.attachShader(prog, cs(gl.FRAGMENT_SHADER, fs));
+  gl.linkProgram(prog);
+  gl.useProgram(prog);
+  const buf = gl.createBuffer();
+  gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1,-1, 1,-1, -1,1, 1,1]), gl.STATIC_DRAW);
+  const pos = gl.getAttribLocation(prog, 'a_position');
+  gl.enableVertexAttribArray(pos);
+  gl.vertexAttribPointer(pos, 2, gl.FLOAT, false, 0, 0);
+  const uTime = gl.getUniformLocation(prog, 'u_time');
+  const uRes = gl.getUniformLocation(prog, 'u_resolution');
+  const uMouse = gl.getUniformLocation(prog, 'u_mouse');
+
+  // u_mouse is in pixel coordinates matching u_resolution (ShaderToy convention).
+  // Shaders that need normalized coords should use: u_mouse / u_resolution.
+  let mouse = { x: canvas.width / 2, y: canvas.height / 2 };
+  window.addEventListener('mousemove', (event) => {
+    const rect = canvas.getBoundingClientRect();
+    if (rect.width && rect.height) {
+      const nx = (event.clientX - rect.left) / rect.width;
+      const ny = 1.0 - (event.clientY - rect.top) / rect.height;
+      mouse.x = nx * canvas.width;
+      mouse.y = ny * canvas.height;
+    }
+  });
+
+  function render(t) {
+    if (typeof ResizeObserver === 'undefined') syncSize();
+    gl.viewport(0, 0, canvas.width, canvas.height);
+    if (uTime) gl.uniform1f(uTime, t * 0.001);
+    if (uRes) gl.uniform2f(uRes, canvas.width, canvas.height);
+    if (uMouse) gl.uniform2f(uMouse, mouse.x, mouse.y);
+    gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+    requestAnimationFrame(render);
+  }
+  render(0);
+})();
+</script>
+</div>
+<!-- STITCH_SHADER_END:ANIMATION_22 -->
+<!-- Overlay Labels -->
+<div class="absolute inset-0 p-md flex flex-col justify-between pointer-events-none">
+<div class="flex justify-between items-start">
+<div class="bg-black/60 backdrop-blur-sm border border-outline-variant px-xs py-1 flex items-center gap-1">
+<div class="w-2 h-2 rounded-full bg-secondary-container"></div>
+<span class="font-label-mono text-[10px] text-on-surface">SURFACE</span>
+</div>
+<div class="bg-black/60 backdrop-blur-sm border border-outline-variant px-xs py-1 flex items-center gap-1">
+<span class="font-label-mono text-[10px] text-on-surface">EXTERIOR TEMP: 112°C</span>
+</div>
+</div>
+<div class="flex justify-center">
+<div class="bg-primary-container/80 backdrop-blur-sm border border-primary px-sm py-xs flex flex-col items-center">
+<span class="font-label-mono text-[10px] text-on-primary-container">CORE EQUILIBRIUM</span>
+<div class="w-px h-8 bg-primary mt-xs"></div>
+</div>
+</div>
+</div>
+</div>
+<div class="flex justify-between text-[10px] font-label-mono text-on-surface-variant px-xs">
+<span>INTENSITY GRADIENT</span>
+<span>DATA REFRESH: 2S</span>
+</div>
+</section>
+<!-- Status Section -->
+<section class="bg-surface-container border border-outline-variant p-md rounded-xl relative overflow-hidden space-y-sm">
+<div class="absolute top-0 right-0 p-sm opacity-20">
+<span class="material-symbols-outlined text-4xl" style="font-variation-settings: 'wght' 700;">thermostat</span>
+</div>
+<div class="flex items-center gap-xs">
+<div class="w-2 h-2 rounded-full bg-secondary-container animate-pulse"></div>
+<h4 class="font-headline-md text-[20px] text-secondary-fixed">REST COMPLETION</h4>
+</div>
+<div class="space-y-xs">
+<div class="flex justify-between items-end border-b border-outline-variant pb-xs">
+<span class="font-label-mono text-label-mono text-on-surface-variant">STATUS</span>
+<span class="font-headline-md text-headline-md text-primary">EQUILIBRIUM ESTABLISHED</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface leading-relaxed pt-xs">
+                    Core temperature has stabilized and begun a <span class="text-secondary-fixed font-bold">-0.2°C</span> trend. Thermal momentum has fully distributed. Ready to slice.
+                </p>
+</div>
+<button class="w-full mt-sm py-sm bg-primary-container text-on-primary-container font-headline-lg text-[24px] tracking-wider active:scale-[0.98] transition-transform flex items-center justify-center gap-sm glow-ember">
+<span class="material-symbols-outlined">restaurant</span>
+                BEGIN CARVING
+            </button>
+</section>
+<!-- Telemetry Data Grid -->
+<section class="grid grid-cols-2 gap-sm pb-10">
+<div class="bg-surface-container-high p-sm border border-outline-variant">
+<span class="font-label-mono text-[10px] text-on-surface-variant uppercase block">Moisture Retention</span>
+<span class="font-headline-md text-headline-md text-secondary-fixed">98.4%</span>
+<div class="w-full h-1 bg-surface-container-lowest mt-xs">
+<div class="h-full heat-gradient" style="width: 98.4%"></div>
+</div>
+</div>
+<div class="bg-surface-container-high p-sm border border-outline-variant">
+<span class="font-label-mono text-[10px] text-on-surface-variant uppercase block">Carry-over High</span>
+<span class="font-headline-md text-headline-md text-primary">+4.2°C</span>
+<span class="font-label-mono text-[10px] text-on-surface-variant block mt-xs">STABILIZED @ 14:02</span>
+</div>
+</section>
+</main>
+<!-- Bottom Navigation -->
+<nav class="fixed bottom-0 w-full flex justify-around items-center py-xs px-margin-mobile bg-surface-container-lowest border-t border-outline-variant z-50">
+<button class="flex flex-col items-center justify-center text-on-surface-variant hover:text-secondary-fixed-dim transition-colors active:scale-90 transition-transform">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-label-mono text-[10px]">Dashboard</span>
+</button>
+<button class="flex flex-col items-center justify-center text-on-surface-variant hover:text-secondary-fixed-dim transition-colors active:scale-90 transition-transform">
+<span class="material-symbols-outlined">thermostat</span>
+<span class="font-label-mono text-[10px]">Probes</span>
+</button>
+<button class="flex flex-col items-center justify-center text-primary bg-primary-container/10 rounded-xl px-4 py-1 active:scale-90 transition-transform">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">history</span>
+<span class="font-label-mono text-[10px]">History</span>
+</button>
+<button class="flex flex-col items-center justify-center text-on-surface-variant hover:text-secondary-fixed-dim transition-colors active:scale-90 transition-transform">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-label-mono text-[10px]">Settings</span>
+</button>
+</nav>
+<script>
+        // Micro-interaction: Update timer for a "live" feel
+        const startTime = Date.now() - (18 * 60 + 24) * 1000;
+        const timerElement = document.querySelector('.font-display-lg');
+        
+        function updateTimer() {
+            const now = Date.now();
+            const diff = Math.floor((now - startTime) / 1000);
+            const minutes = Math.floor(diff / 60);
+            const seconds = diff % 60;
+            timerElement.textContent = `RESTING: ${minutes}:${seconds.toString().padStart(2, '0')}`;
+        }
+        
+        setInterval(updateTimer, 1000);
+
+        // Heat pulse intensity simulation
+        let intensity = 0;
+        setInterval(() => {
+            intensity = (intensity + 0.1) % (Math.PI * 2);
+            const glowVal = 10 + Math.sin(intensity) * 5;
+            document.querySelector('.glow-ember').style.boxShadow = `0 0 ${glowVal}px rgba(255, 77, 0, 0.4)`;
+        }, 100);
+    </script>
+</body></html>

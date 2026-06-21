@@ -1,0 +1,11 @@
+# Raw Design Archives and Extracted Mocks
+stitch_fireboard_pitmaster_dashboard.zip
+extracted_design/
+
+# Local Dev logs & DBs
+*.log
+backend/*.db
+frontend/.next/
+frontend/out/
+node_modules/
+.DS_Store

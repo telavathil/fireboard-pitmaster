@@ -149,6 +149,42 @@ def get_active_session():
     finally:
         conn.close()
 
+@app.patch("/api/sessions/{session_id}")
+def update_session_status(session_id: str, payload: Dict[str, Any]):
+    """
+    Updates the status of a cook session (e.g., transition to resting).
+    """
+    status_val = payload.get("status")
+    if not status_val:
+        raise HTTPException(status_code=400, detail="Status is required in the payload.")
+        
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    
+    try:
+        cursor.execute("SELECT id FROM cook_sessions WHERE id = ?", (session_id,))
+        row = cursor.fetchone()
+        if not row:
+            raise HTTPException(status_code=404, detail="Session not found.")
+            
+        cursor.execute(
+            "UPDATE cook_sessions SET status = ? WHERE id = ?",
+            (status_val, session_id)
+        )
+        conn.commit()
+        logger.info(f"Updated cook session {session_id} status to: {status_val}")
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Failed to update session: {e}")
+        raise HTTPException(status_code=500, detail="Database write failure.")
+    finally:
+        conn.close()
+        
+    return {"status": "success", "message": f"Updated session to {status_val}"}
+
+
+
 async def sse_telemetry_generator(device_id: str, channel_id: int):
     """
     Asynchronous generator that yields Server-Sent Events (SSE) telemetry data.

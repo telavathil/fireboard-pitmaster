@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>FireBoard Pitmaster | Stabilizing</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Source+Sans+3:wght@400;600;700&family=JetBrains+Mono:wght@500&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family='Source+Sans+3':wght@100..900&family=Bebas+Neue:wght@100..900&family=JetBrains+Mono:wght@100..900&display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "surface-tint": "#ffb59e",
+                    "on-tertiary-container": "#292a2a",
+                    "secondary-fixed-dim": "#e9c400",
+                    "on-tertiary-fixed": "#1b1c1c",
+                    "on-surface": "#e5e2e3",
+                    "on-secondary": "#3a3000",
+                    "outline": "#ad897e",
+                    "on-surface-variant": "#e6beb2",
+                    "on-primary-fixed": "#3a0b00",
+                    "tertiary-fixed-dim": "#c8c6c6",
+                    "tertiary": "#c8c6c6",
+                    "surface-variant": "#353436",
+                    "on-secondary-fixed": "#221b00",
+                    "error-container": "#93000a",
+                    "primary-container": "#ff571a",
+                    "background": "#0A0A0B",
+                    "tertiary-fixed": "#e4e2e2",
+                    "on-primary-container": "#521300",
+                    "inverse-surface": "#e5e2e3",
+                    "surface-container-low": "#1c1b1c",
+                    "secondary-fixed": "#ffe16d",
+                    "on-secondary-container": "#725f00",
+                    "on-tertiary-fixed-variant": "#474747",
+                    "surface-container-high": "#2a2a2b",
+                    "inverse-primary": "#ae3200",
+                    "on-primary": "#5e1700",
+                    "secondary": "#fff9ef",
+                    "surface-bright": "#3a393a",
+                    "tertiary-container": "#919090",
+                    "outline-variant": "#5c4037",
+                    "on-tertiary": "#303030",
+                    "secondary-container": "#ffdb3c",
+                    "surface-container-highest": "#353436",
+                    "primary-fixed": "#ffdbd0",
+                    "primary": "#FF4D00",
+                    "on-primary-fixed-variant": "#852400",
+                    "primary-fixed-dim": "#ffb59e",
+                    "inverse-on-surface": "#313031",
+                    "on-error-container": "#ffdad6",
+                    "on-background": "#e5e2e3",
+                    "error": "#ffb4ab",
+                    "surface-container": "#121214",
+                    "surface-container-lowest": "#0e0e0f",
+                    "on-error": "#690005",
+                    "surface-dim": "#131314",
+                    "surface": "#131314",
+                    "on-secondary-fixed-variant": "#544600"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.125rem",
+                    "lg": "0.25rem",
+                    "xl": "0.5rem",
+                    "full": "0.75rem"
+            },
+            "spacing": {
+                    "xl": "64px",
+                    "md": "24px",
+                    "margin-mobile": "16px",
+                    "sm": "16px",
+                    "margin-desktop": "48px",
+                    "xs": "8px",
+                    "gutter": "20px",
+                    "base": "4px",
+                    "lg": "40px"
+            },
+            "fontFamily": {
+                    "display-lg": ["Bebas Neue"],
+                    "body-md": ["'Source Sans 3'"],
+                    "headline-lg": ["Bebas Neue"],
+                    "body-lg": ["'Source Sans 3'"],
+                    "title-lg": ["'Source Sans 3'"],
+                    "headline-lg-mobile": ["Bebas Neue"],
+                    "label-mono": ["JetBrains Mono"],
+                    "headline-md": ["Bebas Neue"]
+            },
+            "fontSize": {
+                    "display-lg": ["72px", {"lineHeight": "1.0", "letterSpacing": "0.02em", "fontWeight": "400"}],
+                    "body-md": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                    "headline-lg": ["48px", {"lineHeight": "1.1", "fontWeight": "400"}],
+                    "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                    "title-lg": ["20px", {"lineHeight": "1.4", "fontWeight": "700"}],
+                    "headline-lg-mobile": ["36px", {"lineHeight": "1.1", "fontWeight": "400"}],
+                    "label-mono": ["14px", {"lineHeight": "1.4", "letterSpacing": "0.05em", "fontWeight": "500"}],
+                    "headline-md": ["32px", {"lineHeight": "1.2", "fontWeight": "400"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .glow-ember {
+            box-shadow: 0 0 15px rgba(255, 77, 0, 0.4);
+        }
+        .shimmer {
+            background: linear-gradient(90deg, #121214 25%, #1c1c1e 50%, #121214 75%);
+            background-size: 200% 100%;
+            animation: shimmer 2s infinite linear;
+        }
+        @keyframes shimmer {
+            from { background-position: 200% 0; }
+            to { background-position: -200% 0; }
+        }
+        @keyframes pulse-ring {
+            0% { transform: scale(0.95); opacity: 0.8; }
+            50% { transform: scale(1.05); opacity: 0.3; }
+            100% { transform: scale(0.95); opacity: 0.8; }
+        }
+        .animate-pulse-ring {
+            animation: pulse-ring 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+        .brushed-metal {
+            background-image: linear-gradient(to bottom, rgba(255,255,255,0.03) 0%, rgba(0,0,0,0) 100%);
+            position: relative;
+        }
+        .brushed-metal::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background-image: url("https://www.transparenttextures.com/patterns/carbon-fibre.png");
+            opacity: 0.05;
+            pointer-events: none;
+        }
+        .kalman-shimmer {
+            background: linear-gradient(90deg, transparent, rgba(255, 219, 60, 0.2), transparent);
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-surface font-body-md selection:bg-primary selection:text-on-primary">
+<!-- Top Navigation Shell -->
+<nav class="fixed top-0 w-full z-50 flex flex-col justify-center px-margin-mobile py-base bg-surface border-b border-outline-variant shadow-[0_0_12px_rgba(255,77,0,0.2)]">
+<div class="flex items-center justify-between w-full h-12">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">local_fire_department</span>
+<span class="font-display-lg text-headline-md text-primary tracking-wider uppercase">FIREBOARD PITMASTER</span>
+</div>
+<div class="w-8 h-8 rounded-full border border-outline overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="A professional close-up headshot of a rugged pitmaster wearing a black leather apron in a smoky, atmospheric outdoor kitchen. Warm amber lighting reflects off high-quality stainless steel surfaces in the background. The aesthetic is gritty, premium, and focused on craftsmanship." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDl_Qj55Im76RJ0jAcsADeDGh_LbvbUDbfNRe9NbhSCbWXvwp_ED5sAFAS53s79Tko4Oex9ONRF0PgKJ6lgwUMF9Xvi3oAXf0H0EyL26rt5gmgzPZNjXT4VVQ3aFjrZOb8anY-e-5tjEmVd7dGUw9vKyLbRR3nxBVAkXrUNzcHdw0pZr3uGs0RGFvNMctFtB2gU2ItJGWpZj0JnVBUP4JdOvAyqkwfq6Psv6q__fr0LjILuA9y6IhpYySJ8zMxRM_T4-5NEGSTnQfRD"/>
+</div>
+</div>
+</nav>
+<!-- Main Content Canvas -->
+<main class="pt-20 pb-32 px-margin-mobile flex flex-col gap-sm">
+<!-- Active Calibration Section -->
+<section class="flex flex-col items-center justify-center py-lg relative overflow-hidden">
+<!-- Pulsing Rings -->
+<div class="absolute w-64 h-64 rounded-full border-2 border-primary/20 animate-pulse-ring"></div>
+<div class="absolute w-72 h-72 rounded-full border border-primary/10 animate-pulse-ring" style="animation-delay: 1.5s;"></div>
+<!-- Central Gauge -->
+<div class="relative w-56 h-56 rounded-full bg-surface-container-lowest border-4 border-surface-container-highest glow-ember flex flex-col items-center justify-center text-center p-md">
+<span class="font-label-mono text-primary text-[12px] tracking-[0.2em] mb-xs">STABILIZING...</span>
+<div class="flex flex-col items-center">
+<span class="font-display-lg text-6xl text-on-surface leading-none">52.0°C</span>
+<span class="font-label-mono text-on-surface-variant text-xs mt-1">RAW: 51.8°C</span>
+</div>
+<!-- Micro Progress Bar -->
+<div class="w-24 mt-md">
+<div class="flex justify-between items-center mb-1">
+<span class="font-label-mono text-[10px] text-on-surface-variant">EST. REMAINING</span>
+<span class="font-label-mono text-[10px] text-primary">4:00</span>
+</div>
+<div class="h-1 bg-surface-variant w-full relative">
+<div class="absolute top-0 left-0 h-full bg-primary" style="width: 60%;"></div>
+</div>
+</div>
+</div>
+</section>
+<!-- Kalman Filter Status -->
+<div class="px-xs flex justify-center">
+<div class="inline-flex items-center gap-xs px-sm py-xs bg-surface-container-high border border-primary/40 rounded-full relative overflow-hidden">
+<div class="kalman-shimmer absolute inset-0"></div>
+<span class="material-symbols-outlined text-primary text-sm animate-pulse" style="font-variation-settings: 'FILL' 1;">analytics</span>
+<span class="font-label-mono text-xs text-on-surface tracking-wide uppercase">Kalman Filter: CALIBRATING</span>
+</div>
+</div>
+<!-- Explainer Tooltip Card -->
+<div class="bg-surface-container border border-outline-variant p-sm flex gap-sm items-start brushed-metal">
+<div class="w-10 h-10 flex-shrink-0 flex items-center justify-center rounded bg-primary/10 border border-primary/20">
+<span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 0;">info</span>
+</div>
+<div>
+<h4 class="font-label-mono text-xs text-primary mb-1 uppercase tracking-wider">Stability Analysis Active</h4>
+<p class="font-body-md text-sm text-on-surface-variant leading-relaxed">
+                    Our Kalman filter is replaying raw probe telemetry to isolate noise and compute thermal diffusivity for precise ETA.
+                </p>
+</div>
+</div>
+<!-- Grid of Predictions (Skeleton State) -->
+<div class="grid grid-cols-2 gap-sm">
+<!-- ETA Skeleton -->
+<div class="bg-surface-container border border-outline-variant p-sm flex flex-col gap-xs min-h-[100px] opacity-70">
+<div class="flex items-center justify-between">
+<span class="font-label-mono text-[10px] text-on-surface-variant uppercase">Final ETA</span>
+<span class="material-symbols-outlined text-xs text-on-surface-variant">schedule</span>
+</div>
+<div class="shimmer h-8 w-24 rounded-xs"></div>
+<div class="shimmer h-3 w-16 rounded-xs mt-auto"></div>
+</div>
+<!-- Carryover Skeleton -->
+<div class="bg-surface-container border border-outline-variant p-sm flex flex-col gap-xs min-h-[100px] opacity-70">
+<div class="flex items-center justify-between">
+<span class="font-label-mono text-[10px] text-on-surface-variant uppercase">Carryover</span>
+<span class="material-symbols-outlined text-xs text-on-surface-variant">thermostat_auto</span>
+</div>
+<div class="shimmer h-8 w-20 rounded-xs"></div>
+<div class="shimmer h-3 w-12 rounded-xs mt-auto"></div>
+</div>
+</div>
+<!-- Ambient Noise Visualization (Atmospheric Effect) -->
+<div class="mt-md px-base">
+<div class="flex items-center gap-xs mb-sm">
+<span class="font-label-mono text-[10px] text-on-surface-variant">SIGNAL NOISE (HZ)</span>
+<div class="h-[1px] flex-grow bg-outline-variant"></div>
+</div>
+<div class="flex items-end justify-between h-12 px-xs">
+<!-- Random noise bars -->
+<div class="w-1 bg-primary/20 h-[20%] animate-[bounce_1.2s_infinite]"></div>
+<div class="w-1 bg-primary/40 h-[40%] animate-[bounce_1.5s_infinite]"></div>
+<div class="w-1 bg-primary/60 h-[30%] animate-[bounce_0.8s_infinite]"></div>
+<div class="w-1 bg-primary/30 h-[50%] animate-[bounce_1.1s_infinite]"></div>
+<div class="w-1 bg-primary/50 h-[25%] animate-[bounce_1.4s_infinite]"></div>
+<div class="w-1 bg-primary/40 h-[60%] animate-[bounce_0.9s_infinite]"></div>
+<div class="w-1 bg-primary/20 h-[35%] animate-[bounce_1.3s_infinite]"></div>
+<div class="w-1 bg-primary/50 h-[45%] animate-[bounce_1s_infinite]"></div>
+</div>
+</div>
+</main>
+<!-- Bottom Navigation Shell -->
+<nav class="fixed bottom-0 w-full z-50 flex justify-around items-center px-4 h-xl bg-surface-container border-t border-outline-variant shadow-[0_-4px_12px_rgba(0,0,0,0.5)]">
+<a class="flex flex-col items-center justify-center text-primary bg-surface-container-highest rounded-none py-xs transition-all duration-200" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">dashboard</span>
+<span class="font-label-mono text-label-mono uppercase mt-1">Dashboard</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant py-xs hover:text-secondary-fixed transition-all duration-200" href="#">
+<span class="material-symbols-outlined">thermostat</span>
+<span class="font-label-mono text-label-mono uppercase mt-1">Probes</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant py-xs hover:text-secondary-fixed transition-all duration-200" href="#">
+<span class="material-symbols-outlined">history</span>
+<span class="font-label-mono text-label-mono uppercase mt-1">History</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant py-xs hover:text-secondary-fixed transition-all duration-200" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-label-mono text-label-mono uppercase mt-1">Settings</span>
+</a>
+</nav>
+<script>
+        // Micro-interaction: Update "Raw" temp slightly to simulate real-time jitter
+        const rawTempEl = document.querySelector('.font-label-mono.text-on-surface-variant.text-xs');
+        let rawTemp = 51.8;
+        
+        setInterval(() => {
+            const jitter = (Math.random() - 0.5) * 0.1;
+            rawTemp = 51.8 + jitter;
+            rawTempEl.textContent = `RAW: ${rawTemp.toFixed(1)}°C`;
+        }, 1200);
+
+        // Micro-interaction: Countdown timer logic (simple visual update)
+        const timerEl = document.querySelector('.font-label-mono.text-primary.text-[10px]');
+        let seconds = 240;
+        
+        setInterval(() => {
+            if(seconds > 0) seconds--;
+            const m = Math.floor(seconds / 60);
+            const s = seconds % 60;
+            timerEl.textContent = `${m}:${s < 10 ? '0' : ''}${s}`;
+        }, 1000);
+    </script>
+</body></html>

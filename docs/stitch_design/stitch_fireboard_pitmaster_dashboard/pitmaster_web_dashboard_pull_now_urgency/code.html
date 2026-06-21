@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>EMBER & CHAR | Hearth Command - PULL NOW</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Source+Sans+3:wght@400;700&family=JetBrains+Mono:wght@500&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue:wght@100..900&family=JetBrains+Mono:wght@100..900&family=Source+Sans+3:wght@100..900&display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .glow-orange {
+            box-shadow: 0 0 12px rgba(255, 77, 0, 0.4);
+        }
+        .glow-orange-intense {
+            box-shadow: 0 0 20px rgba(255, 77, 0, 0.6);
+        }
+        .text-glow-orange {
+            text-shadow: 0 0 8px rgba(255, 77, 0, 0.8);
+        }
+        .metal-texture {
+            background-image: linear-gradient(180deg, rgba(255,255,255,0.03) 0%, rgba(255,255,255,0) 100%);
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+        .scanline {
+            width: 100%;
+            height: 2px;
+            background: rgba(255, 77, 0, 0.1);
+            position: absolute;
+            animation: scan 4s linear infinite;
+        }
+        @keyframes scan {
+            0% { top: 0; }
+            100% { top: 100%; }
+        }
+        @keyframes pulse-critical {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.8; transform: scale(0.98); }
+        }
+        .animate-critical {
+            animation: pulse-critical 1.5s ease-in-out infinite;
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "tertiary-container": "#919090",
+                        "inverse-surface": "#e5e2e3",
+                        "surface-variant": "#353436",
+                        "background": "#131314",
+                        "on-surface": "#e5e2e3",
+                        "secondary-fixed-dim": "#e9c400",
+                        "surface-container-high": "#2a2a2b",
+                        "secondary-fixed": "#ffe16d",
+                        "tertiary-fixed": "#e4e2e2",
+                        "on-primary": "#5e1700",
+                        "surface-dim": "#131314",
+                        "primary-fixed": "#ffdbd0",
+                        "on-secondary-fixed-variant": "#544600",
+                        "on-tertiary-fixed-variant": "#474747",
+                        "primary-container": "#ff571a",
+                        "surface-container": "#201f20",
+                        "outline-variant": "#5c4037",
+                        "inverse-on-surface": "#313031",
+                        "on-surface-variant": "#e6beb2",
+                        "surface-tint": "#ffb59e",
+                        "on-primary-fixed": "#3a0b00",
+                        "inverse-primary": "#ae3200",
+                        "secondary-container": "#ffdb3c",
+                        "error-container": "#93000a",
+                        "surface-container-low": "#1c1b1c",
+                        "surface-container-highest": "#353436",
+                        "on-tertiary-container": "#292a2a",
+                        "surface": "#131314",
+                        "tertiary-fixed-dim": "#c8c6c6",
+                        "surface-bright": "#3a393a",
+                        "on-primary-container": "#521300",
+                        "on-secondary-container": "#725f00",
+                        "on-secondary-fixed": "#221b00",
+                        "on-secondary": "#3a3000",
+                        "tertiary": "#c8c6c6",
+                        "on-tertiary-fixed": "#1b1c1c",
+                        "on-primary-fixed-variant": "#852400",
+                        "on-error": "#690005",
+                        "surface-container-lowest": "#0e0e0f",
+                        "outline": "#ad897e",
+                        "secondary": "#fff9ef",
+                        "on-tertiary": "#303030",
+                        "on-error-container": "#ffdad6",
+                        "primary": "#ffb59e",
+                        "on-background": "#e5e2e3",
+                        "primary-fixed-dim": "#ffb59e",
+                        "error": "#ffb4ab"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "xl": "64px",
+                        "base": "4px",
+                        "margin-mobile": "16px",
+                        "gutter": "20px",
+                        "xs": "8px",
+                        "md": "24px",
+                        "sm": "16px",
+                        "margin-desktop": "48px",
+                        "lg": "40px"
+                    },
+                    "fontFamily": {
+                        "headline-md": ["Bebas Neue"],
+                        "display-lg": ["Bebas Neue"],
+                        "headline-lg-mobile": ["Bebas Neue"],
+                        "body-md": ["\"Source Sans 3\""],
+                        "headline-lg": ["Bebas Neue"],
+                        "body-lg": ["\"Source Sans 3\""],
+                        "title-lg": ["\"Source Sans 3\""],
+                        "label-mono": ["JetBrains Mono"]
+                    },
+                    "fontSize": {
+                        "headline-md": ["32px", {"lineHeight": "1.2", "fontWeight": "400"}],
+                        "display-lg": ["72px", {"lineHeight": "1.0", "letterSpacing": "0.02em", "fontWeight": "400"}],
+                        "headline-lg-mobile": ["36px", {"lineHeight": "1.1", "fontWeight": "400"}],
+                        "body-md": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                        "headline-lg": ["48px", {"lineHeight": "1.1", "fontWeight": "400"}],
+                        "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                        "title-lg": ["20px", {"lineHeight": "1.4", "fontWeight": "700"}],
+                        "label-mono": ["14px", {"lineHeight": "1.4", "letterSpacing": "0.05em", "fontWeight": "500"}]
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-background text-on-surface font-body-md min-h-screen selection:bg-primary-container selection:text-on-primary-container">
+<!-- Top Navigation Anchor (As per JSON) -->
+<header class="sticky top-0 z-50 flex items-center justify-between px-gutter h-16 bg-surface border-b border-outline-variant shadow-[0_0_12px_rgba(255,77,0,0.2)]">
+<div class="font-display-lg text-headline-md text-primary tracking-wider">EMBER & CHAR</div>
+<div class="flex items-center gap-md">
+<button class="material-symbols-outlined text-on-surface-variant hover:text-primary transition-colors">notifications</button>
+<button class="material-symbols-outlined text-on-surface-variant hover:text-primary transition-colors">local_fire_department</button>
+<div class="w-10 h-10 bg-surface-container-highest rounded-full flex items-center justify-center border border-outline-variant">
+<img class="w-full h-full rounded-full object-cover" data-alt="A rugged professional pitmaster profile avatar with a charcoal-smudged face, wearing a black leather apron, set against a dark industrial kitchen background with glowing embers in the distance, high-contrast cinematic lighting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDe0H-bj719ry_NJLf9nE_pszkgfnsMqalhjhHhZuY96O8j_Yqc0yk314KzSNuQDzD-xl9Xmnhxx1tALmXLEoKMjyK98gk6AaFwutwOyKcqe2O0b3aXucdh2Um7uJik7aw5SH-Slyr2sQp0dtrMkvtMWw8Cu5h0X4Np4ObIAaC0lcrJvUMJQPzeAYCL9QdLnl2Ycf4o7IIyiOUwg_ELAUuXMab1srJ6s81rNJXW-ZwKSuqkQeTmtLnylltxpJuLNzfYvWwQf7dwdhLu"/>
+</div>
+</div>
+</header>
+<div class="flex">
+<!-- Side Navigation Bar (As per JSON) -->
+<aside class="fixed left-0 top-0 h-full w-64 bg-surface-container-low border-r border-outline-variant flex flex-col py-md z-40 hidden md:flex pt-20">
+<div class="px-md mb-lg">
+<h2 class="font-headline-md text-primary tracking-wider leading-none">HEARTH COMMAND</h2>
+<div class="mt-xs py-1 px-2 bg-error-container text-on-error-container font-label-mono text-[10px] uppercase tracking-widest inline-block animate-critical">
+                    CRITICAL: PULL NOW
+                </div>
+<p class="mt-xs text-on-surface-variant font-label-mono text-[12px]">Active Session: Brisket #4</p>
+</div>
+<nav class="flex-1 space-y-1">
+<a class="flex items-center gap-md px-md py-sm text-on-primary bg-primary-container border-l-4 border-primary font-bold transition-all" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-label-mono">Dashboard</span>
+</a>
+<a class="flex items-center gap-md px-md py-sm text-on-surface-variant font-medium hover:bg-surface-variant hover:text-primary transition-all" href="#">
+<span class="material-symbols-outlined">thermostat</span>
+<span class="font-label-mono">Probes</span>
+</a>
+<a class="flex items-center gap-md px-md py-sm text-on-surface-variant font-medium hover:bg-surface-variant hover:text-primary transition-all" href="#">
+<span class="material-symbols-outlined">history</span>
+<span class="font-label-mono">History</span>
+</a>
+<a class="flex items-center gap-md px-md py-sm text-on-surface-variant font-medium hover:bg-surface-variant hover:text-primary transition-all" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-label-mono">Settings</span>
+</a>
+</nav>
+<div class="mt-auto px-md">
+<button class="w-full py-md bg-primary-container text-on-primary-container font-headline-md text-headline-md tracking-widest hover:brightness-110 active:scale-95 transition-all glow-orange">
+                    START NEW COOK
+                </button>
+<a class="flex items-center gap-md py-sm mt-md text-on-surface-variant font-medium hover:text-primary" href="#">
+<span class="material-symbols-outlined">help</span>
+<span class="font-label-mono">Support</span>
+</a>
+</div>
+</aside>
+<!-- Main Content Canvas -->
+<main class="flex-1 md:ml-64 p-gutter lg:p-xl">
+<div class="max-w-6xl mx-auto space-y-md">
+<!-- URGENCY ALERT CARD -->
+<section class="relative bg-surface-container rounded-none border border-primary glow-orange-intense overflow-hidden p-lg md:p-xl metal-texture">
+<div class="scanline"></div>
+<div class="relative z-10 flex flex-col md:flex-row md:items-end justify-between gap-lg">
+<div class="space-y-sm max-w-2xl">
+<div class="flex items-center gap-xs text-primary animate-pulse">
+<span class="material-symbols-outlined text-[32px]" style="font-variation-settings: 'FILL' 1;">warning</span>
+<span class="font-label-mono tracking-widest uppercase">Target Threshold Reached</span>
+</div>
+<h1 class="font-display-lg text-[80px] md:text-[120px] text-primary leading-none text-glow-orange uppercase italic">
+                                PULL AT 90°C
+                            </h1>
+<p class="font-body-lg text-on-surface-variant text-xl">
+                                Remove from heat now. Predicted carryover will cook the meat to your target doneness of <span class="text-secondary font-bold">93°C</span> during rest.
+                            </p>
+</div>
+<div class="flex flex-col items-center bg-black p-md border border-outline-variant">
+<span class="font-label-mono text-on-surface-variant text-xs uppercase tracking-[0.2em]">Time to Pull</span>
+<div class="font-display-lg text-[64px] text-secondary leading-none mt-xs">03:01</div>
+<div class="w-full h-1 bg-surface-container-highest mt-md overflow-hidden">
+<div class="h-full bg-secondary w-2/3 animate-pulse"></div>
+</div>
+</div>
+</div>
+<!-- Carryover Expansion Gauge -->
+<div class="mt-xl relative pt-lg">
+<div class="flex justify-between font-label-mono text-xs text-on-surface-variant mb-base">
+<span>CURRENT CORE</span>
+<span class="text-primary">PROJECTED RISE</span>
+<span>FINAL TARGET</span>
+</div>
+<div class="h-8 w-full bg-surface-container-highest flex border border-outline-variant">
+<div class="h-full bg-primary-container relative group" style="width: 70%;">
+<div class="absolute -top-8 right-0 font-headline-md text-2xl text-primary">90°C</div>
+</div>
+<div class="h-full bg-gradient-to-r from-primary-container to-secondary-container relative" style="width: 20%;">
+<div class="absolute -top-8 right-0 font-headline-md text-2xl text-secondary">+3°C</div>
+</div>
+<div class="h-full bg-surface-bright/20 flex-1 relative border-l border-dashed border-secondary">
+<div class="absolute -top-8 right-0 font-headline-md text-2xl text-secondary">93°C</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Bento Grid for Stats and Charts -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-md">
+<!-- Live Chart Area -->
+<div class="lg:col-span-2 bg-surface-container border border-outline-variant p-md relative overflow-hidden group">
+<div class="flex justify-between items-center mb-md">
+<div class="font-headline-md text-2xl tracking-wide uppercase">Core Temp Trajectory</div>
+<div class="flex gap-xs">
+<span class="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
+<span class="font-label-mono text-[10px] text-on-surface-variant">LIVE DATA</span>
+</div>
+</div>
+<div class="h-64 w-full bg-black/40 border-l border-b border-outline-variant relative">
+<!-- Simulated Chart Grid -->
+<div class="absolute inset-0 grid grid-cols-6 grid-rows-4 opacity-10">
+<div class="border-r border-t border-on-surface"></div><div class="border-r border-t border-on-surface"></div><div class="border-r border-t border-on-surface"></div><div class="border-r border-t border-on-surface"></div><div class="border-r border-t border-on-surface"></div><div class="border-r border-t border-on-surface"></div>
+<div class="border-r border-t border-on-surface"></div><div class="border-r border-t border-on-surface"></div><div class="border-r border-t border-on-surface"></div><div class="border-r border-t border-on-surface"></div><div class="border-r border-t border-on-surface"></div><div class="border-r border-t border-on-surface"></div>
+<div class="border-r border-t border-on-surface"></div><div class="border-r border-t border-on-surface"></div><div class="border-r border-t border-on-surface"></div><div class="border-r border-t border-on-surface"></div><div class="border-r border-t border-on-surface"></div><div class="border-r border-t border-on-surface"></div>
+<div class="border-r border-t border-on-surface"></div><div class="border-r border-t border-on-surface"></div><div class="border-r border-t border-on-surface"></div><div class="border-r border-t border-on-surface"></div><div class="border-r border-t border-on-surface"></div><div class="border-r border-t border-on-surface"></div>
+</div>
+<!-- SVG Path for the curve -->
+<svg class="absolute inset-0 w-full h-full" preserveaspectratio="none" viewbox="0 0 400 200">
+<path class="drop-shadow-[0_0_8px_#ff4d00]" d="M0 180 Q 100 170, 200 120 T 400 20" fill="none" stroke="#ff4d00" stroke-width="4"></path>
+<circle class="animate-ping" cx="400" cy="20" fill="#fff" r="6"></circle>
+<circle cx="400" cy="20" fill="#ffb59e" r="4"></circle>
+</svg>
+</div>
+<div class="flex justify-between mt-sm font-label-mono text-[10px] text-on-surface-variant">
+<span>-15 MIN</span>
+<span>-10 MIN</span>
+<span>-5 MIN</span>
+<span class="text-primary font-bold">PULL POINT</span>
+</div>
+</div>
+<!-- Technical Metrics Sidecar -->
+<div class="space-y-md">
+<!-- Ambient Pit Temp Card -->
+<div class="bg-surface-container border border-outline-variant p-md metal-texture">
+<div class="flex justify-between items-start">
+<div class="space-y-1">
+<span class="font-label-mono text-xs text-on-surface-variant uppercase tracking-widest">Ambient Pit Temp</span>
+<div class="font-headline-md text-4xl text-on-surface">121°C</div>
+</div>
+<span class="material-symbols-outlined text-secondary">oven_gen</span>
+</div>
+<div class="mt-md flex items-center gap-xs">
+<span class="text-xs font-label-mono text-on-surface-variant">STATUS:</span>
+<div class="flex-1 h-1 bg-surface-container-highest">
+<div class="h-full bg-secondary-fixed-dim" style="width: 85%;"></div>
+</div>
+<span class="text-[10px] font-label-mono text-secondary">STABLE</span>
+</div>
+</div>
+<!-- Rate of Rise Card -->
+<div class="bg-surface-container border border-outline-variant p-md metal-texture">
+<div class="flex justify-between items-start">
+<div class="space-y-1">
+<span class="font-label-mono text-xs text-on-surface-variant uppercase tracking-widest">Rate of Rise</span>
+<div class="font-headline-md text-4xl text-primary">+0.4°/min</div>
+</div>
+<span class="material-symbols-outlined text-primary">trending_up</span>
+</div>
+<div class="mt-md space-y-xs">
+<div class="flex justify-between text-[10px] font-label-mono text-on-surface-variant">
+<span>TREND</span>
+<span class="text-primary">ACCELERATING</span>
+</div>
+<div class="h-1 w-full bg-surface-container-highest overflow-hidden">
+<div class="h-full bg-primary-container" style="width: 60%;"></div>
+</div>
+</div>
+</div>
+<!-- Quick Actions -->
+<div class="bg-surface-container border border-outline-variant p-md metal-texture flex flex-col gap-sm">
+<button class="w-full py-sm bg-secondary text-on-secondary font-label-mono uppercase tracking-widest text-sm font-bold hover:brightness-110 active:scale-95 transition-all">
+                                Silence Alarm
+                            </button>
+<button class="w-full py-sm border border-outline text-on-surface font-label-mono uppercase tracking-widest text-sm hover:bg-surface-variant transition-all">
+                                Log Weight & Pull
+                            </button>
+</div>
+</div>
+</div>
+<!-- Secondary Information Area -->
+<div class="grid grid-cols-1 md:grid-cols-4 gap-md">
+<div class="bg-surface-container-low border border-outline-variant p-sm flex items-center gap-md">
+<div class="p-xs bg-surface-container-highest border border-outline-variant">
+<span class="material-symbols-outlined text-on-surface-variant">timer</span>
+</div>
+<div>
+<div class="font-label-mono text-[10px] text-on-surface-variant">ELAPSED TIME</div>
+<div class="font-headline-md text-lg">14H 22M</div>
+</div>
+</div>
+<div class="bg-surface-container-low border border-outline-variant p-sm flex items-center gap-md">
+<div class="p-xs bg-surface-container-highest border border-outline-variant">
+<span class="material-symbols-outlined text-on-surface-variant">propane_tank</span>
+</div>
+<div>
+<div class="font-label-mono text-[10px] text-on-surface-variant">FUEL LEVEL</div>
+<div class="font-headline-md text-lg">42%</div>
+</div>
+</div>
+<div class="bg-surface-container-low border border-outline-variant p-sm flex items-center gap-md">
+<div class="p-xs bg-surface-container-highest border border-outline-variant">
+<span class="material-symbols-outlined text-on-surface-variant">wifi</span>
+</div>
+<div>
+<div class="font-label-mono text-[10px] text-on-surface-variant">SIGNAL</div>
+<div class="font-headline-md text-lg">-62 DBM</div>
+</div>
+</div>
+<div class="bg-surface-container-low border border-outline-variant p-sm flex items-center gap-md">
+<div class="p-xs bg-surface-container-highest border border-outline-variant">
+<span class="material-symbols-outlined text-on-surface-variant">share</span>
+</div>
+<div>
+<div class="font-label-mono text-[10px] text-on-surface-variant">SHARE LIVE</div>
+<div class="font-headline-md text-lg underline cursor-pointer">COPIED</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+</div>
+<!-- Micro-interaction Scripts -->
+<script>
+        // Simple interactive effect for the chart line glow
+        document.addEventListener('mousemove', (e) => {
+            const glow = document.querySelector('.glow-orange-intense');
+            if (glow) {
+                const rect = glow.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                // Subtle light tracking could be added here
+            }
+        });
+
+        // Count-down simulation
+        let time = 181; // 3:01 in seconds
+        const timerDisplay = document.querySelector('.font-display-lg.text-\\[64px\\]');
+        
+        setInterval(() => {
+            if (time > 0) {
+                time--;
+                const minutes = Math.floor(time / 60);
+                const seconds = time % 60;
+                if (timerDisplay) {
+                    timerDisplay.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+                }
+            }
+        }, 1000);
+    </script>
+</body></html>

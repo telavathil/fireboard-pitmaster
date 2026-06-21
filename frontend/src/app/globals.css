@@ -1,82 +1,96 @@
 @import "tailwindcss";
 
 @theme {
-  --color-secondary-fixed: #6cff82;
-  --color-secondary: #47e266;
-  --color-primary-fixed: #ffddbb;
-  --color-on-tertiary-container: #00468c;
-  --color-outline: #a28d79;
-  --color-surface-tint: #ffb868;
-  --color-tertiary-fixed: #d6e3ff;
-  --color-surface-container-highest: #353436;
-  --color-on-primary-fixed-variant: #673d00;
-  --color-background: #0F0F10;
-  --color-on-error-container: #ffdad6;
-  --color-secondary-fixed-dim: #47e266;
-  --color-surface-container-lowest: #0e0e0f;
-  --color-on-primary-fixed: #2b1700;
-  --color-surface: #131314;
-  --color-inverse-on-surface: #313031;
-  --color-on-tertiary-fixed-variant: #00468d;
-  --color-surface-container-low: #1c1b1c;
-  --color-on-primary-container: #673d00;
-  --color-primary: #ffc688;
-  --color-tertiary: #bad1ff;
-  --color-on-primary: #482900;
-  --color-surface-bright: #39393a;
-  --color-surface-container: #201f20;
-  --color-on-secondary-container: #004615;
-  --color-on-tertiary: #003064;
-  --color-tertiary-fixed-dim: #aac7ff;
-  --color-outline-variant: #544433;
-  --color-on-secondary-fixed: #002106;
-  --color-on-secondary-fixed-variant: #00531a;
-  --color-primary-fixed-dim: #ffb868;
-  --color-inverse-surface: #e5e2e3;
-  --color-primary-container: #ff9f0a;
+  --color-primary: #ffb59e;                 /* Peach/Light Orange */
+  --color-primary-container: #ff571a;       /* Vermillion/Deep Orange */
+  --color-on-primary: #5e1700;
+  --color-on-primary-container: #521300;
+  --color-secondary: #fff9ef;
+  --color-secondary-container: #ffdb3c;
+  --color-on-secondary: #3a3000;
+  --color-on-secondary-container: #725f00;
+  --color-tertiary: #c8c6c6;
+  --color-tertiary-container: #919090;
+  --color-on-tertiary: #303030;
+  --color-on-tertiary-container: #292a2a;
+  --color-background: #131314;              /* Dark background */
   --color-on-background: #e5e2e3;
+  --color-surface: #131314;
   --color-on-surface: #e5e2e3;
-  --color-surface-dim: #131314;
   --color-surface-variant: #353436;
-  --color-secondary-container: #09bf49;
-  --color-on-secondary: #003910;
-  --color-inverse-primary: #885200;
-  --color-tertiary-container: #8cb6ff;
-  --color-on-error: #690005;
-  --color-on-tertiary-fixed: #001b3e;
-  --color-on-surface-variant: #dac3ad;
-  --color-surface-container-high: #2a2a2b;
+  --color-on-surface-variant: #e6beb2;
+  --color-outline: #ad897e;
+  --color-outline-variant: #5c4037;
   --color-error: #ffb4ab;
   --color-error-container: #93000a;
+  --color-on-error: #690005;
+  --color-on-error-container: #ffdad6;
+  
+  --color-secondary-fixed: #ffe16d;
+  --color-secondary-fixed-dim: #e9c400;
+  --color-on-secondary-fixed: #221b00;
+  --color-on-secondary-fixed-variant: #544600;
+  
+  --color-primary-fixed: #ffdbd0;
+  --color-primary-fixed-dim: #ffb59e;
+  --color-on-primary-fixed: #3a0b00;
+  --color-on-primary-fixed-variant: #852400;
 
-  --border-radius-DEFAULT: 0.25rem;
-  --border-radius-lg: 0.5rem;
-  --border-radius-xl: 0.75rem;
+  --color-tertiary-fixed: #e4e2e2;
+  --color-tertiary-fixed-dim: #c8c6c6;
+  --color-on-tertiary-fixed: #1b1c1c;
+  --color-on-tertiary-fixed-variant: #474747;
+
+  --color-surface-dim: #131314;
+  --color-surface-bright: #3a393a;
+  --color-surface-container-lowest: #0e0e0f;
+  --color-surface-container-low: #1c1b1c;
+  --color-surface-container: #201f20;
+  --color-surface-container-high: #2a2a2b;
+  --color-surface-container-highest: #353436;
+  --color-surface-tint: #ffb59e;
+  --color-inverse-surface: #e5e2e3;
+  --color-inverse-on-surface: #313031;
+  --color-inverse-primary: #ae3200;
+
+  /* Border Radii matching Stitch */
+  --border-radius-DEFAULT: 0px;
+  --border-radius-lg: 2px;
+  --border-radius-xl: 4px;
   --border-radius-full: 9999px;
 
-  --spacing-container-margin: 20px;
+  /* Spacing matching Stitch */
+  --spacing-xs: 8px;
+  --spacing-sm: 16px;
+  --spacing-md: 24px;
+  --spacing-lg: 40px;
+  --spacing-xl: 64px;
+  --spacing-margin-mobile: 16px;
+  --spacing-margin-desktop: 48px;
+  --spacing-gutter: 20px;
+  --spacing-base: 4px;
 
-  /* Custom Font Families from Stitch */
-  --font-headline-md: var(--font-outfit);
-  --font-headline-lg-mobile: var(--font-outfit);
-  --font-body-md: var(--font-inter);
-  --font-label-sm: var(--font-inter);
-  --font-headline-lg: var(--font-outfit);
-  --font-body-lg: var(--font-inter);
-  --font-display-temp: var(--font-outfit);
+  /* Fonts matching Stitch */
+  --font-label-mono: var(--font-jetbrains-mono);
+  --font-headline-md: var(--font-bebas-neue);
+  --font-title-lg: var(--font-source-sans-3);
+  --font-display-lg: var(--font-bebas-neue);
+  --font-body-lg: var(--font-source-sans-3);
+  --font-headline-lg: var(--font-bebas-neue);
+  --font-body-md: var(--font-source-sans-3);
 
-  /* Custom Font Sizes from Stitch */
-  --font-size-headline-md: 20px;
-  --font-size-headline-lg-mobile: 24px;
-  --font-size-body-md: 16px;
-  --font-size-label-sm: 12px;
-  --font-size-headline-lg: 32px;
+  /* Font Sizes matching Stitch */
+  --font-size-label-mono: 14px;
+  --font-size-headline-md: 32px;
+  --font-size-title-lg: 20px;
+  --font-size-display-lg: 72px;
   --font-size-body-lg: 18px;
-  --font-size-display-temp: 80px;
+  --font-size-headline-lg: 48px;
+  --font-size-body-md: 16px;
 }
 
 :root {
-  --background: #0F0F10;
+  --background: #0A0A0B;
   --foreground: #e5e2e3;
 }
 
@@ -87,28 +101,63 @@ body {
 }
 
 .glass-card {
-  background: rgba(255, 255, 255, 0.04);
+  background: rgba(20, 20, 22, 0.7);
   backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  transition: all 0.3s ease;
+  border: 1px solid rgba(255, 77, 0, 0.1);
+  box-shadow: inset 0 0 20px rgba(255, 77, 0, 0.03);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .glass-card:hover {
-  border-color: rgba(255, 159, 10, 0.3);
-  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 77, 0, 0.4);
+  box-shadow: inset 0 0 30px rgba(255, 77, 0, 0.08);
+  background: rgba(20, 20, 22, 0.85);
 }
 
-.text-glow-amber {
-  text-shadow: 0 0 15px rgba(255, 159, 10, 0.4);
+.text-glow-ember {
+  text-shadow: 0 0 20px rgba(255, 77, 0, 0.6);
 }
 
-.amber-glow {
-  box-shadow: 0 0 20px rgba(255, 159, 10, 0.15);
+.ember-glow {
+  box-shadow: 0 0 30px rgba(255, 77, 0, 0.3);
+}
+
+.glow-ember-inner {
+  box-shadow: inset 0 0 12px rgba(255, 77, 0, 0.4);
+}
+
+.forge-surface {
+  background-color: #121214;
+  border: 1px solid #262626;
+  position: relative;
+}
+
+.forge-surface::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0; height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.05), transparent);
+}
+
+.forge-texture {
+  background-image: linear-gradient(to bottom, rgba(255,255,255,0.02) 1px, transparent 1px),
+                    linear-gradient(to right, rgba(255,255,255,0.02) 1px, transparent 1px);
+  background-size: 20px 20px;
 }
 
 .stall-banner {
-  background: linear-gradient(90deg, rgba(255, 159, 10, 0.1) 0%, rgba(255, 159, 10, 0.02) 100%);
-  border-left: 4px solid #ff9f0a;
+  background: linear-gradient(90deg, rgba(255, 77, 0, 0.15) 0%, rgba(255, 77, 0, 0.02) 100%);
+  border-left: 4px solid #FF4D00;
+}
+
+.stall-zone-bg {
+  background: repeating-linear-gradient(
+    45deg,
+    rgba(255, 181, 158, 0.05),
+    rgba(255, 181, 158, 0.05) 10px,
+    transparent 10px,
+    transparent 20px
+  );
 }
 
 .progress-ring__circle {
@@ -117,11 +166,38 @@ body {
   transform-origin: 50% 50%;
 }
 
-@keyframes pulse-slow {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.6; }
+.shimmer {
+  background: linear-gradient(90deg, #1c1b1c 25%, #2a2a2b 50%, #1c1b1c 75%);
+  background-size: 200% 100%;
+  animation: shimmer-anim 1.5s infinite;
 }
 
-.pulse-stall {
-  animation: pulse-slow 2s infinite ease-in-out;
+@keyframes shimmer-anim {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.pulsing-ring {
+  animation: pulse-ring-anim 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes pulse-ring-anim {
+  0%, 100% { transform: scale(1); opacity: 0.8; }
+  50% { transform: scale(1.05); opacity: 0.4; }
+}
+
+@keyframes pulse-heat-anim {
+  0%, 100% { opacity: 0.4; transform: scale(1); }
+  50% { opacity: 0.7; transform: scale(1.05); }
+}
+
+.animate-heat {
+  animation: pulse-heat-anim 4s ease-in-out infinite;
+}
+
+.chart-grid {
+  background-image: 
+    linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+  background-size: 40px 40px;
 }

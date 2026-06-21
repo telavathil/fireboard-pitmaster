@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Fireboard Pitmaster - Pull Transition</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Source+Sans+3:wght@400;700&family=JetBrains+Mono:wght@500&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue:wght@100..900&family=JetBrains+Mono:wght@100..900&family=Source+Sans+3:wght@100..900&display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 48;
+        }
+        .glow-ember {
+            box-shadow: 0 0 20px rgba(255, 77, 0, 0.4);
+        }
+        .glow-ember-inner {
+            box-shadow: inset 0 0 12px rgba(255, 77, 0, 0.4);
+        }
+        .brushed-metal {
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.03) 0%, rgba(0, 0, 0, 0) 100%);
+            position: relative;
+        }
+        .brushed-metal::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background-image: url("https://www.transparenttextures.com/patterns/carbon-fibre.png");
+            opacity: 0.05;
+            pointer-events: none;
+        }
+        @keyframes pulse-heat {
+            0%, 100% { opacity: 0.4; transform: scale(1); }
+            50% { opacity: 0.7; transform: scale(1.05); }
+        }
+        .animate-heat {
+            animation: pulse-heat 4s ease-in-out infinite;
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "primary-container": "#ff571a",
+                        "tertiary-fixed": "#e4e2e2",
+                        "surface-bright": "#3a393a",
+                        "primary-fixed-dim": "#ffb59e",
+                        "on-background": "#e5e2e3",
+                        "outline-variant": "#5c4037",
+                        "background": "#131314",
+                        "on-tertiary-fixed-variant": "#474747",
+                        "primary": "#ffb59e",
+                        "on-secondary-fixed": "#221b00",
+                        "surface-container": "#201f20",
+                        "secondary-fixed": "#ffe16d",
+                        "on-primary-fixed": "#3a0b00",
+                        "outline": "#ad897e",
+                        "on-tertiary-container": "#292a2a",
+                        "inverse-on-surface": "#313031",
+                        "surface-dim": "#131314",
+                        "tertiary-container": "#919090",
+                        "on-secondary-fixed-variant": "#544600",
+                        "surface-tint": "#ffb59e",
+                        "surface-container-low": "#1c1b1c",
+                        "on-secondary-container": "#725f00",
+                        "on-error-container": "#ffdad6",
+                        "surface-variant": "#353436",
+                        "primary-fixed": "#ffdbd0",
+                        "on-tertiary": "#303030",
+                        "surface-container-high": "#2a2a2b",
+                        "on-primary-container": "#521300",
+                        "inverse-surface": "#e5e2e3",
+                        "on-error": "#690005",
+                        "on-tertiary-fixed": "#1b1c1c",
+                        "surface": "#131314",
+                        "on-surface-variant": "#e6beb2",
+                        "on-primary": "#5e1700",
+                        "secondary-container": "#ffdb3c",
+                        "error": "#ffb4ab",
+                        "surface-container-lowest": "#0e0e0f",
+                        "on-secondary": "#3a3000",
+                        "tertiary": "#c8c6c6",
+                        "error-container": "#93000a",
+                        "surface-container-highest": "#353436",
+                        "secondary-fixed-dim": "#e9c400",
+                        "secondary": "#fff9ef",
+                        "on-surface": "#e5e2e3",
+                        "on-primary-fixed-variant": "#852400",
+                        "tertiary-fixed-dim": "#c8c6c6",
+                        "inverse-primary": "#ae3200"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "base": "4px",
+                        "lg": "40px",
+                        "xs": "8px",
+                        "margin-desktop": "48px",
+                        "sm": "16px",
+                        "xl": "64px",
+                        "margin-mobile": "16px",
+                        "gutter": "20px",
+                        "md": "24px"
+                    },
+                    "fontFamily": {
+                        "headline-lg": ["Bebas Neue"],
+                        "body-lg": ["\"Source Sans 3\""],
+                        "headline-lg-mobile": ["Bebas Neue"],
+                        "label-mono": ["JetBrains Mono"],
+                        "headline-md": ["Bebas Neue"],
+                        "body-md": ["\"Source Sans 3\""],
+                        "title-lg": ["\"Source Sans 3\""],
+                        "display-lg": ["Bebas Neue"]
+                    },
+                    "fontSize": {
+                        "headline-lg": ["48px", {"lineHeight": "1.1", "fontWeight": "400"}],
+                        "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                        "headline-lg-mobile": ["36px", {"lineHeight": "1.1", "fontWeight": "400"}],
+                        "label-mono": ["14px", {"lineHeight": "1.4", "letterSpacing": "0.05em", "fontWeight": "500"}],
+                        "headline-md": ["32px", {"lineHeight": "1.2", "fontWeight": "400"}],
+                        "body-md": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                        "title-lg": ["20px", {"lineHeight": "1.4", "fontWeight": "700"}],
+                        "display-lg": ["72px", {"lineHeight": "1.0", "letterSpacing": "0.02em", "fontWeight": "400"}]
+                    }
+                },
+            },
+        }
+    </script>
+</head>
+<body class="bg-surface text-on-surface font-body-md text-body-md overflow-hidden selection:bg-primary-container selection:text-on-primary-container">
+<!-- Background Layer -->
+<div class="fixed inset-0 z-0">
+<!-- Thermal Kinetic Overlay -->
+<div class="absolute inset-0 opacity-20 mix-blend-screen animate-heat" style="background-image: url('https://lh3.googleusercontent.com/aida/AP1WRLtsYziTy1m0MipmjkR3MPLAUR6YrjVzJok13UOBfhksTXS0Q1mTixUrBXz34ZJ9user0QjLSYYptJEUDNIun2ieSTWqjvrDZ4TNZny2eNJ-lBVgrHJm3DyokwrkQ_vbubxXJagkJs32ryy11Rak-J-93eFvcqYAW6VQqDcP_74WHw9FuaOZMBE4lpfpfW7BthlWS449QT78VvoWGsKeVXQYCduCkVCPnI1uXn_zDZQrSqwtbCU-zUGC-w'); background-size: cover; background-position: center;"></div>
+<!-- Grid Pattern Overlay -->
+<div class="absolute inset-0 opacity-10" style="background-image: radial-gradient(#ad897e 1px, transparent 1px); background-size: 24px 24px;"></div>
+</div>
+<!-- Main Content Shell -->
+<div class="relative z-10 flex flex-col h-screen w-full">
+<!-- TopAppBar (Suppressed for focused transition, but using structural command for spacing) -->
+<header class="flex justify-between items-center px-margin-mobile w-full z-50 h-16 border-b border-outline-variant dark:border-outline-variant bg-surface/80 backdrop-blur-md">
+<div class="font-headline-md-mobile text-headline-md-mobile text-primary dark:text-primary tracking-tight">
+                FIREBOARD PITMASTER
+            </div>
+<div class="material-symbols-outlined text-primary">local_fire_department</div>
+</header>
+<!-- Centered Success Content -->
+<main class="flex-grow flex flex-col items-center justify-center px-margin-mobile text-center">
+<!-- Success Indicator -->
+<div class="mb-lg group">
+<div class="w-32 h-32 rounded-full border-4 border-primary-container flex items-center justify-center glow-ember bg-surface relative overflow-hidden">
+<div class="absolute inset-0 bg-primary-container/10 group-hover:bg-primary-container/20 transition-colors"></div>
+<span class="material-symbols-outlined text-6xl text-primary-container" style="font-variation-settings: 'FILL' 1, 'wght' 700;">check_circle</span>
+</div>
+</div>
+<!-- Main Headline -->
+<h1 class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface mb-xs tracking-tight">
+                PULL COMPLETE - INITIATING REST
+            </h1>
+<!-- Summary Card -->
+<div class="w-full max-w-sm p-md bg-surface-container border border-outline-variant glow-ember-inner mb-lg">
+<div class="font-label-mono text-label-mono text-primary-container mb-2">SUMMARY</div>
+<div class="font-headline-md text-headline-md text-on-surface tracking-wider">
+                    PULLED @ 90.0°C
+                </div>
+</div>
+<!-- Technical Instructions -->
+<div class="w-full max-w-sm mb-xl">
+<div class="flex items-start gap-sm text-left bg-surface-container-high/50 p-sm border-l-4 border-secondary-fixed">
+<span class="material-symbols-outlined text-secondary-fixed mt-1">info</span>
+<div>
+<p class="font-label-mono text-label-mono text-on-surface-variant leading-relaxed">
+                            TECHNICAL INSTRUCTION:
+                        </p>
+<p class="font-body-md text-body-md text-on-surface font-bold uppercase tracking-tight">
+                            INSERT SURFACE PROBE (OPTIONAL) & WRAP FOR REST
+                        </p>
+</div>
+</div>
+</div>
+<!-- Action Button -->
+<button class="w-full max-w-sm py-md px-lg bg-primary-container text-surface font-headline-md text-headline-md tracking-widest hover:brightness-110 active:scale-95 transition-all glow-ember group flex items-center justify-center gap-sm">
+                START RESTING TIMER
+                <span class="material-symbols-outlined group-hover:translate-x-1 transition-transform">timer</span>
+</button>
+<!-- Secondary Action -->
+<button class="mt-md font-label-mono text-label-mono text-on-surface-variant hover:text-primary transition-colors underline underline-offset-8">
+                SKIP RESTING (NOT RECOMMENDED)
+            </button>
+</main>
+<!-- Layout Buffer for spacing -->
+<div class="h-20"></div>
+</div>
+<!-- Interaction Layer Script -->
+<script>
+        // Subtle interaction for the "Start Resting" button
+        const btn = document.querySelector('button');
+        btn.addEventListener('click', () => {
+            // Visual feedback
+            btn.classList.add('bg-secondary-fixed');
+            btn.innerHTML = 'INITIALIZING...';
+            
+            // Artificial delay for "mechanical" feel
+            setTimeout(() => {
+                console.log('Transitioning to resting phase...');
+            }, 800);
+        });
+
+        // Atmospheric mouse/touch move effect on the glow
+        document.addEventListener('mousemove', (e) => {
+            const x = (e.clientX / window.innerWidth) - 0.5;
+            const y = (e.clientY / window.innerHeight) - 0.5;
+            const heatOverlay = document.querySelector('.animate-heat');
+            heatOverlay.style.transform = `translate(${x * 20}px, ${y * 20}px) scale(1.05)`;
+        });
+    </script>
+</body></html>

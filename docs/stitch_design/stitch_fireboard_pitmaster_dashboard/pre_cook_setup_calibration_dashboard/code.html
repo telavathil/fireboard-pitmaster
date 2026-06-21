@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>EMBER & CHAR | Pre-Cook Setup</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Source+Sans+3:wght@400;700&family=JetBrains+Mono:wght@500&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue:wght@100..900&family=JetBrains+Mono:wght@100..900&family=Source+Sans+3:wght@100..900&display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .glow-orange {
+            box-shadow: 0 0 12px rgba(255, 77, 0, 0.4);
+        }
+        .glow-orange-inner {
+            box-shadow: inset 0 0 12px rgba(255, 77, 0, 0.4);
+        }
+        .forge-texture {
+            background-image: linear-gradient(to bottom, rgba(255,255,255,0.02) 1px, transparent 1px),
+                              linear-gradient(to right, rgba(255,255,255,0.02) 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+        .brushed-metal {
+            background: linear-gradient(180deg, #131314 0%, #0e0e0f 100%);
+            position: relative;
+        }
+        .brushed-metal::before {
+            content: "";
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: repeating-linear-gradient(90deg, rgba(255,255,255,0.01) 0px, rgba(255,255,255,0.01) 1px, transparent 1px, transparent 2px);
+            pointer-events: none;
+        }
+        input[type="range"] {
+            -webkit-appearance: none;
+            background: #262626;
+            height: 4px;
+        }
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 16px;
+            height: 16px;
+            background: #ff571a;
+            border: 2px solid #fff9ef;
+            cursor: pointer;
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface": "#131314",
+                        "on-surface-variant": "#e6beb2",
+                        "primary-container": "#ff571a",
+                        "on-primary-fixed-variant": "#852400",
+                        "primary-fixed-dim": "#ffb59e",
+                        "on-secondary": "#3a3000",
+                        "on-primary": "#5e1700",
+                        "background": "#131314",
+                        "on-surface": "#e5e2e3",
+                        "on-primary-container": "#521300",
+                        "surface-container-high": "#2a2a2b",
+                        "on-secondary-container": "#725f00",
+                        "secondary-fixed-dim": "#e9c400",
+                        "on-tertiary": "#303030",
+                        "tertiary": "#c8c6c6",
+                        "surface-container-highest": "#353436",
+                        "primary": "#ffb59e",
+                        "inverse-primary": "#ae3200",
+                        "tertiary-fixed": "#e4e2e2",
+                        "surface-dim": "#131314",
+                        "error-container": "#93000a",
+                        "surface-variant": "#353436",
+                        "primary-fixed": "#ffdbd0",
+                        "surface-container-low": "#1c1b1c",
+                        "surface-tint": "#ffb59e",
+                        "tertiary-container": "#919090",
+                        "outline": "#ad897e",
+                        "on-tertiary-fixed-variant": "#474747",
+                        "outline-variant": "#5c4037",
+                        "inverse-surface": "#e5e2e3",
+                        "surface-container": "#201f20",
+                        "secondary-container": "#ffdb3c",
+                        "tertiary-fixed-dim": "#c8c6c6",
+                        "secondary": "#fff9ef",
+                        "surface-bright": "#3a393a",
+                        "on-tertiary-fixed": "#1b1c1c",
+                        "surface-container-lowest": "#0e0e0f",
+                        "on-secondary-fixed-variant": "#544600",
+                        "secondary-fixed": "#ffe16d",
+                        "on-secondary-fixed": "#221b00",
+                        "on-error": "#690005",
+                        "inverse-on-surface": "#313031",
+                        "on-primary-fixed": "#3a0b00",
+                        "on-tertiary-container": "#292a2a",
+                        "error": "#ffb4ab",
+                        "on-background": "#e5e2e3",
+                        "on-error-container": "#ffdad6"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "md": "24px",
+                        "sm": "16px",
+                        "gutter": "20px",
+                        "base": "4px",
+                        "xs": "8px",
+                        "margin-mobile": "16px",
+                        "lg": "40px",
+                        "xl": "64px",
+                        "margin-desktop": "48px"
+                    },
+                    "fontFamily": {
+                        "title-lg": ["Source Sans 3"],
+                        "display-lg": ["Bebas Neue"],
+                        "headline-lg-mobile": ["Bebas Neue"],
+                        "label-mono": ["JetBrains Mono"],
+                        "body-lg": ["Source Sans 3"],
+                        "headline-md": ["Bebas Neue"],
+                        "headline-lg": ["Bebas Neue"],
+                        "body-md": ["Source Sans 3"]
+                    },
+                    "fontSize": {
+                        "title-lg": ["20px", {"lineHeight": "1.4", "fontWeight": "700"}],
+                        "display-lg": ["72px", {"lineHeight": "1.0", "letterSpacing": "0.02em", "fontWeight": "400"}],
+                        "headline-lg-mobile": ["36px", {"lineHeight": "1.1", "fontWeight": "400"}],
+                        "label-mono": ["14px", {"lineHeight": "1.4", "letterSpacing": "0.05em", "fontWeight": "500"}],
+                        "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                        "headline-md": ["32px", {"lineHeight": "1.2", "fontWeight": "400"}],
+                        "headline-lg": ["48px", {"lineHeight": "1.1", "fontWeight": "400"}],
+                        "body-md": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}]
+                    }
+                },
+            },
+        }
+    </script>
+</head>
+<body class="bg-background text-on-surface font-body-md brushed-metal min-h-screen">
+<!-- Persistent Side Navigation Bar -->
+<nav class="fixed left-0 top-0 h-full flex flex-col py-md w-64 bg-surface-container-low border-r border-outline-variant z-50">
+<div class="px-gutter mb-xl">
+<h1 class="font-headline-md text-primary tracking-wider">HEARTH COMMAND</h1>
+<p class="font-label-mono text-on-surface-variant text-[10px] uppercase opacity-60">Active Session: Brisket #4</p>
+</div>
+<div class="flex-1 space-y-base px-xs">
+<a class="flex items-center gap-sm px-gutter py-md text-on-surface-variant font-medium hover:bg-surface-variant hover:text-primary transition-all" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-label-mono text-label-mono">Dashboard</span>
+</a>
+<a class="flex items-center gap-sm px-gutter py-md text-on-primary bg-primary-container border-l-4 border-primary font-bold transition-all" href="#">
+<span class="material-symbols-outlined">thermostat</span>
+<span class="font-label-mono text-label-mono">Probes</span>
+</a>
+<a class="flex items-center gap-sm px-gutter py-md text-on-surface-variant font-medium hover:bg-surface-variant hover:text-primary transition-all" href="#">
+<span class="material-symbols-outlined">history</span>
+<span class="font-label-mono text-label-mono">History</span>
+</a>
+<a class="flex items-center gap-sm px-gutter py-md text-on-surface-variant font-medium hover:bg-surface-variant hover:text-primary transition-all" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-label-mono text-label-mono">Settings</span>
+</a>
+</div>
+<button class="mx-gutter mb-xl bg-primary-container text-on-primary-container font-display-lg text-title-lg py-sm px-md active:scale-95 duration-100 glow-orange">
+            START NEW COOK
+        </button>
+<div class="px-xs mt-auto">
+<a class="flex items-center gap-sm px-gutter py-md text-on-surface-variant font-medium hover:bg-surface-variant transition-all" href="#">
+<span class="material-symbols-outlined">help</span>
+<span class="font-label-mono text-label-mono">Support</span>
+</a>
+</div>
+</nav>
+<!-- Main Content Area -->
+<main class="ml-64 p-lg">
+<!-- Header -->
+<header class="flex justify-between items-center mb-xl">
+<div>
+<h2 class="font-display-lg text-headline-lg text-primary">PRE-COOK SETUP</h2>
+<p class="font-label-mono text-on-surface-variant">CALIBRATING THERMAL KINETICS FOR SESSION #004</p>
+</div>
+<div class="flex gap-md">
+<button class="material-symbols-outlined p-base text-on-surface-variant hover:text-primary transition-colors">notifications</button>
+<button class="material-symbols-outlined p-base text-on-surface-variant hover:text-primary transition-colors">local_fire_department</button>
+</div>
+</header>
+<!-- Bento Grid Layout -->
+<div class="grid grid-cols-12 gap-gutter">
+<!-- 1. Target Doneness (Wide Panel) -->
+<section class="col-span-12 lg:col-span-8 bg-surface border border-outline-variant p-lg relative overflow-hidden group">
+<div class="absolute top-0 left-0 w-1 h-full bg-primary shadow-[2px_0_10px_rgba(255,87,26,0.5)]"></div>
+<div class="flex justify-between items-start mb-lg">
+<div>
+<h3 class="font-display-lg text-headline-md text-on-surface">TARGET DONENESS</h3>
+<p class="font-label-mono text-xs text-on-surface-variant">MOLECULAR PROTEIN RECONSTRUCT PARAMETERS</p>
+</div>
+<div class="text-right">
+<span class="font-display-lg text-[64px] text-primary-container leading-none">203°F</span>
+<p class="font-label-mono text-xs text-on-surface-variant">INTERNAL CORE TARGET</p>
+</div>
+</div>
+<div class="flex flex-col gap-lg">
+<!-- Preset Selector -->
+<div class="flex flex-wrap gap-xs">
+<button class="bg-primary-container text-on-primary-container font-label-mono px-md py-xs border border-primary">BRISKET (203°F)</button>
+<button class="bg-surface-container-high text-on-surface-variant font-label-mono px-md py-xs border border-outline-variant hover:border-primary transition-all">PORK BUTT (205°F)</button>
+<button class="bg-surface-container-high text-on-surface-variant font-label-mono px-md py-xs border border-outline-variant hover:border-primary transition-all">MEDIUM RARE (135°F)</button>
+<button class="bg-surface-container-high text-on-surface-variant font-label-mono px-md py-xs border border-outline-variant hover:border-primary transition-all">POULTRY (165°F)</button>
+<button class="bg-surface-container-high text-on-surface-variant font-label-mono px-md py-xs border border-outline-variant hover:border-primary transition-all">CUSTOM</button>
+</div>
+<!-- Temperature Slider -->
+<div class="py-md">
+<input class="w-full h-2 cursor-pointer accent-primary-container" max="220" min="100" type="range" value="203"/>
+<div class="flex justify-between mt-sm font-label-mono text-[10px] text-on-surface-variant">
+<span>100°F (RAW)</span>
+<span>165°F (STALL)</span>
+<span>212°F (BOIL)</span>
+</div>
+</div>
+</div>
+</section>
+<!-- 4. Channel Mapping Widget (Quick Action) -->
+<section class="col-span-12 lg:col-span-4 bg-surface border border-outline-variant p-lg flex flex-col justify-between">
+<div>
+<h3 class="font-display-lg text-headline-md text-on-surface mb-md">CHANNEL MAPPING</h3>
+<div class="space-y-sm">
+<div class="flex items-center justify-between p-sm bg-surface-container-lowest border border-outline-variant">
+<div class="flex items-center gap-sm">
+<div class="w-3 h-3 bg-primary glow-orange"></div>
+<span class="font-label-mono">PROBE 01 (CORE)</span>
+</div>
+<span class="material-symbols-outlined text-primary">link</span>
+</div>
+<div class="flex items-center justify-between p-sm bg-surface-container-lowest border border-outline-variant opacity-50">
+<div class="flex items-center gap-sm">
+<div class="w-3 h-3 bg-on-surface-variant"></div>
+<span class="font-label-mono">PROBE 02 (AMBIENT)</span>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant">link_off</span>
+</div>
+</div>
+</div>
+<button class="w-full mt-lg bg-primary-container text-on-primary-container font-display-lg text-headline-md py-md hover:brightness-110 active:scale-95 transition-all glow-orange">
+                    INITIALIZE THERMAL MODEL
+                </button>
+</section>
+<!-- 2. Geometry Calibration (Central Panel) -->
+<section class="col-span-12 lg:col-span-7 bg-surface border border-outline-variant p-lg relative overflow-hidden">
+<div class="flex justify-between items-center mb-xl">
+<h3 class="font-display-lg text-headline-md text-on-surface">GEOMETRY CALIBRATION</h3>
+<span class="font-label-mono text-xs text-primary-container">3D VOLUMETRIC SCAN READY</span>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-xl items-center">
+<!-- Interactive Illustration Area -->
+<div class="relative aspect-square bg-surface-container-lowest border border-outline-variant/30 flex items-center justify-center p-md forge-texture">
+<!-- Stylized Meat Vector Placeholder -->
+<div class="w-48 h-32 bg-on-primary-fixed-variant/20 border-2 border-primary-container/40 relative transform rotate-12 transition-transform hover:scale-105 duration-700">
+<!-- Heat layers visualization -->
+<div class="absolute inset-0 flex flex-col items-center justify-center">
+<div class="w-full h-1/3 bg-primary-container/10 border-b border-primary/20 animate-pulse"></div>
+<div class="w-full h-1/3 bg-primary-container/20 border-b border-primary/40"></div>
+<div class="w-full h-1/3 bg-primary-container/30"></div>
+</div>
+<div class="absolute -top-4 -right-4 font-label-mono text-[10px] text-primary bg-surface border border-primary px-xs">CORE AXIS</div>
+</div>
+<!-- UI Overlays -->
+<div class="absolute inset-4 border border-outline-variant/20 pointer-events-none"></div>
+<div class="absolute bottom-4 left-4 font-label-mono text-[10px] text-on-surface-variant">REF: BRISKET_FLAT_A</div>
+</div>
+<!-- Sliders -->
+<div class="space-y-lg">
+<div>
+<label class="block font-label-mono text-xs text-on-surface-variant mb-xs">THICKNESS (MM)</label>
+<div class="flex items-center gap-md">
+<input class="flex-1 accent-primary-container" max="150" min="10" type="range" value="75"/>
+<span class="font-label-mono text-primary w-12 text-right">75.2</span>
+</div>
+</div>
+<div>
+<label class="block font-label-mono text-xs text-on-surface-variant mb-xs">WEIGHT (KG)</label>
+<div class="flex items-center gap-md">
+<input class="flex-1 accent-primary-container" max="10" min="0.5" step="0.1" type="range" value="5.4"/>
+<span class="font-label-mono text-primary w-12 text-right">5.45</span>
+</div>
+</div>
+<div class="p-sm bg-surface-container-high border border-outline-variant">
+<p class="font-label-mono text-[10px] text-on-surface-variant leading-tight">ESTIMATED THERMAL INERTIA:<br/><span class="text-secondary font-bold">14.82 KJ/K</span></p>
+</div>
+</div>
+</div>
+</section>
+<!-- 3. Cooker Thermal Profile (Cards Grid) -->
+<section class="col-span-12 lg:col-span-5 bg-surface border border-outline-variant p-lg">
+<h3 class="font-display-lg text-headline-md text-on-surface mb-lg">COOKER THERMAL PROFILE</h3>
+<div class="grid grid-cols-2 gap-md">
+<!-- Card 1: Kamado -->
+<button class="group p-md border border-primary bg-surface-container-high text-left relative overflow-hidden glow-orange-inner">
+<div class="flex justify-between items-start mb-sm">
+<span class="material-symbols-outlined text-primary">oven_gen</span>
+<span class="font-label-mono text-[10px] text-primary">SELECTED</span>
+</div>
+<h4 class="font-display-lg text-title-lg text-on-surface">KAMADO</h4>
+<p class="font-label-mono text-[10px] text-on-surface-variant mt-xs">High Retention / Low Airflow</p>
+<div class="mt-md h-1 bg-surface-container-lowest">
+<div class="h-full bg-primary-container w-[85%]"></div>
+</div>
+<p class="font-label-mono text-[9px] text-primary mt-1">HUMIDITY: 85%</p>
+</button>
+<!-- Card 2: Pellet Grill -->
+<button class="group p-md border border-outline-variant bg-surface-container-lowest text-left hover:border-primary transition-all">
+<div class="flex justify-between items-start mb-sm">
+<span class="material-symbols-outlined text-on-surface-variant group-hover:text-primary">heat_pump</span>
+</div>
+<h4 class="font-display-lg text-title-lg text-on-surface">PELLET GRILL</h4>
+<p class="font-label-mono text-[10px] text-on-surface-variant mt-xs">Forced Convection / Medium Airflow</p>
+<div class="mt-md h-1 bg-surface-container-low">
+<div class="h-full bg-on-surface-variant w-[40%]"></div>
+</div>
+<p class="font-label-mono text-[9px] text-on-surface-variant mt-1">HUMIDITY: 40%</p>
+</button>
+<!-- Card 3: Offset Smoker -->
+<button class="group p-md border border-outline-variant bg-surface-container-lowest text-left hover:border-primary transition-all">
+<div class="flex justify-between items-start mb-sm">
+<span class="material-symbols-outlined text-on-surface-variant group-hover:text-primary">air</span>
+</div>
+<h4 class="font-display-lg text-title-lg text-on-surface">OFFSET SMOKER</h4>
+<p class="font-label-mono text-[10px] text-on-surface-variant mt-xs">Natural Convection / High Airflow</p>
+<div class="mt-md h-1 bg-surface-container-low">
+<div class="h-full bg-on-surface-variant w-[20%]"></div>
+</div>
+<p class="font-label-mono text-[9px] text-on-surface-variant mt-1">HUMIDITY: 20%</p>
+</button>
+<!-- Card 4: Electric Smoker -->
+<button class="group p-md border border-outline-variant bg-surface-container-lowest text-left hover:border-primary transition-all">
+<div class="flex justify-between items-start mb-sm">
+<span class="material-symbols-outlined text-on-surface-variant group-hover:text-primary">bolt</span>
+</div>
+<h4 class="font-display-lg text-title-lg text-on-surface">ELECTRIC</h4>
+<p class="font-label-mono text-[10px] text-on-surface-variant mt-xs">Stagnant Air / Ultra-High Retention</p>
+<div class="mt-md h-1 bg-surface-container-low">
+<div class="h-full bg-on-surface-variant w-[95%]"></div>
+</div>
+<p class="font-label-mono text-[9px] text-on-surface-variant mt-1">HUMIDITY: 95%</p>
+</button>
+</div>
+</section>
+</div>
+<!-- Footer / Status Bar -->
+<footer class="mt-xl pt-lg border-t border-outline-variant flex justify-between items-center opacity-70">
+<div class="flex gap-lg font-label-mono text-[10px]">
+<div class="flex gap-xs items-center">
+<span class="w-2 h-2 rounded-full bg-green-500 animate-ping"></span>
+<span class="text-on-surface">SENSOR NETWORK: CONNECTED</span>
+</div>
+<div class="text-on-surface-variant">API LATENCY: 14MS</div>
+<div class="text-on-surface-variant">MODEL VERSION: TRACER-V4.2.1</div>
+</div>
+<div class="font-label-mono text-[10px] text-on-surface-variant">
+                © 2024 EMBER & CHAR | INDUSTRIAL THERMAL MODELING
+            </div>
+</footer>
+</main>
+<script>
+        // Micro-interactions for sliders
+        const sliders = document.querySelectorAll('input[type="range"]');
+        sliders.forEach(slider => {
+            slider.addEventListener('input', function() {
+                // Future implementation: Update 3D visualization or estimated values
+                const val = this.value;
+                const target = this.parentElement.querySelector('.text-primary');
+                if (target) {
+                    target.textContent = val;
+                }
+            });
+        });
+
+        // Toggle "Cooker Profile" active state
+        const cookerButtons = document.querySelectorAll('section:nth-of-type(4) button');
+        cookerButtons.forEach(btn => {
+            btn.addEventListener('click', function() {
+                cookerButtons.forEach(b => {
+                    b.classList.remove('border-primary', 'bg-surface-container-high', 'glow-orange-inner');
+                    b.classList.add('border-outline-variant', 'bg-surface-container-lowest');
+                    const selectedLabel = b.querySelector('.font-label-mono.text-primary');
+                    if(selectedLabel) selectedLabel.classList.add('hidden');
+                });
+                this.classList.add('border-primary', 'bg-surface-container-high', 'glow-orange-inner');
+                this.classList.remove('border-outline-variant', 'bg-surface-container-lowest');
+                const selectedLabel = this.querySelector('.font-label-mono.text-primary');
+                if(selectedLabel) selectedLabel.classList.remove('hidden');
+            });
+        });
+    </script>
+</body></html>

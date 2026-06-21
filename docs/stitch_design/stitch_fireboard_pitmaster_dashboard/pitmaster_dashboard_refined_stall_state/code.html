@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>FireBoard Pitmaster - Stall Active</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&amp;family=Source+Sans+3:wght@400;700&amp;family=JetBrains+Mono:wght@500&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue:wght@100..900&amp;family=JetBrains+Mono:wght@100..900&amp;family=Source+Sans+3:wght@100..900&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .glow-ember {
+            box-shadow: 0 0 12px rgba(255, 77, 0, 0.4);
+        }
+        .glow-ember-intense {
+            box-shadow: 0 0 20px rgba(255, 77, 0, 0.6);
+        }
+        .bg-charred {
+            background: linear-gradient(180deg, #131314 0%, #0e0e0f 100%);
+            position: relative;
+        }
+        .bg-charred::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background-image: url("https://www.transparenttextures.com/patterns/carbon-fibre.png");
+            opacity: 0.05;
+            pointer-events: none;
+        }
+        @keyframes pulse-glow {
+            0%, 100% { opacity: 0.4; transform: scale(1); }
+            50% { opacity: 0.8; transform: scale(1.05); }
+        }
+        .animate-pulse-glow {
+            animation: pulse-glow 3s ease-in-out infinite;
+        }
+        .heat-gradient {
+            background: linear-gradient(90deg, #ff571a 0%, #ffdb3c 100%);
+        }
+        .radial-progress {
+            --value: 71.2;
+            --max: 100;
+            background: radial-gradient(closest-side, #131314 85%, transparent 86% 100%),
+                        conic-gradient(#ff571a calc(var(--value) * 1%), #262626 0);
+        }
+    </style>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "surface-dim": "#131314",
+                    "error-container": "#93000a",
+                    "surface": "#131314",
+                    "on-surface-variant": "#e6beb2",
+                    "on-surface": "#e5e2e3",
+                    "primary-container": "#ff571a",
+                    "on-error-container": "#ffdad6",
+                    "on-secondary": "#3a3000",
+                    "background": "#131314",
+                    "on-primary": "#5e1700",
+                    "outline-variant": "#5c4037",
+                    "on-background": "#e5e2e3",
+                    "error": "#ffb4ab",
+                    "on-secondary-fixed-variant": "#544600",
+                    "secondary-fixed-dim": "#e9c400",
+                    "inverse-on-surface": "#313031",
+                    "surface-container-high": "#2a2a2b",
+                    "secondary": "#fff9ef",
+                    "primary-fixed-dim": "#ffb59e",
+                    "on-primary-fixed": "#3a0b00",
+                    "on-tertiary-fixed-variant": "#474747",
+                    "on-tertiary-fixed": "#1b1c1c",
+                    "outline": "#ad897e",
+                    "on-tertiary-container": "#292a2a",
+                    "tertiary-container": "#919090",
+                    "surface-tint": "#ffb59e",
+                    "on-secondary-container": "#725f00",
+                    "on-tertiary": "#303030",
+                    "tertiary-fixed": "#e4e2e2",
+                    "surface-container-low": "#1c1b1c",
+                    "surface-container": "#201f20",
+                    "surface-container-lowest": "#0e0e0f",
+                    "on-secondary-fixed": "#221b00",
+                    "inverse-primary": "#ae3200",
+                    "primary": "#ffb59e",
+                    "surface-bright": "#3a393a",
+                    "on-primary-fixed-variant": "#852400",
+                    "on-error": "#690005",
+                    "surface-container-highest": "#353436",
+                    "primary-fixed": "#ffdbd0",
+                    "surface-variant": "#353436",
+                    "secondary-container": "#ffdb3c",
+                    "secondary-fixed": "#ffe16d",
+                    "inverse-surface": "#e5e2e3",
+                    "on-primary-container": "#521300",
+                    "tertiary-fixed-dim": "#c8c6c6",
+                    "tertiary": "#c8c6c6"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.125rem",
+                    "lg": "0.25rem",
+                    "xl": "0.5rem",
+                    "full": "0.75rem"
+            },
+            "spacing": {
+                    "xs": "8px",
+                    "base": "4px",
+                    "sm": "16px",
+                    "xl": "64px",
+                    "margin-desktop": "48px",
+                    "lg": "40px",
+                    "md": "24px",
+                    "gutter": "20px",
+                    "margin-mobile": "16px"
+            },
+            "fontFamily": {
+                    "headline-md": ["Bebas Neue"],
+                    "title-lg": ["Source Sans 3"],
+                    "label-mono": ["JetBrains Mono"],
+                    "headline-lg": ["Bebas Neue"],
+                    "headline-lg-mobile": ["Bebas Neue"],
+                    "display-lg": ["Bebas Neue"],
+                    "body-md": ["Source Sans 3"],
+                    "body-lg": ["Source Sans 3"]
+            },
+            "fontSize": {
+                    "headline-md": ["32px", {"lineHeight": "1.2", "fontWeight": "400"}],
+                    "title-lg": ["20px", {"lineHeight": "1.4", "fontWeight": "700"}],
+                    "label-mono": ["14px", {"lineHeight": "1.4", "letterSpacing": "0.05em", "fontWeight": "500"}],
+                    "headline-lg": ["48px", {"lineHeight": "1.1", "fontWeight": "400"}],
+                    "headline-lg-mobile": ["36px", {"lineHeight": "1.1", "fontWeight": "400"}],
+                    "display-lg": ["72px", {"lineHeight": "1.0", "letterSpacing": "0.02em", "fontWeight": "400"}],
+                    "body-md": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                    "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+</head>
+<body class="bg-surface-lowest text-on-surface font-body-md selection:bg-primary-container selection:text-on-primary-container">
+<!-- Top App Bar -->
+<header class="fixed top-0 w-full z-40 bg-surface dark:bg-surface flex flex-col justify-center px-margin-mobile w-full py-base border-b border-outline-variant shadow-[0_0_12px_rgba(255,77,0,0.2)]">
+<div class="flex items-center justify-between w-full h-14">
+<div class="flex items-center gap-xs">
+<span class="material-symbols-outlined text-primary" data-icon="local_fire_department">local_fire_department</span>
+<h1 class="font-display-lg text-headline-md text-primary tracking-wider uppercase">FIREBOARD PITMASTER</h1>
+</div>
+<div class="w-8 h-8 rounded-full border border-outline-variant overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="A close-up high-resolution portrait of a rugged professional pitmaster wearing a black leather apron, standing in a dimly lit, atmospheric smokehouse with orange embers glowing in the background. The lighting is dramatic and moody, reflecting a premium industrial BBQ brand aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDiMU64hKmc5rwnF5Z6t8Glwe6eA0vwTS2MHGnqYM5gt_f1eDiVK_-r7yNVPBIQaeip641qhzRWyGlpcc1t9HJUtLS54kMfCEHq6QqdzOF1qtZ4osF08M6aE1P8v57tVS4dOnUL4qUoEtvPkD0R4vr0JbzUZNUJF3cH1unHfPqCbhwWXIhDqY4nzqZ0Iw5shgHPU5iwji-XCoPEHrEIxLk-cUTKwEjDDtVBg-yRwrgCNTPPV-NVqfh0js8QWAu8Hux78JYlwO3Ntnct"/>
+</div>
+</div>
+</header>
+<main class="pt-20 pb-32 px-margin-mobile min-h-screen bg-charred">
+<!-- Dashboard Content -->
+<div class="flex flex-col gap-md">
+<!-- Central Stall Status Widget -->
+<section class="relative flex flex-col items-center justify-center py-lg">
+<div class="relative w-64 h-64 flex items-center justify-center rounded-full radial-progress border-4 border-outline-variant glow-ember">
+<div class="flex flex-col items-center justify-center text-center">
+<span class="font-label-mono text-label-mono text-on-surface-variant uppercase tracking-widest mb-base">Core Temp</span>
+<div class="font-display-lg text-[64px] text-white leading-none">71.2°C</div>
+<div class="mt-md flex flex-col items-center">
+<div class="relative">
+<span class="material-symbols-outlined text-secondary-container text-4xl animate-pulse-glow" data-icon="humidity_mid">humidity_mid</span>
+</div>
+<span class="font-headline-md text-headline-md text-primary mt-base">STALL ACTIVE</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Moisture Budget Progress Bar -->
+<section class="bg-surface-container border border-outline-variant p-sm shadow-md">
+<div class="flex justify-between items-center mb-xs flex-wrap">
+<span class="font-label-mono text-label-mono text-on-surface-variant uppercase">Moisture Budget</span>
+<span class="font-label-mono text-label-mono text-secondary-container">45% REMAINING</span>
+</div>
+<div class="h-4 bg-surface-container-highest border border-outline-variant overflow-hidden">
+<div class="h-full heat-gradient glow-ember" style="width: 45%;"></div>
+</div>
+<div class="flex justify-between mt-xs">
+<span class="font-label-mono text-[10px] text-on-surface-variant opacity-60 uppercase">Saturated</span>
+<span class="font-label-mono text-[10px] text-on-surface-variant opacity-60 uppercase">Bark Formed</span>
+</div>
+</section>
+<!-- Explanatory Banner -->
+<section class="bg-primary-container/10 border-l-4 border-primary p-sm flex gap-sm items-start">
+<span class="material-symbols-outlined text-primary mt-1" data-icon="info">info</span>
+<p class="font-body-md text-on-surface leading-tight">
+<span class="font-bold text-primary">Stall Active:</span> Evaporative cooling is forming bark. Smoker heat is balanced by moisture loss.
+                </p>
+</section>
+<!-- Predictive Data & Bento Stats -->
+<div class="grid grid-cols-2 gap-sm">
+<!-- Prediction Card -->
+<div class="col-span-2 bg-surface-container border border-outline-variant p-sm flex items-center justify-between">
+<div class="flex flex-col">
+<span class="font-label-mono text-label-mono text-on-surface-variant uppercase mb-base">Estimated Breakout</span>
+<div class="flex items-center gap-xs flex-wrap">
+<span class="font-headline-md text-headline-md text-secondary-container leading-none">42 MINUTES</span>
+<span class="material-symbols-outlined text-secondary-container" data-icon="query_stats">query_stats</span>
+</div>
+</div>
+<div class="w-12 h-12 flex items-center justify-center border border-outline-variant rounded-lg">
+<span class="material-symbols-outlined text-primary" data-icon="timeline">timeline</span>
+</div>
+</div>
+<!-- Secondary Stats -->
+<div class="bg-surface-container-low border border-outline-variant p-sm">
+<span class="font-label-mono text-[12px] text-on-surface-variant uppercase">Pit Temp</span>
+<div class="font-headline-md text-headline-md text-on-surface">107°C</div>
+<div class="flex items-center text-error text-[12px] font-label-mono mt-base">
+<span class="material-symbols-outlined text-[14px]" data-icon="trending_up">trending_up</span>
+<span>+2°</span>
+</div>
+</div>
+<div class="bg-surface-container-low border border-outline-variant p-sm">
+<span class="font-label-mono text-[12px] text-on-surface-variant uppercase">Target</span>
+<div class="font-headline-md text-headline-md text-on-surface">95°C</div>
+<div class="text-on-surface-variant text-[12px] font-label-mono mt-base">
+                        EST. 3:45 PM
+                    </div>
+</div>
+</div>
+<!-- Visual Texture Image Section -->
+<div class="w-full h-32 border border-outline-variant overflow-hidden relative group">
+<div class="absolute inset-0 bg-black/40 z-10"></div>
+<div class="absolute inset-0 flex items-center justify-center z-20">
+<span class="font-label-mono text-label-mono text-white/80 uppercase tracking-widest px-md py-xs border border-white/20 backdrop-blur-sm bg-black/20">View Smoke Graph</span>
+</div>
+<img class="w-full h-full object-cover grayscale-[0.5] group-hover:grayscale-0 transition-all duration-500" data-alt="A thermal kinetics graphic showing heat distribution and moisture evaporation patterns during the BBQ stall phase." src="https://lh3.googleusercontent.com/aida-public/AB6AXuClT11lVmPZKiq7F1dG19UG_9S5Y20BVMF-sLvKMQohUhZsyCqTgLwBu1H0S97It9-YM5sR1z6B8C4whBgMsyfwy_gUnmgVT0pJteZOiJ47XvROxpLXIuoq1xj2TgSVI0l6BHrJouPI0tlNbDvdgpNqXZ8lD4SockJmqeWu-GAJEXsJ-1nDuJDzzBvo-VPDPvgbya-6EFBRxlKd3LnI3Q-D5x3QyH3N6OHXLTdsz-gMLRCkp9Neb8JnHs9LkrAmGj_QkR_05YS9ndJJ"/>
+</div>
+</div>
+</main>
+<!-- Bottom Navigation Bar -->
+<nav class="fixed bottom-0 w-full z-50 bg-surface-container dark:bg-surface-container border-t border-outline-variant shadow-[0_-4px_12px_rgba(0,0,0,0.5)] flex justify-around items-center px-4 h-xl">
+<!-- Dashboard (Active) -->
+<a class="flex flex-col items-center justify-center text-primary bg-surface-container-highest rounded-none py-xs transition-all duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard" style="font-variation-settings: 'FILL' 1;">dashboard</span>
+<span class="font-label-mono text-label-mono uppercase mt-1">Dashboard</span>
+</a>
+<!-- Probes -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant py-xs hover:text-secondary-fixed transition-all duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="thermostat">thermostat</span>
+<span class="font-label-mono text-label-mono uppercase mt-1">Probes</span>
+</a>
+<!-- History -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant py-xs hover:text-secondary-fixed transition-all duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="history">history</span>
+<span class="font-label-mono text-label-mono uppercase mt-1">History</span>
+</a>
+<!-- Settings -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant py-xs hover:text-secondary-fixed transition-all duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span class="font-label-mono text-label-mono uppercase mt-1">Settings</span>
+</a>
+</nav>
+<script>
+        // Micro-interaction for temperature pulsing
+        const tempDisplay = document.querySelector('.radial-progress');
+        let growing = true;
+        let baseValue = 71.2;
+
+        setInterval(() => {
+            const flicker = (Math.random() - 0.5) * 0.1;
+            const newVal = (baseValue + flicker).toFixed(1);
+            const textEl = tempDisplay.querySelector('.text-white');
+            if(textEl) textEl.textContent = newVal + '°C';
+        }, 2000);
+
+        // Click interaction for cards
+        document.querySelectorAll('section, .grid div').forEach(el => {
+            el.addEventListener('click', () => {
+                el.style.transform = 'scale(0.98)';
+                setTimeout(() => {
+                    el.style.transform = 'scale(1)';
+                }, 100);
+            });
+        });
+    </script>
+</body></html>
