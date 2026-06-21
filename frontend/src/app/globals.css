@@ -1,0 +1,127 @@
+@import "tailwindcss";
+
+@theme {
+  --color-secondary-fixed: #6cff82;
+  --color-secondary: #47e266;
+  --color-primary-fixed: #ffddbb;
+  --color-on-tertiary-container: #00468c;
+  --color-outline: #a28d79;
+  --color-surface-tint: #ffb868;
+  --color-tertiary-fixed: #d6e3ff;
+  --color-surface-container-highest: #353436;
+  --color-on-primary-fixed-variant: #673d00;
+  --color-background: #0F0F10;
+  --color-on-error-container: #ffdad6;
+  --color-secondary-fixed-dim: #47e266;
+  --color-surface-container-lowest: #0e0e0f;
+  --color-on-primary-fixed: #2b1700;
+  --color-surface: #131314;
+  --color-inverse-on-surface: #313031;
+  --color-on-tertiary-fixed-variant: #00468d;
+  --color-surface-container-low: #1c1b1c;
+  --color-on-primary-container: #673d00;
+  --color-primary: #ffc688;
+  --color-tertiary: #bad1ff;
+  --color-on-primary: #482900;
+  --color-surface-bright: #39393a;
+  --color-surface-container: #201f20;
+  --color-on-secondary-container: #004615;
+  --color-on-tertiary: #003064;
+  --color-tertiary-fixed-dim: #aac7ff;
+  --color-outline-variant: #544433;
+  --color-on-secondary-fixed: #002106;
+  --color-on-secondary-fixed-variant: #00531a;
+  --color-primary-fixed-dim: #ffb868;
+  --color-inverse-surface: #e5e2e3;
+  --color-primary-container: #ff9f0a;
+  --color-on-background: #e5e2e3;
+  --color-on-surface: #e5e2e3;
+  --color-surface-dim: #131314;
+  --color-surface-variant: #353436;
+  --color-secondary-container: #09bf49;
+  --color-on-secondary: #003910;
+  --color-inverse-primary: #885200;
+  --color-tertiary-container: #8cb6ff;
+  --color-on-error: #690005;
+  --color-on-tertiary-fixed: #001b3e;
+  --color-on-surface-variant: #dac3ad;
+  --color-surface-container-high: #2a2a2b;
+  --color-error: #ffb4ab;
+  --color-error-container: #93000a;
+
+  --border-radius-DEFAULT: 0.25rem;
+  --border-radius-lg: 0.5rem;
+  --border-radius-xl: 0.75rem;
+  --border-radius-full: 9999px;
+
+  --spacing-container-margin: 20px;
+
+  /* Custom Font Families from Stitch */
+  --font-headline-md: var(--font-outfit);
+  --font-headline-lg-mobile: var(--font-outfit);
+  --font-body-md: var(--font-inter);
+  --font-label-sm: var(--font-inter);
+  --font-headline-lg: var(--font-outfit);
+  --font-body-lg: var(--font-inter);
+  --font-display-temp: var(--font-outfit);
+
+  /* Custom Font Sizes from Stitch */
+  --font-size-headline-md: 20px;
+  --font-size-headline-lg-mobile: 24px;
+  --font-size-body-md: 16px;
+  --font-size-label-sm: 12px;
+  --font-size-headline-lg: 32px;
+  --font-size-body-lg: 18px;
+  --font-size-display-temp: 80px;
+}
+
+:root {
+  --background: #0F0F10;
+  --foreground: #e5e2e3;
+}
+
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+  -webkit-font-smoothing: antialiased;
+}
+
+.glass-card {
+  background: rgba(255, 255, 255, 0.04);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  transition: all 0.3s ease;
+}
+
+.glass-card:hover {
+  border-color: rgba(255, 159, 10, 0.3);
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.text-glow-amber {
+  text-shadow: 0 0 15px rgba(255, 159, 10, 0.4);
+}
+
+.amber-glow {
+  box-shadow: 0 0 20px rgba(255, 159, 10, 0.15);
+}
+
+.stall-banner {
+  background: linear-gradient(90deg, rgba(255, 159, 10, 0.1) 0%, rgba(255, 159, 10, 0.02) 100%);
+  border-left: 4px solid #ff9f0a;
+}
+
+.progress-ring__circle {
+  transition: stroke-dashoffset 0.35s;
+  transform: rotate(-90deg);
+  transform-origin: 50% 50%;
+}
+
+@keyframes pulse-slow {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
+}
+
+.pulse-stall {
+  animation: pulse-slow 2s infinite ease-in-out;
+}
