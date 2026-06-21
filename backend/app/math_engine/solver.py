@@ -7,6 +7,7 @@ class CookingSolver:
         weight_kg: float,
         cooker_type: str,
         target_temp_c: float,
+        meat_type: str = "beef",
         D: float = 0.14,  # Thermal diffusivity of meat (mm^2/s)
         k: float = 0.5,   # Thermal conductivity of meat (W/m*K)
         h: float = 15.0,  # Convective heat transfer coefficient (W/m^2*K)
@@ -19,6 +20,7 @@ class CookingSolver:
             weight_kg: Total weight of the meat cut in kg.
             cooker_type: Smoker/cooker type (e.g. "kamado", "pellet", "oven").
             target_temp_c: Target core temperature for completion.
+            meat_type: Meat type string (e.g. "beef", "pork", "poultry", "fish").
             D: Thermal diffusivity (mm^2/sec).
             k: Thermal conductivity (W/m*K).
             h: Convective heat transfer coefficient (W/m^2*K).
@@ -27,8 +29,24 @@ class CookingSolver:
         self.weight_kg = weight_kg
         self.cooker_type = cooker_type.lower()
         self.target_temp_c = target_temp_c
-        self.D = D
-        self.k = k
+        self.meat_type = meat_type.strip().lower() if meat_type else "beef"
+        
+        # Meat thermal profiles based on scientific tables (e.g. Douglas Baldwin, etc.)
+        MEAT_THERMAL_PROFILES = {
+            "beef":    {"D": 0.138, "k": 0.49, "alpha": 12.0},
+            "pork":    {"D": 0.142, "k": 0.51, "alpha": 11.5},
+            "poultry": {"D": 0.150, "k": 0.53, "alpha": 10.0},
+            "chicken": {"D": 0.150, "k": 0.53, "alpha": 10.0},
+            "turkey":  {"D": 0.150, "k": 0.53, "alpha": 10.0},
+            "fish":    {"D": 0.160, "k": 0.56, "alpha": 6.0},
+            "seafood": {"D": 0.160, "k": 0.56, "alpha": 6.0},
+        }
+        
+        profile = MEAT_THERMAL_PROFILES.get(self.meat_type, MEAT_THERMAL_PROFILES["beef"])
+        
+        # Use profile values if parameters are at their default placeholders
+        self.D = D if D != 0.14 else profile["D"]
+        self.k = k if k != 0.5 else profile["k"]
         self.h = h
         
         # Grid parameters
@@ -48,7 +66,7 @@ class CookingSolver:
         else:
             beta = 1.0
             
-        alpha = 12.0
+        alpha = profile["alpha"]
         self.t_stall_budget = alpha * thickness_mm * weight_kg * beta
 
     def initialize_profile(self, current_core: float, current_ambient: float, heating_rate_c_per_sec: float) -> np.ndarray:
@@ -63,6 +81,12 @@ class CookingSolver:
         delta_t = (rate * (self.L ** 2)) / (2.0 * self.D)
         
         surface_temp = current_core + delta_t
+        
+        # During the evaporative stall phase (core between 65C and 75C), the surface
+        # has already reached the wet-bulb limit temperature of 70C.
+        if 65.0 <= current_core < 75.0:
+            surface_temp = max(surface_temp, 70.0)
+            
         # Cap surface temp logically between core and ambient cooker temperature
         surface_temp = max(current_core, min(surface_temp, current_ambient))
         
@@ -227,6 +251,11 @@ class CookingSolver:
         else:
             fraction_done = (initial_core - 65.0) / 10.0
             remaining_stall = self.t_stall_budget * (1.0 - fraction_done)
+            
+        # If the core is already heating rapidly, the stall is physically over
+        # (rate > 0.2C/min = 0.00333C/s)
+        if heating_rate_c_per_sec > 0.00333:
+            remaining_stall = 0.0
             
         # Initialize temperature profile in the meat
         profile = self.initialize_profile(initial_core, ambient_temp, heating_rate_c_per_sec)

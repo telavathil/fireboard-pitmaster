@@ -96,7 +96,13 @@ To model this without solving highly complex coupled mass-transfer partial diffe
    $$T_N^{n+1} = \min(T_N^{n+1}, T_{\text{stall}})$$
 2. **Moisture Budget**: The length of the stall is proportional to the total water volume. We define a total "stall duration budget" $t_{\text{stall}}$ (seconds):
    $$t_{\text{stall}} = \alpha \cdot \text{thickness\_mm} \cdot \text{weight\_kg} \cdot \beta_{\text{cooker}}$$
+   Where $\alpha$ (moisture-to-stall ratio) and thermal constants (diffusivity $D$, conductivity $k$) are dynamically mapped based on the `meat_type` profile (sourced from Douglas Baldwin's empirical tables):
+   * **Beef**: $D = 0.138$, $k = 0.49$, $\alpha = 12.0$
+   * **Pork**: $D = 0.142$, $k = 0.51$, $\alpha = 11.5$
+   * **Poultry**: $D = 0.150$, $k = 0.53$, $\alpha = 10.0$
+   * **Fish**: $D = 0.160$, $k = 0.56$, $\alpha = 6.0$
 3. **Dry-out (Bark Formation)**: Once the simulation has accumulated $t_{\text{stall}}$ seconds in the capped state, the surface moisture is fully depleted. The temperature cap is removed, allowing the surface node $T_N$ to rise toward $T_{\text{ambient}}$ normally, causing the core temperature to break out of the stall.
+4. **Heating-Rate Stall Bypass**: For very thick cuts of meat (e.g., 100mm brisket), core temperature lag is large, meaning the core may not enter the $65^\circ\text{C}$ range until *after* the surface has already finished stalling and dried out. To prevent the solver from adding artificial stall duration to a cut that has already dried out, we monitor the core's heating rate. If the Kalman-filtered rate exceeds $0.2^\circ\text{C}/\text{min}$ ($0.0033^\circ\text{C}/\text{s}$), the stall is physically over, and any remaining $t_{\text{stall}}$ is set to zero.
 
 ---
 

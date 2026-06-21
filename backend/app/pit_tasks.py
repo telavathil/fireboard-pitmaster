@@ -189,11 +189,12 @@ def run_predictions(session_id: str, device_id: str, core_temp: float, ambient_t
     weight_kg = 2.0
     thickness_mm = 75.0
     cooker_type = "pellet"
+    meat_type = "beef"
     try:
-        cursor.execute("SELECT weight_kg, thickness_mm, cooker_type FROM cook_sessions WHERE id = ?", (session_id,))
+        cursor.execute("SELECT weight_kg, thickness_mm, cooker_type, meat_type FROM cook_sessions WHERE id = ?", (session_id,))
         row = cursor.fetchone()
         if row:
-            weight_kg, thickness_mm, cooker_type = row
+            weight_kg, thickness_mm, cooker_type, meat_type = row
     except Exception as e:
         logger.error(f"Failed to fetch session details from DB: {e}")
     finally:
@@ -204,7 +205,8 @@ def run_predictions(session_id: str, device_id: str, core_temp: float, ambient_t
         thickness_mm=thickness_mm,
         weight_kg=weight_kg,
         cooker_type=cooker_type,
-        target_temp_c=target_temp
+        target_temp_c=target_temp,
+        meat_type=meat_type
     )
     
     ambient_val = ambient_temp if ambient_temp is not None else 110.0
