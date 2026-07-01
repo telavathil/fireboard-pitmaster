@@ -2,6 +2,7 @@
 
 import React from "react";
 import { useCookSession } from "../context/CookSessionContext";
+import ForgeCard from "./ui/ForgeCard";
 
 export default function Phase4Pull() {
   const {
@@ -56,33 +57,36 @@ export default function Phase4Pull() {
       {/* Detail widgets grid layout */}
       <div className="grid grid-cols-12 gap-md flex-grow items-start min-h-[300px]">
         {/* Trajectory Plot Column */}
-        <section className="col-span-8 forge-surface p-md h-full flex flex-col justify-between min-h-[260px]">
-          <div className="flex justify-between items-baseline mb-sm">
-            <h3 className="font-label-mono text-xs text-on-surface-variant uppercase">CORE TEMP TRAJECTORY</h3>
-            <span className="font-label-mono text-[9px] text-error uppercase font-bold animate-pulse">LIVE DATA</span>
-          </div>
-          <div className="flex-grow chart-grid border border-outline-variant/30 relative overflow-hidden min-h-[140px] flex items-center justify-center">
-            <div className="absolute inset-y-0 right-[20%] w-[1px] bg-error/40 border-dashed flex items-center justify-center">
-              <span className="font-label-mono text-[8px] text-error/80 uppercase -rotate-90 whitespace-nowrap tracking-widest mt-12">PULL POINT</span>
+        <div className="col-span-8 h-full">
+          <ForgeCard
+            grow
+            layout="column-between"
+            minHeight="medium"
+            title="CORE TEMP TRAJECTORY"
+            headerExtra={<span className="font-label-mono text-[9px] text-error uppercase font-bold animate-pulse">LIVE DATA</span>}
+          >
+            <div className="flex-grow chart-grid border border-outline-variant/30 relative overflow-hidden min-h-[140px] flex items-center justify-center mt-sm">
+              <div className="absolute inset-y-0 right-[20%] w-[1px] bg-error/40 border-dashed flex items-center justify-center">
+                <span className="font-label-mono text-[8px] text-error/80 uppercase -rotate-90 whitespace-nowrap tracking-widest mt-12">PULL POINT</span>
+              </div>
+              <svg className="absolute inset-0 w-full h-full" preserveAspectRatio="none" viewBox="0 0 1000 400">
+                <path d="M0,320 L250,280 L500,200 L750,120 L800,105 L1000,90" fill="none" stroke="#FF4D00" strokeWidth="3"></path>
+                <circle cx="800" cy="105" r="5" fill="#FF4D00"></circle>
+              </svg>
+              <div className="absolute bottom-xs left-xs right-xs flex justify-between font-label-mono text-[8px] text-on-surface-variant">
+                <span>-15 MIN</span>
+                <span>-10 MIN</span>
+                <span>-5 MIN</span>
+                <span>PULL POINT</span>
+              </div>
             </div>
-            <svg className="absolute inset-0 w-full h-full" preserveAspectRatio="none" viewBox="0 0 1000 400">
-              <path d="M0,320 L250,280 L500,200 L750,120 L800,105 L1000,90" fill="none" stroke="#FF4D00" strokeWidth="3"></path>
-              <circle cx="800" cy="105" r="5" fill="#FF4D00"></circle>
-            </svg>
-            <div className="absolute bottom-xs left-xs right-xs flex justify-between font-label-mono text-[8px] text-on-surface-variant">
-              <span>-15 MIN</span>
-              <span>-10 MIN</span>
-              <span>-5 MIN</span>
-              <span>PULL POINT</span>
-            </div>
-          </div>
-        </section>
+          </ForgeCard>
+        </div>
 
         {/* Ambient Temperature Gauge Column */}
         <section className="col-span-4 flex flex-col gap-md h-full justify-between min-h-[260px]">
-          <div className="forge-surface p-md">
-            <h3 className="font-label-mono text-xs text-on-surface-variant mb-4 uppercase">AMBIENT PIT TEMP</h3>
-            <div className="flex items-baseline gap-2">
+          <ForgeCard title="AMBIENT PIT TEMP">
+            <div className="flex items-baseline gap-2 mt-4">
               <span className="font-headline-md text-3xl text-on-surface">226°F</span>
               <span className="font-label-mono text-xs text-secondary-fixed font-bold uppercase flex items-center gap-1">
                 <span className="material-symbols-outlined text-[14px]">oven_gen</span> STATUS: STABLE
@@ -98,22 +102,24 @@ export default function Phase4Pull() {
                 <span className="material-symbols-outlined text-xs">trending_up</span> ACCELERATING
               </span>
             </div>
-          </div>
+          </ForgeCard>
 
-          <div className="forge-surface p-md flex flex-col gap-sm">
-            <button
-              onClick={() => handleUpdateStatus("resting")}
-              className="action-btn action-btn-accent"
-            >
-              START RESTING TIMER
-            </button>
-            <button
-              onClick={() => handleUpdateStatus("resting")}
-              className="action-btn-outline w-full"
-            >
-              LOG WEIGHT & PULL
-            </button>
-          </div>
+          <ForgeCard>
+            <div className="flex flex-col gap-sm">
+              <button
+                onClick={() => handleUpdateStatus("resting")}
+                className="action-btn action-btn-accent w-full"
+              >
+                START RESTING TIMER
+              </button>
+              <button
+                onClick={() => handleUpdateStatus("resting")}
+                className="action-btn-outline w-full"
+              >
+                LOG WEIGHT & PULL
+              </button>
+            </div>
+          </ForgeCard>
         </section>
       </div>
 

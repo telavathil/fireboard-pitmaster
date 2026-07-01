@@ -2,6 +2,7 @@
 
 import React from "react";
 import { useCookSession } from "../context/CookSessionContext";
+import ForgeCard from "./ui/ForgeCard";
 
 export default function Phase1Setup() {
   const {
@@ -26,7 +27,7 @@ export default function Phase1Setup() {
     applyPresetF,
   } = useCookSession();
 
-  // Handle any local errors (simulated via props before, now we can keep empty or read context)
+  // Handle any local errors
   const sessionError = null;
 
   return (
@@ -34,19 +35,23 @@ export default function Phase1Setup() {
       {/* Left Column (col-span-8) */}
       <div className="col-span-8 flex flex-col gap-md">
         {/* Target Doneness */}
-        <section className="forge-surface p-md overflow-hidden group flex-grow flex flex-col justify-between">
-          <div className="absolute top-0 left-0 w-1 h-full bg-primary shadow-[2px_0_10px_rgba(255,87,26,0.5)]"></div>
-          <div className="flex justify-between items-start">
-            <div>
-              <h3 className="font-headline-md text-on-surface uppercase">TARGET DONENESS</h3>
-              <p className="font-label-mono text-xs text-on-surface-variant uppercase">MOLECULAR PROTEIN RECONSTRUCT PARAMETERS</p>
-            </div>
+        <ForgeCard
+          title="TARGET DONENESS"
+          subtitle="MOLECULAR PROTEIN RECONSTRUCT PARAMETERS"
+          hasHighlight
+          grow
+          layout="column-between"
+          headerExtra={
             <div className="text-right">
-              <span className="font-display-lg text-[64px] text-primary-container leading-none font-bold">{targetTempF}°F</span>
-              <p className="font-label-mono text-xs text-on-surface-variant uppercase mt-1">INTERNAL CORE TARGET</p>
+              <span className="font-display-lg text-[64px] text-primary-container leading-none font-bold">
+                {targetTempF}°F
+              </span>
+              <p className="font-label-mono text-xs text-on-surface-variant uppercase mt-1">
+                INTERNAL CORE TARGET
+              </p>
             </div>
-          </div>
-
+          }
+        >
           <div className="flex flex-col gap-md my-md">
             <div className="flex flex-wrap gap-xs">
               <button
@@ -110,16 +115,18 @@ export default function Phase1Setup() {
               </div>
             </div>
           </div>
-        </section>
+        </ForgeCard>
 
         {/* Cook Configuration */}
-        <section className="forge-surface p-md overflow-hidden group">
-          <div className="absolute top-0 left-0 w-1 h-full bg-primary shadow-[2px_0_10px_rgba(255,87,26,0.5)]"></div>
-          <h3 className="font-headline-md text-on-surface uppercase mb-sm">PROTEIN & ENVELOPE CALIBRATION</h3>
-          
+        <ForgeCard
+          title="PROTEIN & ENVELOPE CALIBRATION"
+          hasHighlight
+        >
           <div className="grid grid-cols-2 gap-md my-sm">
             <div>
-              <label className="block font-label-mono text-[10px] text-on-surface-variant uppercase tracking-wider mb-2">Protein Selection</label>
+              <label className="block font-label-mono text-[10px] text-on-surface-variant uppercase tracking-wider mb-2">
+                Protein Selection
+              </label>
               <div className="grid grid-cols-2 gap-xs">
                 {["beef", "pork", "poultry", "fish"].map((meat) => (
                   <button
@@ -137,7 +144,9 @@ export default function Phase1Setup() {
             </div>
 
             <div>
-              <label className="block font-label-mono text-[10px] text-on-surface-variant uppercase tracking-wider mb-2">Cut / Description</label>
+              <label className="block font-label-mono text-[10px] text-on-surface-variant uppercase tracking-wider mb-2">
+                Cut / Description
+              </label>
               <input
                 type="text"
                 value={cutType}
@@ -150,7 +159,9 @@ export default function Phase1Setup() {
 
           <div className="grid grid-cols-3 gap-md mt-md">
             <div>
-              <label className="block font-label-mono text-[10px] text-on-surface-variant uppercase tracking-wider mb-2">Cooker Model</label>
+              <label className="block font-label-mono text-[10px] text-on-surface-variant uppercase tracking-wider mb-2">
+                Cooker Model
+              </label>
               <select
                 value={cookerType}
                 onChange={(e) => setCookerType(e.target.value)}
@@ -164,7 +175,9 @@ export default function Phase1Setup() {
             </div>
 
             <div>
-              <label className="block font-label-mono text-[10px] text-on-surface-variant uppercase tracking-wider mb-2">Weight (KG)</label>
+              <label className="block font-label-mono text-[10px] text-on-surface-variant uppercase tracking-wider mb-2">
+                Weight (KG)
+              </label>
               <input
                 type="text"
                 value={weightKg}
@@ -174,7 +187,9 @@ export default function Phase1Setup() {
             </div>
 
             <div>
-              <label className="block font-label-mono text-[10px] text-on-surface-variant uppercase tracking-wider mb-2">Core Thickness (MM)</label>
+              <label className="block font-label-mono text-[10px] text-on-surface-variant uppercase tracking-wider mb-2">
+                Core Thickness (MM)
+              </label>
               <input
                 type="text"
                 value={thicknessMm}
@@ -183,18 +198,21 @@ export default function Phase1Setup() {
               />
             </div>
           </div>
-        </section>
+        </ForgeCard>
       </div>
 
       {/* Right Column (col-span-4) */}
       <div className="col-span-4 flex flex-col gap-md justify-between">
         {/* Device Sync Info */}
-        <section className="forge-surface p-md flex-grow">
-          <h3 className="font-headline-md text-on-surface uppercase mb-sm">HARDWARE NODE SYNC</h3>
-          
+        <ForgeCard
+          title="HARDWARE NODE SYNC"
+          grow
+        >
           <div className="space-y-sm mt-md">
             <div>
-              <label className="block font-label-mono text-[9px] text-on-surface-variant uppercase mb-1">Probe Node ID</label>
+              <label className="block font-label-mono text-[9px] text-on-surface-variant uppercase mb-1">
+                Probe Node ID
+              </label>
               <input
                 type="text"
                 value={deviceId}
@@ -204,7 +222,9 @@ export default function Phase1Setup() {
             </div>
 
             <div>
-              <label className="block font-label-mono text-[9px] text-on-surface-variant uppercase mb-1">Device Nickname</label>
+              <label className="block font-label-mono text-[9px] text-on-surface-variant uppercase mb-1">
+                Device Nickname
+              </label>
               <input
                 type="text"
                 value={deviceName}
@@ -215,16 +235,22 @@ export default function Phase1Setup() {
           </div>
 
           <div className="mt-lg border-t border-outline-variant/40 pt-md text-on-surface-variant font-label-mono text-[10px] leading-relaxed uppercase">
-            <p className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-green-500"></span> Bluetooth Broadcast Active</p>
-            <p className="flex items-center gap-2 mt-1"><span className="w-1.5 h-1.5 rounded-full bg-green-500"></span> SSE Web Socket Ready</p>
+            <p className="flex items-center gap-2">
+              <span className="w-1.5 h-1.5 rounded-full bg-green-500"></span> Bluetooth Broadcast Active
+            </p>
+            <p className="flex items-center gap-2 mt-1">
+              <span className="w-1.5 h-1.5 rounded-full bg-green-500"></span> SSE Web Socket Ready
+            </p>
           </div>
-        </section>
+        </ForgeCard>
 
         {/* Start Cook Action */}
-        <section className="forge-surface p-md">
+        <ForgeCard>
           <form onSubmit={handleCreateSession}>
             {sessionError && (
-              <p className="font-label-mono text-xs text-error uppercase mb-sm animate-pulse">{sessionError}</p>
+              <p className="font-label-mono text-xs text-error uppercase mb-sm animate-pulse">
+                {sessionError}
+              </p>
             )}
             <button
               type="submit"
@@ -234,7 +260,7 @@ export default function Phase1Setup() {
               {isCreatingSession ? "Calibrating..." : "INITIALIZE HEARTH COOK"}
             </button>
           </form>
-        </section>
+        </ForgeCard>
       </div>
     </>
   );

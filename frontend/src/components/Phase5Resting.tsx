@@ -3,6 +3,7 @@
 import React from "react";
 import WebGLShader from "./WebGLShader";
 import { useCookSession } from "../context/CookSessionContext";
+import ForgeCard from "./ui/ForgeCard";
 
 export default function Phase5Resting() {
   const {
@@ -19,22 +20,31 @@ export default function Phase5Resting() {
     <>
       {/* Left Column: Live Thermographic WebGL Visualizer */}
       <section className="col-span-8 flex flex-col gap-md h-full">
-        <div className="forge-surface p-md flex-grow flex flex-col justify-between min-h-[300px]">
-          <div className="flex justify-between items-end mb-md">
+        <ForgeCard
+          grow
+          layout="column-between"
+          minHeight="tall"
+          title={
             <div>
-              <h2 className="font-label-mono text-tertiary-fixed text-xs uppercase tracking-[0.2em]">Thermal Equilibrium Modeling</h2>
-              <p className="font-label-mono text-[9px] text-on-surface-variant uppercase mt-1">SIMULATING CORE GRADIENT MOLECULAR CONDUCTION</p>
+              <h2 className="font-label-mono text-tertiary-fixed text-xs uppercase tracking-[0.2em]">
+                Thermal Equilibrium Modeling
+              </h2>
+              <p className="font-label-mono text-[9px] text-on-surface-variant uppercase mt-1">
+                SIMULATING CORE GRADIENT MOLECULAR CONDUCTION
+              </p>
             </div>
+          }
+          headerExtra={
             <div className="flex gap-md font-label-mono text-xs">
               <div className="flex items-center gap-2">
                 <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse"></span>
                 <span className="uppercase text-[9px]">SOLVING SCHRÖDINGER EQUATIONS</span>
               </div>
             </div>
-          </div>
-
+          }
+        >
           {/* WebGL container */}
-          <div className="flex-grow border border-outline-variant/30 relative overflow-hidden min-h-[220px] bg-background">
+          <div className="flex-grow border border-outline-variant/30 relative overflow-hidden min-h-[220px] bg-background mt-md">
             <div className="absolute inset-0">
               <WebGLShader />
             </div>
@@ -58,7 +68,7 @@ export default function Phase5Resting() {
               <text x="20" y="45" fill="rgba(255,255,255,0.2)" fontSize="8" fontFamily="monospace" letterSpacing="1">GRADIENT VECTOR RESOLUTION: 256PTS</text>
             </svg>
           </div>
-        </div>
+        </ForgeCard>
 
         <div className="grid grid-cols-3 gap-md">
           <div className="forge-surface p-4 flex gap-4 items-center">
@@ -88,10 +98,16 @@ export default function Phase5Resting() {
       {/* Right Column: Resting timer widgets */}
       <aside className="col-span-4 flex flex-col gap-md h-full justify-between">
         {/* Rest Duration Stopwatch */}
-        <div className="forge-surface p-md flex flex-col items-center justify-center flex-grow">
-          <p className="font-label-mono text-[10px] text-primary uppercase tracking-[0.2em] mb-4 font-bold">Equilibrium Resting Phase</p>
-          
-          <div className="relative w-36 h-36 flex items-center justify-center">
+        <ForgeCard
+          grow
+          centered
+          title={
+            <p className="font-label-mono text-[10px] text-primary uppercase tracking-[0.2em] font-bold">
+              Equilibrium Resting Phase
+            </p>
+          }
+        >
+          <div className="relative w-36 h-36 flex items-center justify-center mt-4">
             <div className="absolute inset-0 border-4 border-primary/20 rounded-full animate-heat"></div>
             <svg className="w-full h-full -rotate-90">
               <circle className="text-white/5" cx="72" cy="72" fill="transparent" r="64" stroke="currentColor" strokeWidth="6"></circle>
@@ -113,12 +129,11 @@ export default function Phase5Resting() {
               <span className="font-label-mono text-[8px] text-secondary-fixed mt-1 uppercase font-bold">RESTING ACTIVE</span>
             </div>
           </div>
-        </div>
+        </ForgeCard>
 
         {/* Delta carryover details */}
-        <div className="forge-surface p-md">
-          <h3 className="font-label-mono text-xs text-on-surface-variant mb-4 uppercase">Carryover Thermodynamics</h3>
-          <div className="space-y-sm text-xs font-label-mono">
+        <ForgeCard title="Carryover Thermodynamics">
+          <div className="space-y-sm text-xs font-label-mono mt-4">
             <div className="flex justify-between">
               <span className="text-outline">INITIAL PULL</span>
               <span className="text-on-surface">191°F Core</span>
@@ -132,15 +147,14 @@ export default function Phase5Resting() {
               <span className="text-green-500 font-bold">98.4%</span>
             </div>
           </div>
-        </div>
+        </ForgeCard>
 
         {/* Resting status logs */}
-        <div className="forge-surface p-md">
-          <h3 className="font-label-mono text-xs text-on-surface-variant mb-4 uppercase">Resting logs</h3>
-          <p className="font-label-mono text-[9px] text-on-surface-variant leading-relaxed uppercase">
+        <ForgeCard title="Resting logs">
+          <p className="font-label-mono text-[9px] text-on-surface-variant leading-relaxed uppercase mt-4">
             Convective heat flow has equilibrated. Fiber contraction relaxed. Core moisture redistribution vectors stabilizing. Estimated carving readiness: 20 mins.
           </p>
-        </div>
+        </ForgeCard>
       </aside>
     </>
   );

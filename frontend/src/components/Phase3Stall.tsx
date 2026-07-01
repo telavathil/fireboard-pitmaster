@@ -2,6 +2,7 @@
 
 import React from "react";
 import { useCookSession } from "../context/CookSessionContext";
+import ForgeCard from "./ui/ForgeCard";
 
 export default function Phase3Stall() {
   const {
@@ -29,18 +30,25 @@ export default function Phase3Stall() {
           </div>
         </div>
 
-        <div className="forge-surface p-md flex-grow flex flex-col justify-between min-h-[220px]">
-          <div className="flex justify-between items-end mb-md">
+        <ForgeCard
+          grow
+          layout="column-between"
+          minHeight="short"
+          title={
             <div>
-              <h2 className="font-label-mono text-tertiary-fixed text-xs uppercase tracking-[0.2em]">Stall Plateau Tracking</h2>
+              <h2 className="font-label-mono text-tertiary-fixed text-xs uppercase tracking-[0.2em]">
+                Stall Plateau Tracking
+              </h2>
               <div className="flex items-baseline gap-3 mt-1">
                 <span className="font-display-lg text-5xl text-on-surface leading-none">{coreTempF}°F</span>
-                <span className="font-label-mono text-primary text-xs uppercase font-bold px-1.5 py-0.5 border border-primary/20 bg-primary/5 animate-pulse">PLATEAU ACTIVE</span>
+                <span className="font-label-mono text-primary text-xs uppercase font-bold px-1.5 py-0.5 border border-primary/20 bg-primary/5 animate-pulse">
+                  PLATEAU ACTIVE
+                </span>
               </div>
             </div>
-          </div>
-
-          <div className="flex-grow chart-grid border border-outline-variant/30 relative overflow-hidden min-h-[140px]">
+          }
+        >
+          <div className="flex-grow chart-grid border border-outline-variant/30 relative overflow-hidden min-h-[140px] mt-md">
             {/* Shaded stall zone */}
             <div className="absolute inset-y-0 left-[35%] right-[25%] stall-zone-bg border-l border-r border-primary/30 flex items-center justify-center">
               <span className="font-label-mono text-[9px] text-primary/70 uppercase tracking-widest -rotate-90">STALL ZONE</span>
@@ -51,7 +59,7 @@ export default function Phase3Stall() {
               <circle cx="500" cy="180" r="5" fill="#FF4D00"></circle>
             </svg>
           </div>
-        </div>
+        </ForgeCard>
 
         <div className="grid grid-cols-2 gap-md">
           <div className="forge-surface p-4 flex gap-4 items-center">
@@ -74,14 +82,16 @@ export default function Phase3Stall() {
       {/* Right Column: Widgets */}
       <aside className="col-span-4 flex flex-col gap-md h-full justify-between">
         {/* Moisture Budget Gauge */}
-        <div className="forge-surface p-md">
-          <div className="flex justify-between items-center mb-4">
-            <h3 className="font-label-mono text-xs text-on-surface-variant uppercase">Bark Moisture Budget</h3>
-            <span className="font-label-mono text-xs text-primary font-bold">{moistureBudget}%</span>
-          </div>
-
+        <ForgeCard
+          title={
+            <h3 className="font-label-mono text-xs text-on-surface-variant uppercase">
+              Bark Moisture Budget
+            </h3>
+          }
+          headerExtra={<span className="font-label-mono text-xs text-primary font-bold">{moistureBudget}%</span>}
+        >
           {/* Progress bar */}
-          <div className="w-full bg-surface-container-high h-3 border border-outline-variant/30 mb-sm">
+          <div className="w-full bg-surface-container-high h-3 border border-outline-variant/30 mb-sm mt-md">
             <div
               className="bg-primary h-full transition-all duration-500 shadow-[0_0_10px_rgba(255,87,26,0.4)]"
               style={{ width: `${moistureBudget}%` }}
@@ -91,15 +101,20 @@ export default function Phase3Stall() {
           <p className="font-label-mono text-[9px] text-on-surface-variant leading-relaxed uppercase">
             If moisture drops below 25%, bark surface risks drying out completely, halting convective heat absorption. Click below to spritz surface.
           </p>
-        </div>
+        </ForgeCard>
 
         {/* Spritz Button Widget */}
-        <div className="forge-surface p-md flex flex-col items-center justify-center">
-          <p className="font-label-mono text-[10px] text-secondary-fixed uppercase tracking-[0.2em] mb-4 font-bold">Bark Hydration Controls</p>
-          
+        <ForgeCard
+          centered
+          title={
+            <p className="font-label-mono text-[10px] text-secondary-fixed uppercase tracking-[0.2em] font-bold">
+              Bark Hydration Controls
+            </p>
+          }
+        >
           <button
             onClick={handleSpritz}
-            className="action-btn action-btn-secondary py-sm"
+            className="action-btn action-btn-secondary py-sm mt-4"
           >
             SPRITZ COOKING SURFACE
           </button>
@@ -108,12 +123,11 @@ export default function Phase3Stall() {
             <span className="text-outline">TOTAL SPRITZ COUNT</span>
             <span className="text-on-surface font-bold">{spritzCount} TIMES</span>
           </div>
-        </div>
+        </ForgeCard>
 
         {/* Kalman model accuracy */}
-        <div className="forge-surface p-md">
-          <h3 className="font-label-mono text-xs text-on-surface-variant mb-4 uppercase">Stall Phase Status</h3>
-          <div className="space-y-sm text-xs font-label-mono">
+        <ForgeCard title="Stall Phase Status">
+          <div className="space-y-sm text-xs font-label-mono mt-4">
             <div className="flex justify-between">
               <span className="text-outline">STALL ANGLE</span>
               <span className="text-on-surface">0.02°/min (FLAT)</span>
@@ -123,7 +137,7 @@ export default function Phase3Stall() {
               <span className="text-secondary-fixed font-bold">172°F Core</span>
             </div>
           </div>
-        </div>
+        </ForgeCard>
       </aside>
     </>
   );

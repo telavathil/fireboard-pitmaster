@@ -2,6 +2,7 @@
 
 import React from "react";
 import { useCookSession } from "../context/CookSessionContext";
+import ForgeCard from "./ui/ForgeCard";
 
 export default function Phase6Active() {
   const {
@@ -26,12 +27,13 @@ export default function Phase6Active() {
     <>
       {/* Left Column: Live Chart */}
       <section className="col-span-8 flex flex-col gap-md h-full">
-        <div className="forge-surface p-md flex-grow flex flex-col justify-between min-h-[300px]">
-          <div className="flex justify-between items-end mb-md">
-            <div>
-              <h2 className="font-headline-md text-on-surface uppercase leading-none text-xl">Active Session Tracking</h2>
-              <p className="font-label-mono text-xs text-on-surface-variant uppercase mt-1">Status: Running</p>
-            </div>
+        <ForgeCard
+          grow
+          layout="column-between"
+          minHeight="tall"
+          title="Active Session Tracking"
+          subtitle="Status: Running"
+          headerExtra={
             <div className="flex gap-md font-label-mono text-xs">
               <div className="flex items-center gap-2">
                 <span className="w-3 h-0.5 bg-primary"></span>
@@ -42,10 +44,10 @@ export default function Phase6Active() {
                 <span className="uppercase text-[9px]">Ambient</span>
               </div>
             </div>
-          </div>
-
+          }
+        >
           {/* Chart SVG */}
-          <div className="flex-grow chart-grid border border-outline-variant/30 relative overflow-hidden min-h-[180px]">
+          <div className="flex-grow chart-grid border border-outline-variant/30 relative overflow-hidden min-h-[180px] mt-md">
             {history.length > 0 ? (
               <svg className="absolute inset-0 w-full h-full" preserveAspectRatio="none">
                 <path
@@ -69,7 +71,7 @@ export default function Phase6Active() {
               </div>
             )}
           </div>
-        </div>
+        </ForgeCard>
 
         <div className="grid grid-cols-2 gap-md">
           <div className="forge-surface p-4 flex gap-4 items-center">
@@ -95,9 +97,16 @@ export default function Phase6Active() {
       {/* Right Column: Active Live status */}
       <aside className="col-span-4 flex flex-col gap-md h-full justify-between">
         {/* Live progress circle */}
-        <div className="forge-surface p-md flex flex-col items-center justify-center flex-grow">
-          <p className="font-label-mono text-[10px] text-primary uppercase tracking-[0.2em] mb-4 font-bold">Target Temperature Gauge</p>
-          <div className="relative w-36 h-36 flex items-center justify-center">
+        <ForgeCard
+          grow
+          centered
+          title={
+            <p className="font-label-mono text-[10px] text-primary uppercase tracking-[0.2em] font-bold">
+              Target Temperature Gauge
+            </p>
+          }
+        >
+          <div className="relative w-36 h-36 flex items-center justify-center mt-4">
             <svg className="w-full h-full -rotate-90">
               <circle className="text-white/5" cx="72" cy="72" fill="transparent" r="64" stroke="currentColor" strokeWidth="6"></circle>
               <circle
@@ -118,42 +127,52 @@ export default function Phase6Active() {
               <span className="font-label-mono text-[8px] text-secondary-fixed mt-1 uppercase">Target: {targetTempFDisplay}°F</span>
             </div>
           </div>
-        </div>
+        </ForgeCard>
 
         {/* ETA & Recommendations */}
         <div className="space-y-sm">
-          <div className="forge-surface p-4">
-            <span className="font-label-mono text-[10px] text-on-surface-variant uppercase tracking-wider block">Estimated Remaining (ETA)</span>
+          <ForgeCard
+            title={
+              <span className="font-label-mono text-[10px] text-on-surface-variant uppercase tracking-wider block">
+                Estimated Remaining (ETA)
+              </span>
+            }
+            compactPadding
+          >
             <h3 className="font-headline-lg text-3xl text-primary tracking-widest mt-1 leading-none">
               {formatEta(telemetry ? telemetry.eta_seconds : -1)}
             </h3>
-          </div>
+          </ForgeCard>
 
-          <div className="forge-surface p-4 flex justify-between items-center">
-            <div>
-              <span className="font-label-mono text-[10px] text-on-surface-variant uppercase tracking-wider block">Projected Carryover Rise</span>
-              <h3 className="font-headline-lg text-2xl text-secondary-fixed leading-none mt-1">
-                +{carryoverRiseF}°F
-              </h3>
-            </div>
-            <div className="text-right">
-              <span className="font-label-mono text-[8px] text-on-surface-variant uppercase block mb-1">Recommendation</span>
-              <div className="bg-primary/10 border border-primary/40 px-3 py-1 text-primary font-headline-md text-xs uppercase tracking-wide">
-                PULL AT {pullTempF}°F
+          <ForgeCard compactPadding>
+            <div className="flex justify-between items-center w-full">
+              <div>
+                <span className="font-label-mono text-[10px] text-on-surface-variant uppercase tracking-wider block">Projected Carryover Rise</span>
+                <h3 className="font-headline-lg text-2xl text-secondary-fixed leading-none mt-1">
+                  +{carryoverRiseF}°F
+                </h3>
+              </div>
+              <div className="text-right">
+                <span className="font-label-mono text-[8px] text-on-surface-variant uppercase block mb-1">Recommendation</span>
+                <div className="bg-primary/10 border border-primary/40 px-3 py-1 text-primary font-headline-md text-xs uppercase tracking-wide">
+                  PULL AT {pullTempF}°F
+                </div>
               </div>
             </div>
-          </div>
+          </ForgeCard>
 
-          <div className="forge-surface p-4 text-xs font-label-mono space-y-xs uppercase">
-            <div className="flex justify-between">
-              <span className="text-outline">CUT / PROTEIN</span>
-              <span className="text-on-surface font-bold">{activeSession?.cut_type} ({getMeatLabel(activeSession?.meat_type || "")})</span>
+          <ForgeCard compactPadding>
+            <div className="text-xs font-label-mono space-y-xs uppercase">
+              <div className="flex justify-between">
+                <span className="text-outline">CUT / PROTEIN</span>
+                <span className="text-on-surface font-bold">{activeSession?.cut_type} ({getMeatLabel(activeSession?.meat_type || "")})</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-outline">COOKER</span>
+                <span className="text-on-surface font-bold">{activeSession?.cooker_type}</span>
+              </div>
             </div>
-            <div className="flex justify-between">
-              <span className="text-outline">COOKER</span>
-              <span className="text-on-surface font-bold">{activeSession?.cooker_type}</span>
-            </div>
-          </div>
+          </ForgeCard>
         </div>
       </aside>
     </>
