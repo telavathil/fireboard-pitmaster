@@ -4,6 +4,9 @@ import React from "react";
 import WebGLShader from "./WebGLShader";
 import { useCookSession } from "../context/CookSessionContext";
 import ForgeCard from "./ui/ForgeCard";
+import ForgeStat from "./ui/ForgeStat";
+import ForgeRadialGauge from "./ui/ForgeRadialGauge";
+import ForgeKeyValueList from "./ui/ForgeKeyValueList";
 
 export default function Phase5Resting() {
   const {
@@ -71,27 +74,24 @@ export default function Phase5Resting() {
         </ForgeCard>
 
         <div className="grid grid-cols-3 gap-md">
-          <div className="forge-surface p-4 flex gap-4 items-center">
-            <span className="material-symbols-outlined text-primary text-3xl">thermometer</span>
-            <div>
-              <p className="font-label-mono text-[9px] text-on-surface-variant uppercase">Core Temp</p>
-              <p className="font-headline-md text-xl">{coreTempF}°F</p>
-            </div>
-          </div>
-          <div className="forge-surface p-4 flex gap-4 items-center">
-            <span className="material-symbols-outlined text-secondary-fixed text-3xl">trending_down</span>
-            <div>
-              <p className="font-label-mono text-[9px] text-on-surface-variant uppercase">Peak Carryover Temp</p>
-              <p className="font-headline-md text-xl">{peakRestTempF}°F</p>
-            </div>
-          </div>
-          <div className="forge-surface p-4 flex gap-4 items-center">
-            <span className="material-symbols-outlined text-tertiary-fixed text-3xl">track_changes</span>
-            <div>
-              <p className="font-label-mono text-[9px] text-on-surface-variant uppercase">Target Temperature</p>
-              <p className="font-headline-md text-xl">{targetTempFDisplay}°F</p>
-            </div>
-          </div>
+          <ForgeStat
+            icon="thermometer"
+            iconColor="primary"
+            label="Core Temp"
+            value={`${coreTempF}°F`}
+          />
+          <ForgeStat
+            icon="trending_down"
+            iconColor="secondary"
+            label="Peak Carryover Temp"
+            value={`${peakRestTempF}°F`}
+          />
+          <ForgeStat
+            icon="track_changes"
+            iconColor="outline"
+            label="Target Temperature"
+            value={`${targetTempFDisplay}°F`}
+          />
         </div>
       </section>
 
@@ -107,46 +107,24 @@ export default function Phase5Resting() {
             </p>
           }
         >
-          <div className="relative w-36 h-36 flex items-center justify-center mt-4">
-            <div className="absolute inset-0 border-4 border-primary/20 rounded-full animate-heat"></div>
-            <svg className="w-full h-full -rotate-90">
-              <circle className="text-white/5" cx="72" cy="72" fill="transparent" r="64" stroke="currentColor" strokeWidth="6"></circle>
-              <circle
-                className="text-primary"
-                cx="72"
-                cy="72"
-                fill="transparent"
-                r="64"
-                stroke="currentColor"
-                strokeDasharray={2 * Math.PI * 64}
-                strokeDashoffset={(2 * Math.PI * 64) * 0.4} // static fill at 60%
-                strokeWidth="6"
-              ></circle>
-            </svg>
-            <div className="absolute flex flex-col items-center text-center">
-              <span className="font-label-mono text-[9px] text-on-surface-variant">ELAPSED TIME</span>
-              <span className="font-display-lg text-3xl font-bold tracking-wider">{formatStopwatch(restDurationSeconds)}</span>
-              <span className="font-label-mono text-[8px] text-secondary-fixed mt-1 uppercase font-bold">RESTING ACTIVE</span>
-            </div>
-          </div>
+          <ForgeRadialGauge
+            value={60}
+            label="ELAPSED TIME"
+            centerText={formatStopwatch(restDurationSeconds)}
+            statusBadge="RESTING ACTIVE"
+            animation="heat"
+          />
         </ForgeCard>
 
         {/* Delta carryover details */}
         <ForgeCard title="Carryover Thermodynamics">
-          <div className="space-y-sm text-xs font-label-mono mt-4">
-            <div className="flex justify-between">
-              <span className="text-outline">INITIAL PULL</span>
-              <span className="text-on-surface">191°F Core</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-outline">NET CARRYOVER RISE</span>
-              <span className="text-secondary-fixed font-bold">+{peakRestTempF - 191}°F</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-outline">CARRYOVER EFFICIENCY</span>
-              <span className="text-green-500 font-bold">98.4%</span>
-            </div>
-          </div>
+          <ForgeKeyValueList
+            items={[
+              { label: "INITIAL PULL", value: "191°F Core" },
+              { label: "NET CARRYOVER RISE", value: `+${peakRestTempF - 191}°F`, valueColor: "secondary" },
+              { label: "CARRYOVER EFFICIENCY", value: "98.4%", valueColor: "green" },
+            ]}
+          />
         </ForgeCard>
 
         {/* Resting status logs */}

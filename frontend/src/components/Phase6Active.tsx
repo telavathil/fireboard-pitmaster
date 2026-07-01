@@ -3,6 +3,9 @@
 import React from "react";
 import { useCookSession } from "../context/CookSessionContext";
 import ForgeCard from "./ui/ForgeCard";
+import ForgeStat from "./ui/ForgeStat";
+import ForgeRadialGauge from "./ui/ForgeRadialGauge";
+import ForgeKeyValueList from "./ui/ForgeKeyValueList";
 
 export default function Phase6Active() {
   const {
@@ -74,23 +77,22 @@ export default function Phase6Active() {
         </ForgeCard>
 
         <div className="grid grid-cols-2 gap-md">
-          <div className="forge-surface p-4 flex gap-4 items-center">
-            <span className="material-symbols-outlined text-primary text-3xl">oven_gen</span>
-            <div>
-              <p className="font-label-mono text-[9px] text-on-surface-variant uppercase">Ambient Pit Temp</p>
-              <p className="font-headline-md text-xl">
-                {telemetry?.ambient_temp ? `${Math.round(telemetry.ambient_temp * 9/5 + 32)}°F` : "--°F"}{" "}
-                <span className="text-xs text-secondary-fixed font-label-mono ml-2 uppercase font-bold">STABLE</span>
-              </p>
-            </div>
-          </div>
-          <div className="forge-surface p-4 flex gap-4 items-center">
-            <span className="material-symbols-outlined text-secondary-fixed text-3xl">opacity</span>
-            <div>
-              <p className="font-label-mono text-[9px] text-on-surface-variant uppercase">Moisture Balance</p>
-              <p className="font-headline-md text-xl">{moistureBudget}% <span className="text-xs text-outline font-label-mono ml-2 uppercase font-bold">OPTIMAL</span></p>
-            </div>
-          </div>
+          <ForgeStat
+            icon="oven_gen"
+            iconColor="primary"
+            label="Ambient Pit Temp"
+            value={telemetry?.ambient_temp ? `${Math.round(telemetry.ambient_temp * 9/5 + 32)}°F` : "--°F"}
+            statusText="STABLE"
+            statusColor="stable"
+          />
+          <ForgeStat
+            icon="opacity"
+            iconColor="secondary"
+            label="Moisture Balance"
+            value={`${moistureBudget}%`}
+            statusText="OPTIMAL"
+            statusColor="optimal"
+          />
         </div>
       </section>
 
@@ -106,27 +108,12 @@ export default function Phase6Active() {
             </p>
           }
         >
-          <div className="relative w-36 h-36 flex items-center justify-center mt-4">
-            <svg className="w-full h-full -rotate-90">
-              <circle className="text-white/5" cx="72" cy="72" fill="transparent" r="64" stroke="currentColor" strokeWidth="6"></circle>
-              <circle
-                className="text-primary"
-                cx="72"
-                cy="72"
-                fill="transparent"
-                r="64"
-                stroke="currentColor"
-                strokeDasharray={2 * Math.PI * 64}
-                strokeDashoffset={(2 * Math.PI * 64) * (1 - progressPercent / 100)}
-                strokeWidth="6"
-              ></circle>
-            </svg>
-            <div className="absolute flex flex-col items-center text-center">
-              <span className="font-label-mono text-[9px] text-on-surface-variant">Core Temp</span>
-              <span className="font-display-lg text-3xl font-bold">{coreTempF}°F</span>
-              <span className="font-label-mono text-[8px] text-secondary-fixed mt-1 uppercase">Target: {targetTempFDisplay}°F</span>
-            </div>
-          </div>
+          <ForgeRadialGauge
+            value={progressPercent}
+            label="Core Temp"
+            centerText={`${coreTempF}°F`}
+            statusBadge={`Target: ${targetTempFDisplay}°F`}
+          />
         </ForgeCard>
 
         {/* ETA & Recommendations */}
@@ -162,16 +149,13 @@ export default function Phase6Active() {
           </ForgeCard>
 
           <ForgeCard compactPadding>
-            <div className="text-xs font-label-mono space-y-xs uppercase">
-              <div className="flex justify-between">
-                <span className="text-outline">CUT / PROTEIN</span>
-                <span className="text-on-surface font-bold">{activeSession?.cut_type} ({getMeatLabel(activeSession?.meat_type || "")})</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-outline">COOKER</span>
-                <span className="text-on-surface font-bold">{activeSession?.cooker_type}</span>
-              </div>
-            </div>
+            <ForgeKeyValueList
+              items={[
+                { label: "CUT / PROTEIN", value: `${activeSession?.cut_type} (${getMeatLabel(activeSession?.meat_type || "")})` },
+                { label: "COOKER", value: activeSession?.cooker_type || "" },
+              ]}
+              compact
+            />
           </ForgeCard>
         </div>
       </aside>

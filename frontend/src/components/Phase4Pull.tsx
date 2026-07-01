@@ -3,6 +3,8 @@
 import React from "react";
 import { useCookSession } from "../context/CookSessionContext";
 import ForgeCard from "./ui/ForgeCard";
+import ForgeStat from "./ui/ForgeStat";
+import ForgeKeyValueList from "./ui/ForgeKeyValueList";
 
 export default function Phase4Pull() {
   const {
@@ -92,16 +94,21 @@ export default function Phase4Pull() {
                 <span className="material-symbols-outlined text-[14px]">oven_gen</span> STATUS: STABLE
               </span>
             </div>
-            <div className="mt-xs text-[10px] text-on-surface-variant font-label-mono uppercase flex justify-between">
-              <span>RATE OF RISE</span>
-              <span className="text-secondary-fixed">+0.0°F/min</span>
-            </div>
-            <div className="mt-1 text-[10px] text-on-surface-variant font-label-mono uppercase flex justify-between">
-              <span>TREND</span>
-              <span className="text-primary font-bold flex items-center gap-0.5">
-                <span className="material-symbols-outlined text-xs">trending_up</span> ACCELERATING
-              </span>
-            </div>
+            <ForgeKeyValueList
+              items={[
+                { label: "RATE OF RISE", value: "+0.0°F/min", valueColor: "secondary" },
+                {
+                  label: "TREND",
+                  value: (
+                    <span className="flex items-center gap-0.5">
+                      <span className="material-symbols-outlined text-xs">trending_up</span> ACCELERATING
+                    </span>
+                  ),
+                  valueColor: "primary",
+                },
+              ]}
+              compact
+            />
           </ForgeCard>
 
           <ForgeCard>
@@ -125,34 +132,28 @@ export default function Phase4Pull() {
 
       {/* Footer statistics widgets row layout */}
       <footer className="grid grid-cols-4 gap-md shrink-0">
-        <div className="forge-surface p-4 flex gap-4 items-center">
-          <span className="material-symbols-outlined text-outline text-2xl">timer</span>
-          <div>
-            <p className="font-label-mono text-[9px] text-on-surface-variant uppercase">ELAPSED TIME</p>
-            <p className="font-headline-md text-lg">14H 22M</p>
-          </div>
-        </div>
-        <div className="forge-surface p-4 flex gap-4 items-center">
-          <span className="material-symbols-outlined text-outline text-2xl">propane_tank</span>
-          <div>
-            <p className="font-label-mono text-[9px] text-on-surface-variant uppercase">FUEL LEVEL</p>
-            <p className="font-headline-md text-lg">42%</p>
-          </div>
-        </div>
-        <div className="forge-surface p-4 flex gap-4 items-center">
-          <span className="material-symbols-outlined text-outline text-2xl">wifi</span>
-          <div>
-            <p className="font-label-mono text-[9px] text-on-surface-variant uppercase">SIGNAL</p>
-            <p className="font-headline-md text-lg">-62 DBM</p>
-          </div>
-        </div>
-        <div className="forge-surface p-4 flex gap-4 items-center cursor-pointer hover:border-primary group transition-colors">
-          <span className="material-symbols-outlined text-outline group-hover:text-primary text-2xl">share</span>
-          <div>
-            <p className="font-label-mono text-[9px] text-on-surface-variant group-hover:text-primary uppercase">SHARE LIVE</p>
-            <p className="font-headline-md text-lg group-hover:text-primary uppercase text-xs tracking-wide">COPY LINK</p>
-          </div>
-        </div>
+        <ForgeStat
+          icon="timer"
+          label="ELAPSED TIME"
+          value="14H 22M"
+        />
+        <ForgeStat
+          icon="propane_tank"
+          label="FUEL LEVEL"
+          value="42%"
+        />
+        <ForgeStat
+          icon="wifi"
+          label="SIGNAL"
+          value="-62 DBM"
+        />
+        <ForgeStat
+          icon="share"
+          label="SHARE LIVE"
+          value={<span className="text-xs tracking-wide uppercase">COPY LINK</span>}
+          interactive
+          onClick={() => {}}
+        />
       </footer>
     </>
   );

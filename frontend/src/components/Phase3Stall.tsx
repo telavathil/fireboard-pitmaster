@@ -3,6 +3,8 @@
 import React from "react";
 import { useCookSession } from "../context/CookSessionContext";
 import ForgeCard from "./ui/ForgeCard";
+import ForgeStat from "./ui/ForgeStat";
+import ForgeKeyValueList from "./ui/ForgeKeyValueList";
 
 export default function Phase3Stall() {
   const {
@@ -62,20 +64,22 @@ export default function Phase3Stall() {
         </ForgeCard>
 
         <div className="grid grid-cols-2 gap-md">
-          <div className="forge-surface p-4 flex gap-4 items-center">
-            <span className="material-symbols-outlined text-primary text-3xl">thermostat</span>
-            <div>
-              <p className="font-label-mono text-[9px] text-on-surface-variant uppercase">Pit Temp</p>
-              <p className="font-headline-md text-xl">228°F <span className="text-[10px] font-label-mono text-outline uppercase ml-1">STABLE</span></p>
-            </div>
-          </div>
-          <div className="forge-surface p-4 flex gap-4 items-center">
-            <span className="material-symbols-outlined text-secondary-fixed text-3xl">humidity_percentage</span>
-            <div>
-              <p className="font-label-mono text-[9px] text-on-surface-variant uppercase">Relative Humidity</p>
-              <p className="font-headline-md text-xl">78% <span className="text-[10px] font-label-mono text-secondary-fixed uppercase ml-1">HIGH</span></p>
-            </div>
-          </div>
+          <ForgeStat
+            icon="thermostat"
+            iconColor="primary"
+            label="Pit Temp"
+            value="228°F"
+            statusText="STABLE"
+            statusColor="decreasing"
+          />
+          <ForgeStat
+            icon="humidity_percentage"
+            iconColor="secondary"
+            label="Relative Humidity"
+            value="78%"
+            statusText="HIGH"
+            statusColor="high"
+          />
         </div>
       </section>
 
@@ -127,16 +131,12 @@ export default function Phase3Stall() {
 
         {/* Kalman model accuracy */}
         <ForgeCard title="Stall Phase Status">
-          <div className="space-y-sm text-xs font-label-mono mt-4">
-            <div className="flex justify-between">
-              <span className="text-outline">STALL ANGLE</span>
-              <span className="text-on-surface">0.02°/min (FLAT)</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-outline">EST. BREAKOUT</span>
-              <span className="text-secondary-fixed font-bold">172°F Core</span>
-            </div>
-          </div>
+          <ForgeKeyValueList
+            items={[
+              { label: "STALL ANGLE", value: "0.02°/min (FLAT)" },
+              { label: "EST. BREAKOUT", value: "172°F Core", valueColor: "secondary" },
+            ]}
+          />
         </ForgeCard>
       </aside>
     </>

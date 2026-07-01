@@ -3,6 +3,9 @@
 import React from "react";
 import { useCookSession } from "../context/CookSessionContext";
 import ForgeCard from "./ui/ForgeCard";
+import ForgeStat from "./ui/ForgeStat";
+import ForgeRadialGauge from "./ui/ForgeRadialGauge";
+import ForgeKeyValueList from "./ui/ForgeKeyValueList";
 
 export default function Phase2Stabilizing() {
   const { coreTempF } = useCookSession();
@@ -48,20 +51,22 @@ export default function Phase2Stabilizing() {
         </ForgeCard>
 
         <div className="grid grid-cols-2 gap-md">
-          <div className="forge-surface p-4 flex gap-4 items-center">
-            <span className="material-symbols-outlined text-primary text-3xl">local_fire_department</span>
-            <div>
-              <p className="font-label-mono text-[9px] text-on-surface-variant uppercase">Ambient Pit Temp</p>
-              <p className="font-headline-md text-xl">225°F <span className="text-xs text-secondary-fixed font-label-mono ml-2 uppercase font-bold">STABLE</span></p>
-            </div>
-          </div>
-          <div className="forge-surface p-4 flex gap-4 items-center">
-            <span className="material-symbols-outlined text-secondary-fixed text-3xl">opacity</span>
-            <div>
-              <p className="font-label-mono text-[9px] text-on-surface-variant uppercase">Surface Moisture</p>
-              <p className="font-headline-md text-xl">64% <span className="text-xs text-outline font-label-mono ml-2 uppercase">DECREASING</span></p>
-            </div>
-          </div>
+          <ForgeStat
+            icon="local_fire_department"
+            iconColor="primary"
+            label="Ambient Pit Temp"
+            value="225°F"
+            statusText="STABLE"
+            statusColor="stable"
+          />
+          <ForgeStat
+            icon="opacity"
+            iconColor="secondary"
+            label="Surface Moisture"
+            value="64%"
+            statusText="DECREASING"
+            statusColor="decreasing"
+          />
         </div>
       </section>
 
@@ -76,21 +81,22 @@ export default function Phase2Stabilizing() {
             </h3>
           }
         >
-          <div className="space-y-sm text-xs font-label-mono mt-4">
-            <div className="flex justify-between">
-              <span className="text-outline">PROBE MODEL</span>
-              <span className="text-on-surface">EMBER-X1 V2.4</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-outline">SIGNAL STRENGTH</span>
-              <div className="flex gap-0.5">
-                <div className="w-1 h-3 bg-primary"></div>
-                <div className="w-1 h-3 bg-primary"></div>
-                <div className="w-1 h-3 bg-primary"></div>
-                <div className="w-1 h-3 bg-outline/30"></div>
-              </div>
-            </div>
-          </div>
+          <ForgeKeyValueList
+            items={[
+              { label: "PROBE MODEL", value: "EMBER-X1 V2.4" },
+              {
+                label: "SIGNAL STRENGTH",
+                value: (
+                  <div className="flex gap-0.5">
+                    <div className="w-1 h-3 bg-primary"></div>
+                    <div className="w-1 h-3 bg-primary"></div>
+                    <div className="w-1 h-3 bg-primary"></div>
+                    <div className="w-1 h-3 bg-outline/30"></div>
+                  </div>
+                ),
+              },
+            ]}
+          />
         </ForgeCard>
 
         {/* Active Calibration Gauge */}
@@ -102,30 +108,13 @@ export default function Phase2Stabilizing() {
             </p>
           }
         >
-          <div className="relative w-36 h-36 flex items-center justify-center mt-4">
-            <div className="absolute inset-0 border-4 border-primary/20 rounded-full pulsing-ring"></div>
-            <svg className="w-full h-full -rotate-90">
-              <circle className="text-outline/10" cx="72" cy="72" fill="transparent" r="64" stroke="currentColor" strokeWidth="4"></circle>
-              <circle
-                className="text-primary"
-                cx="72"
-                cy="72"
-                fill="transparent"
-                r="64"
-                stroke="currentColor"
-                strokeDasharray={2 * Math.PI * 64}
-                strokeDashoffset={(2 * Math.PI * 64) * 0.25} // 75%
-                strokeWidth="5"
-              ></circle>
-            </svg>
-            <div className="absolute flex flex-col items-center">
-              <span className="font-label-mono text-[9px] text-on-surface-variant">CONFIDENCE</span>
-              <span className="font-display-lg text-3xl font-bold">75%</span>
-              <span className="font-label-mono text-[8px] text-secondary-fixed mt-1 px-1.5 py-0.5 border border-secondary-fixed/30 bg-secondary-fixed/5 uppercase">
-                STABILIZING
-              </span>
-            </div>
-          </div>
+          <ForgeRadialGauge
+            value={75}
+            label="CONFIDENCE"
+            centerText="75%"
+            statusBadge="STABILIZING"
+            animation="pulse"
+          />
         </ForgeCard>
 
         {/* Skeleton/Shimmer boxes */}
