@@ -49,10 +49,11 @@ The project includes a **[Makefile](Makefile)** to simplify development and test
    cp .env.example .env
    ```
 
-2. **Run Tests**: Execute the test suite inside the container:
+2. **Run Tests**: Execute the backend test suite inside the container:
    ```bash
    make test
    ```
+   Frontend unit, component, and E2E tests are documented in [`frontend/README.md`](frontend/README.md#testing).
 
 3. **Start Application**: Build and start all services (FastAPI, Redis, Stoker, Pit Boss):
    ```bash
