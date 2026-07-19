@@ -49,10 +49,14 @@ function DashboardContent() {
 
           <form onSubmit={handleLogin} className="space-y-sm">
             <div>
-              <label className="block font-label-mono text-xs uppercase tracking-wider text-on-surface-variant opacity-75 mb-1">
+              <label
+                htmlFor="login-username"
+                className="block font-label-mono text-xs uppercase tracking-wider text-on-surface-variant opacity-75 mb-1"
+              >
                 Username
               </label>
               <input
+                id="login-username"
                 type="text"
                 required
                 value={username}
@@ -63,10 +67,14 @@ function DashboardContent() {
             </div>
 
             <div>
-              <label className="block font-label-mono text-xs uppercase tracking-wider text-on-surface-variant opacity-75 mb-1">
+              <label
+                htmlFor="login-password"
+                className="block font-label-mono text-xs uppercase tracking-wider text-on-surface-variant opacity-75 mb-1"
+              >
                 Password
               </label>
               <input
+                id="login-password"
                 type="password"
                 required
                 value={password}

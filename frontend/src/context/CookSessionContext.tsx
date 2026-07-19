@@ -2,6 +2,8 @@
 
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { CookSession, TelemetryPayload } from "../types";
+import { formatEta, formatStopwatch, getMeatLabel } from "../lib/formatters";
+import { getSvgPathF, getSvgPathAmbientF } from "../lib/chartPaths";
 
 interface CookSessionContextType {
   // Auth State
@@ -444,35 +446,6 @@ export function CookSessionProvider({ children }: { children: React.ReactNode })
     Math.min(100, ((currentCoreFiltered - 4.0) / (currentTarget - 4.0)) * 100)
   );
 
-  // SVG Graph paths
-  const getSvgPathF = (data: TelemetryPayload[], minValF: number, maxValF: number) => {
-    if (data.length === 0) return "";
-    const width = 800;
-    const height = 300;
-    const coords = data.map((d, index) => {
-      const x = (index / (data.length - 1 || 1)) * width;
-      const valC = d.core_temp_filtered || 0;
-      const valF = valC * 9/5 + 32;
-      const y = height - ((valF - minValF) / (maxValF - minValF || 1)) * height;
-      return `${x},${y}`;
-    });
-    return `M ${coords.join(" L ")}`;
-  };
-
-  const getSvgPathAmbientF = (data: TelemetryPayload[], minValF: number, maxValF: number) => {
-    if (data.length === 0) return "";
-    const width = 800;
-    const height = 300;
-    const coords = data.map((d, index) => {
-      const x = (index / (data.length - 1 || 1)) * width;
-      const valC = d.ambient_temp || 110.0;
-      const valF = valC * 9/5 + 32;
-      const y = height - ((valF - minValF) / (maxValF - minValF || 1)) * height;
-      return `${x},${y}`;
-    });
-    return `M ${coords.join(" L ")}`;
-  };
-
   const minTempF = 40;
   const maxTempF = 250;
 
@@ -494,28 +467,6 @@ export function CookSessionProvider({ children }: { children: React.ReactNode })
     currentPhase = 6; // Regular Active Cook
   }
 
-  // Format Helper: Time Remaining
-  const formatEta = (seconds: number) => {
-    if (seconds === null || seconds === undefined || seconds < 0) return "CALCULATING";
-    if (seconds === 0) return "DONE";
-    const h = Math.floor(seconds / 3600);
-    const m = Math.floor((seconds % 3600) / 60);
-    const s = seconds % 60;
-    return `${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}`;
-  };
-
-  // Format Helper: Stopwatch
-  const formatStopwatch = (totalSeconds: number) => {
-    const h = Math.floor(totalSeconds / 3600);
-    const m = Math.floor((totalSeconds % 3600) / 60);
-    const s = totalSeconds % 60;
-    return `${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}`;
-  };
-
-  const getMeatLabel = (meat: string) => {
-    if (!meat) return "";
-    return meat.charAt(0).toUpperCase() + meat.slice(1).toLowerCase();
-  };
 
   // Sync state variables onto window for E2E headless validation testing
   if (typeof window !== "undefined") {

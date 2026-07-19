@@ -33,35 +33,43 @@ export default function Sidebar() {
           )}
         </div>
 
-        <nav className="flex-1 space-y-1">
-          <div
+        <nav aria-label="Primary navigation" className="flex-1 space-y-1">
+          <button
+            type="button"
             onClick={() => setActiveTab("dashboard")}
-            className={`nav-item ${activeTab === "dashboard" ? "nav-item-active" : ""}`}
+            aria-current={activeTab === "dashboard" ? "page" : undefined}
+            className={`nav-item w-full text-left ${activeTab === "dashboard" ? "nav-item-active" : ""}`}
           >
-            <span className="material-symbols-outlined">dashboard</span>
+            <span className="material-symbols-outlined" aria-hidden="true">dashboard</span>
             <span className="font-label-mono text-label-mono">Dashboard</span>
-          </div>
-          <div
+          </button>
+          <button
+            type="button"
             onClick={() => setActiveTab("probes")}
-            className={`nav-item ${activeTab === "probes" ? "nav-item-active" : ""}`}
+            aria-current={activeTab === "probes" ? "page" : undefined}
+            className={`nav-item w-full text-left ${activeTab === "probes" ? "nav-item-active" : ""}`}
           >
-            <span className="material-symbols-outlined">thermostat</span>
+            <span className="material-symbols-outlined" aria-hidden="true">thermostat</span>
             <span className="font-label-mono text-label-mono">Probes</span>
-          </div>
-          <div
+          </button>
+          <button
+            type="button"
             onClick={() => setActiveTab("history")}
-            className={`nav-item ${activeTab === "history" ? "nav-item-active" : ""}`}
+            aria-current={activeTab === "history" ? "page" : undefined}
+            className={`nav-item w-full text-left ${activeTab === "history" ? "nav-item-active" : ""}`}
           >
-            <span className="material-symbols-outlined">history</span>
+            <span className="material-symbols-outlined" aria-hidden="true">history</span>
             <span className="font-label-mono text-label-mono">History</span>
-          </div>
-          <div
+          </button>
+          <button
+            type="button"
             onClick={() => setActiveTab("settings")}
-            className={`nav-item ${activeTab === "settings" ? "nav-item-active" : ""}`}
+            aria-current={activeTab === "settings" ? "page" : undefined}
+            className={`nav-item w-full text-left ${activeTab === "settings" ? "nav-item-active" : ""}`}
           >
-            <span className="material-symbols-outlined">settings</span>
+            <span className="material-symbols-outlined" aria-hidden="true">settings</span>
             <span className="font-label-mono text-label-mono">Settings</span>
-          </div>
+          </button>
         </nav>
 
         {activeSession && (
@@ -77,44 +85,55 @@ export default function Sidebar() {
       </aside>
 
       {/* Mobile Bottom Navigation (shown only on mobile) */}
-      <div className="flex md:hidden fixed bottom-0 left-0 right-0 h-16 bg-surface-container border-t border-outline-variant/30 z-50 justify-around items-center px-xs">
-        <div
+      <nav
+        aria-label="Mobile navigation"
+        className="flex md:hidden fixed bottom-0 left-0 right-0 h-16 bg-surface-container border-t border-outline-variant/30 z-50 justify-around items-center px-xs"
+      >
+        <button
+          type="button"
           onClick={() => setActiveTab("dashboard")}
+          aria-current={activeTab === "dashboard" ? "page" : undefined}
           className={`flex flex-col items-center justify-center flex-1 py-1 cursor-pointer transition-all ${
             activeTab === "dashboard" ? "text-primary font-bold" : "text-on-surface-variant"
           }`}
         >
-          <span className="material-symbols-outlined text-xl">dashboard</span>
+          <span className="material-symbols-outlined text-xl" aria-hidden="true">dashboard</span>
           <span className="font-label-mono text-[9px] mt-0.5">Dashboard</span>
-        </div>
-        <div
+        </button>
+        <button
+          type="button"
           onClick={() => setActiveTab("probes")}
+          aria-current={activeTab === "probes" ? "page" : undefined}
           className={`flex flex-col items-center justify-center flex-1 py-1 cursor-pointer transition-all ${
             activeTab === "probes" ? "text-primary font-bold" : "text-on-surface-variant"
           }`}
         >
-          <span className="material-symbols-outlined text-xl">thermostat</span>
+          <span className="material-symbols-outlined text-xl" aria-hidden="true">thermostat</span>
           <span className="font-label-mono text-[9px] mt-0.5">Probes</span>
-        </div>
-        <div
+        </button>
+        <button
+          type="button"
           onClick={() => setActiveTab("history")}
+          aria-current={activeTab === "history" ? "page" : undefined}
           className={`flex flex-col items-center justify-center flex-1 py-1 cursor-pointer transition-all ${
             activeTab === "history" ? "text-primary font-bold" : "text-on-surface-variant"
           }`}
         >
-          <span className="material-symbols-outlined text-xl">history</span>
+          <span className="material-symbols-outlined text-xl" aria-hidden="true">history</span>
           <span className="font-label-mono text-[9px] mt-0.5">History</span>
-        </div>
-        <div
+        </button>
+        <button
+          type="button"
           onClick={() => setActiveTab("settings")}
+          aria-current={activeTab === "settings" ? "page" : undefined}
           className={`flex flex-col items-center justify-center flex-1 py-1 cursor-pointer transition-all ${
             activeTab === "settings" ? "text-primary font-bold" : "text-on-surface-variant"
           }`}
         >
-          <span className="material-symbols-outlined text-xl">settings</span>
+          <span className="material-symbols-outlined text-xl" aria-hidden="true">settings</span>
           <span className="font-label-mono text-[9px] mt-0.5">Settings</span>
-        </div>
-      </div>
+        </button>
+      </nav>
     </>
   );
 }
