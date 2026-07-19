@@ -4,7 +4,6 @@ import React from "react";
 import { useCookSession } from "../context/CookSessionContext";
 import ForgeCard from "./ui/ForgeCard";
 import ForgeStat from "./ui/ForgeStat";
-import ForgeRadialGauge from "./ui/ForgeRadialGauge";
 import ForgeKeyValueList from "./ui/ForgeKeyValueList";
 
 export default function Phase6Active() {
@@ -12,9 +11,6 @@ export default function Phase6Active() {
     telemetry,
     history,
     coreTempF,
-    targetTempFDisplay,
-    progressPercent,
-    moistureBudget,
     carryoverRiseF,
     pullTempF,
     activeSession,
@@ -24,17 +20,28 @@ export default function Phase6Active() {
     getSvgPathF,
     minTempF,
     maxTempF,
+    moistureBudget,
   } = useCookSession();
+
+  const filteredVarianceF = telemetry
+    ? Math.round(Math.abs(telemetry.core_temp_raw - telemetry.core_temp_filtered) * 9 / 5 * 10) / 10
+    : 0;
+
+  const heatingRateFPerMin = telemetry ? Math.round(telemetry.heating_rate * 9 / 5 * 10) / 10 : 0;
+  const heatFluxDescription =
+    heatingRateFPerMin > 0.3
+      ? "Stable upward momentum. No immediate stall predicted."
+      : "Momentum flattening. Monitor for stall onset.";
 
   return (
     <>
       {/* Left Column: Live Chart */}
-      <section className="col-span-8 flex flex-col gap-md h-full">
+      <section className="col-span-12 md:col-span-8 flex flex-col gap-md h-full">
         <ForgeCard
           grow
           layout="column-between"
           minHeight="tall"
-          title="Active Session Tracking"
+          title="Thermal Evolution"
           subtitle="Status: Running"
           headerExtra={
             <div className="flex gap-md font-label-mono text-xs">
@@ -76,44 +83,82 @@ export default function Phase6Active() {
           </div>
         </ForgeCard>
 
-        <div className="grid grid-cols-2 gap-md">
-          <ForgeStat
-            icon="oven_gen"
-            iconColor="primary"
-            label="Ambient Pit Temp"
-            value={telemetry?.ambient_temp ? `${Math.round(telemetry.ambient_temp * 9/5 + 32)}°F` : "--°F"}
-            statusText="STABLE"
-            statusColor="stable"
-          />
-          <ForgeStat
-            icon="opacity"
-            iconColor="secondary"
-            label="Moisture Balance"
-            value={`${moistureBudget}%`}
-            statusText="OPTIMAL"
-            statusColor="optimal"
-          />
-        </div>
+        <ForgeStat
+          icon="opacity"
+          iconColor="secondary"
+          label="Moisture Balance"
+          value={`${moistureBudget}%`}
+          statusText="OPTIMAL"
+          statusColor="optimal"
+        />
       </section>
 
-      {/* Right Column: Active Live status */}
-      <aside className="col-span-4 flex flex-col gap-md h-full justify-between">
-        {/* Live progress circle */}
+      {/* Right Column: Probe telemetry + ETA/recommendations */}
+      <aside className="col-span-12 md:col-span-4 flex flex-col gap-md h-full justify-between">
+        {/* Core Temperature Probe */}
         <ForgeCard
-          grow
-          centered
+          compactPadding
+          hasHighlight
           title={
-            <p className="font-label-mono text-[10px] text-primary uppercase tracking-[0.2em] font-bold">
-              Target Temperature Gauge
-            </p>
+            <span className="font-label-mono text-[9px] text-on-surface-variant uppercase tracking-wider">
+              Core Temperature
+            </span>
+          }
+          headerExtra={
+            <span className="font-label-mono text-[9px] text-primary border border-primary/40 px-2 py-0.5 uppercase">
+              Probe 01
+            </span>
           }
         >
-          <ForgeRadialGauge
-            value={progressPercent}
-            label="Core Temp"
-            centerText={`${coreTempF}°F`}
-            statusBadge={`Target: ${targetTempFDisplay}°F`}
-          />
+          <h3 className="font-headline-lg text-3xl text-on-surface leading-none mt-1">{coreTempF}°F</h3>
+          <div className="flex justify-between items-center mt-2">
+            <span className="font-label-mono text-[9px] text-on-surface-variant uppercase">Filtered Variance</span>
+            <span className="font-label-mono text-[9px] text-secondary-fixed">±{filteredVarianceF}°F</span>
+          </div>
+          <div className="w-full bg-surface-container h-1 mt-1">
+            <div
+              className="h-full bg-gradient-to-r from-primary to-secondary-fixed"
+              style={{ width: `${Math.min(100, filteredVarianceF * 20)}%` }}
+            ></div>
+          </div>
+        </ForgeCard>
+
+        {/* Smoker Ambient Probe */}
+        <ForgeCard
+          compactPadding
+          title={
+            <span className="font-label-mono text-[9px] text-on-surface-variant uppercase tracking-wider">
+              Smoker Ambient
+            </span>
+          }
+          headerExtra={
+            <span className="font-label-mono text-[9px] text-secondary-fixed border border-secondary-fixed/40 px-2 py-0.5 uppercase">
+              Pit Sensor
+            </span>
+          }
+        >
+          <h3 className="font-headline-lg text-3xl text-secondary-fixed leading-none mt-1">
+            {telemetry?.ambient_temp ? `${Math.round(telemetry.ambient_temp * 9 / 5 + 32)}°F` : "--°F"}
+          </h3>
+          <p className="font-label-mono text-[9px] text-on-surface-variant uppercase mt-2">Status: Stable</p>
+        </ForgeCard>
+
+        {/* Heat Flux */}
+        <ForgeCard
+          compactPadding
+          title={
+            <span className="font-label-mono text-[9px] text-on-surface-variant uppercase tracking-wider">
+              Heat Flux
+            </span>
+          }
+          headerExtra={
+            <span className="font-label-mono text-[8px] text-on-surface-variant uppercase">Heating Rate</span>
+          }
+        >
+          <h3 className="font-headline-lg text-3xl text-primary leading-none mt-1">{heatingRateFPerMin}°/MIN</h3>
+          <p className="font-label-mono text-[9px] text-on-surface-variant leading-snug mt-2 uppercase">
+            {heatFluxDescription}
+          </p>
         </ForgeCard>
 
         {/* ETA & Recommendations */}

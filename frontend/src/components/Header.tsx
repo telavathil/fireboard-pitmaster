@@ -4,27 +4,23 @@ import React from "react";
 import { useCookSession } from "../context/CookSessionContext";
 
 export default function Header() {
-  const { activeSession, handleEndCook } = useCookSession();
+  const { activeSession, handleEndCook, username } = useCookSession();
+
+  const sessionContext = activeSession
+    ? `${activeSession.cooker_type.toUpperCase()} · ${activeSession.cut_type.toUpperCase()} (${activeSession.weight_kg}KG)`
+    : null;
 
   return (
     <header className="dashboard-header">
       <div className="flex items-center gap-gutter">
-        <span className="font-headline-lg text-headline-lg uppercase tracking-tighter text-primary">EMBER & CHAR</span>
-        <div className="h-6 w-[1px] bg-outline-variant mx-4"></div>
-        {activeSession ? (
-          <div className="flex items-center gap-2">
-            <span className="w-2.5 h-2.5 rounded-full bg-red-500 animate-pulse"></span>
-            <span className="font-label-mono text-xs uppercase text-on-surface tracking-wider">
-              LIVE BROADCAST ACTIVE
+        <span className="font-headline-lg text-2xl md:text-headline-lg uppercase tracking-tighter text-primary">EMBER & CHAR</span>
+        {sessionContext && (
+          <>
+            <div className="h-6 w-[1px] bg-outline-variant mx-4"></div>
+            <span className="font-label-mono text-xs uppercase text-on-surface-variant tracking-wider hidden md:inline">
+              {sessionContext}
             </span>
-          </div>
-        ) : (
-          <div className="flex items-center gap-2">
-            <span className="w-2.5 h-2.5 rounded-full bg-outline-variant"></span>
-            <span className="font-label-mono text-xs uppercase text-on-surface-variant tracking-wider">
-              STANDBY
-            </span>
-          </div>
+          </>
         )}
       </div>
 
@@ -38,9 +34,14 @@ export default function Header() {
           </button>
         )}
         <div className="h-10 w-[1px] bg-outline-variant mx-2"></div>
+        <span className="material-symbols-outlined text-on-surface-variant text-xl cursor-pointer hover:text-primary transition-colors">
+          notifications
+        </span>
         <div className="flex items-center gap-2">
           <span className="material-symbols-outlined text-on-surface-variant text-xl">account_circle</span>
-          <span className="font-label-mono text-xs text-on-surface-variant font-bold">PITMASTER</span>
+          <span className="font-label-mono text-xs text-on-surface-variant font-bold uppercase">
+            {username || "Pitmaster"}
+          </span>
         </div>
       </div>
     </header>

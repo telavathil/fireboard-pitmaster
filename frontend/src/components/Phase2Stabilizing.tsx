@@ -13,7 +13,7 @@ export default function Phase2Stabilizing() {
   return (
     <>
       {/* Left Column: Live Chart */}
-      <section className="col-span-8 flex flex-col gap-md h-full">
+      <section className="col-span-12 md:col-span-8 flex flex-col gap-md h-full">
         <ForgeCard
           grow
           layout="column-between"
@@ -71,7 +71,7 @@ export default function Phase2Stabilizing() {
       </section>
 
       {/* Right Column: Widgets */}
-      <aside className="col-span-4 flex flex-col gap-md h-full">
+      <aside className="col-span-12 md:col-span-4 flex flex-col gap-md h-full">
         {/* Device Status */}
         <ForgeCard
           title={
@@ -115,24 +115,43 @@ export default function Phase2Stabilizing() {
             statusBadge="STABILIZING"
             animation="pulse"
           />
+          
+          {/* Kalman Filter Status Badge */}
+          <div className="mt-md px-xs flex justify-center">
+            <div className="inline-flex items-center gap-xs px-sm py-xs bg-surface-container-high border border-primary/40 rounded-full relative overflow-hidden">
+              <span className="material-symbols-outlined text-primary text-sm animate-pulse" style={{ fontVariationSettings: "'FILL' 1" }}>
+                analytics
+              </span>
+              <span className="font-label-mono text-[10px] text-on-surface tracking-wide uppercase">
+                Kalman Filter: CALIBRATING
+              </span>
+            </div>
+          </div>
         </ForgeCard>
 
         {/* Skeleton/Shimmer boxes */}
-        <div className="flex-grow flex flex-col gap-sm">
-          <ForgeCard compactPadding>
-            <div className="flex justify-between items-center">
-              <div className="h-3 w-20 shimmer opacity-50"></div>
-              <div className="h-3 w-8 shimmer opacity-30"></div>
-            </div>
-            <div className="h-6 w-3/4 shimmer opacity-40 mt-1"></div>
-          </ForgeCard>
-          <ForgeCard compactPadding>
-            <div className="flex justify-between items-center">
-              <div className="h-3 w-24 shimmer opacity-50"></div>
-              <div className="h-3 w-8 shimmer opacity-30"></div>
-            </div>
-            <div className="h-6 w-1/2 shimmer opacity-40 mt-1"></div>
-          </ForgeCard>
+        <div className="grid grid-cols-2 gap-sm flex-grow">
+          <div className="opacity-70 flex flex-col flex-grow">
+            <ForgeCard compactPadding>
+              <div className="flex justify-between items-center mb-xs">
+                <span className="font-label-mono text-[9px] text-on-surface-variant uppercase">FINAL ETA</span>
+                <span className="material-symbols-outlined text-[10px] text-on-surface-variant">schedule</span>
+              </div>
+              <div className="shimmer h-8 w-24 rounded-xs opacity-40"></div>
+              <div className="shimmer h-3 w-16 rounded-xs mt-4 opacity-30"></div>
+            </ForgeCard>
+          </div>
+
+          <div className="opacity-70 flex flex-col flex-grow">
+            <ForgeCard compactPadding>
+              <div className="flex justify-between items-center mb-xs">
+                <span className="font-label-mono text-[9px] text-on-surface-variant uppercase">CARRYOVER</span>
+                <span className="material-symbols-outlined text-[10px] text-on-surface-variant">thermostat_auto</span>
+              </div>
+              <div className="shimmer h-8 w-20 rounded-xs opacity-40"></div>
+              <div className="shimmer h-3 w-12 rounded-xs mt-4 opacity-30"></div>
+            </ForgeCard>
+          </div>
         </div>
       </aside>
     </>

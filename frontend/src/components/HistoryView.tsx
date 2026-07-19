@@ -1,20 +1,26 @@
 "use client";
 
 import React from "react";
+import ForgeCard from "./ui/ForgeCard";
+import ForgeKeyValueList from "./ui/ForgeKeyValueList";
+import ForgeStat from "./ui/ForgeStat";
 
 export default function HistoryView() {
   return (
     <>
       {/* Left Column - Past Sessions */}
-      <div className="col-span-8 flex flex-col gap-md">
-        <div className="forge-surface p-md">
-          <h2 className="font-headline-md text-headline-md text-on-surface uppercase mb-sm">SESSION HISTORY LOG</h2>
-          <p className="font-label-mono text-xs text-on-surface-variant uppercase">ARCHIVED TEMPERATURE PROFILES AND KINETIC MODELS</p>
-        </div>
+      <div className="col-span-12 md:col-span-8 flex flex-col gap-md">
+        <ForgeCard
+          title="SESSION HISTORY LOG"
+          subtitle="ARCHIVED TEMPERATURE PROFILES AND KINETIC MODELS"
+        />
 
         {/* Session Cards */}
         <div className="space-y-sm">
-          <div className="forge-surface p-md border-l-4 border-primary/50 relative overflow-hidden group">
+          <ForgeCard
+            hasHighlight
+            highlightColor="bg-primary/50"
+          >
             <div className="flex justify-between items-start">
               <div>
                 <span className="font-label-mono text-[10px] text-primary uppercase font-bold tracking-widest bg-primary/10 px-2 py-0.5 border border-primary/20">
@@ -42,9 +48,12 @@ export default function HistoryView() {
                 <p className="text-on-surface mt-1">206.4°F (Carryover)</p>
               </div>
             </div>
-          </div>
+          </ForgeCard>
 
-          <div className="forge-surface p-md border-l-4 border-outline relative overflow-hidden group">
+          <ForgeCard
+            hasHighlight
+            highlightColor="bg-outline"
+          >
             <div className="flex justify-between items-start">
               <div>
                 <span className="font-label-mono text-[10px] text-outline-variant uppercase tracking-widest bg-surface-container-high px-2 py-0.5 border border-outline-variant/30">
@@ -72,37 +81,25 @@ export default function HistoryView() {
                 <p className="text-on-surface mt-1">208.1°F (Carryover)</p>
               </div>
             </div>
-          </div>
+          </ForgeCard>
         </div>
       </div>
 
       {/* Right Column - Historical Analytics */}
-      <div className="col-span-4 flex flex-col gap-md">
-        <div className="forge-surface p-md">
-          <h3 className="font-label-mono text-xs text-on-surface-variant mb-4 uppercase tracking-wider">Historical Analytics</h3>
-          <div className="space-y-sm text-xs font-label-mono">
-            <div className="flex justify-between">
-              <span className="text-outline">TOTAL COOK TIME</span>
-              <span className="text-on-surface">42.6 HOURS</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-outline">STALL COVERS</span>
-              <span className="text-on-surface">3 SESSIONS</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-outline">PREDICTION ERROR</span>
-              <span className="text-primary font-bold">± 4.2 MINS</span>
-            </div>
-            <div className="flex justify-between border-t border-outline-variant/30 pt-xs">
-              <span className="text-outline">FAVORITE PRESET</span>
-              <span className="text-secondary-fixed font-bold">BEEF BRISKET</span>
-            </div>
-          </div>
-        </div>
+      <div className="col-span-12 md:col-span-4 flex flex-col gap-md">
+        <ForgeCard title="Historical Analytics">
+          <ForgeKeyValueList
+            items={[
+              { label: "TOTAL COOK TIME", value: "42.6 HOURS" },
+              { label: "STALL COVERS", value: "3 SESSIONS" },
+              { label: "PREDICTION ERROR", value: "± 4.2 MINS", valueColor: "primary" },
+              { label: "FAVORITE PRESET", value: "BEEF BRISKET", valueColor: "secondary" },
+            ]}
+          />
+        </ForgeCard>
 
-        <div className="forge-surface p-md flex flex-col justify-center">
-          <p className="font-label-mono text-[10px] text-primary uppercase tracking-[0.2em] mb-4 font-bold">Wood Fuel Distribution</p>
-          <div className="space-y-xs font-label-mono text-xs">
+        <ForgeCard title="Wood Fuel Distribution">
+          <div className="space-y-xs font-label-mono text-xs mt-4">
             <div>
               <div className="flex justify-between text-[11px] mb-1">
                 <span>POST OAK</span>
@@ -131,7 +128,7 @@ export default function HistoryView() {
               </div>
             </div>
           </div>
-        </div>
+        </ForgeCard>
       </div>
     </>
   );

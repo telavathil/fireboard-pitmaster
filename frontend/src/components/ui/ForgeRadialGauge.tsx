@@ -51,9 +51,13 @@ export default function ForgeRadialGauge({
         />
       </svg>
       
-      <div className="absolute flex flex-col items-center text-center">
+      <div className="absolute flex flex-col items-center text-center px-2">
         <span className="font-label-mono text-[9px] text-on-surface-variant uppercase">{label}</span>
-        <span className="font-display-lg text-3xl font-bold tracking-wider">{centerText}</span>
+        <span className={`font-display-lg ${
+          typeof centerText === "string" && centerText.length > 5 ? "text-xl" : "text-3xl"
+        } font-bold tracking-wider`}>
+          {centerText}
+        </span>
         {statusBadge && (
           <span className="font-label-mono text-[8px] text-secondary-fixed mt-1 px-1.5 py-0.5 border border-secondary-fixed/30 bg-secondary-fixed/5 uppercase font-bold">
             {statusBadge}

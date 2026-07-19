@@ -17,41 +17,53 @@ export default function Phase4Pull() {
     formatStopwatch,
   } = useCookSession();
 
+  const [alarmSilenced, setAlarmSilenced] = React.useState(false);
+
   return (
     <>
       {/* Alert Card */}
-      <section className="bg-error-container/20 border-2 border-error p-lg flex flex-col gap-md relative overflow-hidden group shrink-0">
-        <div className="absolute top-0 left-0 w-1.5 h-full bg-error animate-critical"></div>
-        <div className="flex justify-between items-start">
-          <div className="flex items-center gap-sm">
-            <span className="material-symbols-outlined text-error text-3xl animate-pulse">warning</span>
-            <div>
-              <h2 className="font-headline-md text-headline-lg uppercase text-on-error-container leading-none">TARGET THRESHOLD REACHED</h2>
-              <p className="font-label-mono text-xs text-error uppercase mt-2 tracking-wide font-bold">PULL AT {pullTempF}°F</p>
+      <section className="bg-surface-container rounded-none border border-error p-lg relative overflow-hidden group shrink-0 shadow-[0_0_12px_rgba(255,77,0,0.4)]">
+        <div className="scanline"></div>
+        <div className="relative z-10 flex flex-col md:flex-row md:items-end justify-between gap-lg">
+          <div className="space-y-sm max-w-2xl">
+            <div className={`flex items-center gap-xs text-primary ${alarmSilenced ? "" : "animate-pulse"}`}>
+              <span className="material-symbols-outlined text-[32px]" style={{ fontVariationSettings: "'FILL' 1" }}>warning</span>
+              <span className="font-label-mono tracking-widest uppercase text-sm">Target Threshold Reached</span>
+            </div>
+            <h1 className="font-display-lg text-4xl sm:text-5xl md:text-6xl lg:text-[80px] text-primary leading-none uppercase italic">
+              PULL AT {pullTempF}°F
+            </h1>
+            <p className="font-body-lg text-on-surface-variant text-base">
+              Remove from heat now. Predicted carryover will cook the meat to your target doneness of <span className="text-secondary font-bold">{targetTempFDisplay}°F</span> during rest.
+            </p>
+          </div>
+
+          <div className="flex flex-col items-center bg-black p-md border border-outline-variant w-full md:w-36">
+            <span className="font-label-mono text-on-surface-variant text-[10px] uppercase tracking-[0.2em] whitespace-nowrap">Time to Pull</span>
+            <div className="font-display-lg text-[48px] text-secondary leading-none mt-xs">{formatStopwatch(pullTimeSeconds)}</div>
+            <div className="w-24 h-1 bg-surface-container-highest mt-md overflow-hidden">
+              <div className={`h-full bg-secondary w-2/3 ${alarmSilenced ? "" : "animate-pulse"}`}></div>
             </div>
           </div>
         </div>
-        
-        <p className="text-on-error-container font-body-md text-base opacity-90 max-w-2xl leading-relaxed mt-2 uppercase">
-          Remove from heat now. Predicted carryover will cook the meat to your target doneness of {targetTempFDisplay}°F during rest.
-        </p>
 
-        <div className="grid grid-cols-4 gap-md border-t border-error/30 pt-md mt-md">
-          <div className="bg-background/40 p-4 border border-error/20 flex flex-col justify-between">
-            <span className="font-label-mono text-[10px] text-on-surface-variant uppercase block">TIME TO PULL</span>
-            <span className="font-headline-lg text-4xl text-error tracking-widest leading-none mt-2 block">{formatStopwatch(pullTimeSeconds)}</span>
+        {/* Carryover Expansion Gauge */}
+        <div className="mt-xl relative pt-lg border-t border-outline-variant/30">
+          <div className="flex justify-between font-label-mono text-[10px] text-on-surface-variant mb-xs">
+            <span>CURRENT CORE</span>
+            <span className="text-primary">PROJECTED RISE</span>
+            <span>FINAL TARGET</span>
           </div>
-          <div className="bg-background/40 p-4 border border-error/20 flex flex-col justify-between">
-            <span className="font-label-mono text-[10px] text-on-surface-variant uppercase block">CURRENT CORE</span>
-            <span className="font-headline-lg text-4xl text-on-surface leading-none mt-2 block">{coreTempF}°F</span>
-          </div>
-          <div className="bg-background/40 p-4 border border-error/20 flex flex-col justify-between">
-            <span className="font-label-mono text-[10px] text-on-surface-variant uppercase block">PROJECTED RISE</span>
-            <span className="font-headline-lg text-4xl text-secondary-fixed leading-none mt-2 block">+{carryoverRiseF}°F</span>
-          </div>
-          <div className="bg-background/40 p-4 border border-error/20 flex flex-col justify-between">
-            <span className="font-label-mono text-[10px] text-on-surface-variant uppercase block">FINAL TARGET</span>
-            <span className="font-headline-lg text-4xl text-primary-container leading-none mt-2 block">{targetTempFDisplay}°F</span>
+          <div className="h-8 w-full bg-surface-container-highest flex border border-outline-variant">
+            <div className="h-full bg-primary-container relative flex items-center justify-end pr-2" style={{ width: "70%" }}>
+              <div className="absolute -top-6 right-0 font-headline-md text-xl text-primary">{coreTempF}°F</div>
+            </div>
+            <div className="h-full bg-gradient-to-r from-primary-container to-secondary-container relative flex items-center justify-end pr-2" style={{ width: "20%" }}>
+              <div className="absolute -top-6 right-0 font-headline-md text-xl text-secondary-fixed">+{carryoverRiseF}°F</div>
+            </div>
+            <div className="h-full bg-surface-bright/20 flex-1 relative border-l border-dashed border-secondary flex items-center justify-end pr-2">
+              <div className="absolute -top-6 right-0 font-headline-md text-xl text-secondary-fixed">{targetTempFDisplay}°F</div>
+            </div>
           </div>
         </div>
       </section>
@@ -59,7 +71,7 @@ export default function Phase4Pull() {
       {/* Detail widgets grid layout */}
       <div className="grid grid-cols-12 gap-md flex-grow items-start min-h-[300px]">
         {/* Trajectory Plot Column */}
-        <div className="col-span-8 h-full">
+        <div className="col-span-12 md:col-span-8 h-full">
           <ForgeCard
             grow
             layout="column-between"
@@ -86,7 +98,7 @@ export default function Phase4Pull() {
         </div>
 
         {/* Ambient Temperature Gauge Column */}
-        <section className="col-span-4 flex flex-col gap-md h-full justify-between min-h-[260px]">
+        <section className="col-span-12 md:col-span-4 flex flex-col gap-md h-full justify-between min-h-[260px]">
           <ForgeCard title="AMBIENT PIT TEMP">
             <div className="flex items-baseline gap-2 mt-4">
               <span className="font-headline-md text-3xl text-on-surface">226°F</span>
@@ -114,10 +126,12 @@ export default function Phase4Pull() {
           <ForgeCard>
             <div className="flex flex-col gap-sm">
               <button
-                onClick={() => handleUpdateStatus("resting")}
-                className="action-btn action-btn-accent w-full"
+                type="button"
+                onClick={() => setAlarmSilenced(true)}
+                disabled={alarmSilenced}
+                className="w-full py-3 bg-secondary text-on-secondary font-headline-md text-xl tracking-widest hover:brightness-110 active:scale-[0.98] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                START RESTING TIMER
+                {alarmSilenced ? "ALARM SILENCED" : "SILENCE ALARM"}
               </button>
               <button
                 onClick={() => handleUpdateStatus("resting")}
@@ -131,7 +145,7 @@ export default function Phase4Pull() {
       </div>
 
       {/* Footer statistics widgets row layout */}
-      <footer className="grid grid-cols-4 gap-md shrink-0">
+      <footer className="grid grid-cols-2 md:grid-cols-4 gap-md shrink-0">
         <ForgeStat
           icon="timer"
           label="ELAPSED TIME"

@@ -122,7 +122,9 @@ def get_active_session():
     cursor = conn.cursor()
     
     try:
-        cursor.execute("SELECT * FROM cook_sessions ORDER BY created_at DESC LIMIT 1")
+        cursor.execute(
+            "SELECT * FROM cook_sessions WHERE status != 'completed' ORDER BY created_at DESC LIMIT 1"
+        )
         row = cursor.fetchone()
         
         if not row:

@@ -34,7 +34,7 @@ function DashboardContent() {
   if (!token) {
     return (
       <div className="flex-grow flex items-center justify-center px-sm py-xl min-h-screen bg-[#0E0E0F]">
-        <div className="glass-card max-w-md w-full p-md relative overflow-hidden border border-outline-variant/30">
+        <div className="glass-card max-w-[28rem] w-full p-md relative overflow-hidden border border-outline-variant/30">
           <div className="absolute w-32 h-32 bg-primary/10 blur-[50px] -top-10 -right-10 rounded-full"></div>
           <div className="flex items-center gap-sm mb-sm">
             <span className="material-symbols-outlined text-primary text-3xl animate-pulse" style={{ fontVariationSettings: "'FILL' 1" }}>
@@ -100,7 +100,7 @@ function DashboardContent() {
   const outerClasses = `min-h-screen bg-[#0E0E0F] text-on-surface font-body-md flex${currentPhase === 1 ? " brushed-metal" : ""}`;
   
   // Determine dynamic main tag classes
-  let mainClasses = "ml-64 mt-20 p-md h-[calc(100vh-5rem)] bg-background overflow-y-auto";
+  let mainClasses = "ml-0 md:ml-64 mt-20 p-sm md:p-md min-h-[calc(100vh-5rem)] pb-24 md:pb-md bg-background overflow-y-auto";
   if (activeTab === "dashboard" && !activeSession && debugPhaseOverride === null) {
     mainClasses += " flex flex-col items-center justify-center";
   } else if (activeTab === "dashboard" && currentPhase === 4) {
@@ -122,7 +122,7 @@ function DashboardContent() {
             if (activeTab === "settings") {
               return <SettingsView />;
             }
-            if (activeTab === "probes" || currentPhase === 1) {
+            if (activeTab === "probes") {
               return <Phase1Setup />;
             }
             if (activeTab === "dashboard") {

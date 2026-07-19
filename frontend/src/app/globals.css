@@ -203,11 +203,11 @@ body {
 }
 
 @utility dashboard-sidebar {
-  @apply flex flex-col py-md bg-surface-container h-screen w-64 fixed left-0 top-0 border-r border-outline-variant z-50;
+  @apply hidden md:flex flex-col py-md bg-surface-container h-screen w-64 fixed left-0 top-0 border-r border-outline-variant z-50;
 }
 
 @utility dashboard-header {
-  @apply flex justify-between items-center px-margin-desktop w-[calc(100%-16rem)] ml-64 bg-surface h-20 border-b border-outline-variant z-40 fixed top-0 left-0 right-0;
+  @apply flex justify-between items-center px-4 md:px-margin-desktop w-full md:w-[calc(100%-16rem)] ml-0 md:ml-64 bg-surface h-20 border-b border-outline-variant z-40 fixed top-0 left-0 right-0;
 }
 
 @utility nav-item {
