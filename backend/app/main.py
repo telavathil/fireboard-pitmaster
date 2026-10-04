@@ -13,7 +13,7 @@ from app.config import settings
 from app.database import init_db, get_db_connection
 from app.schemas import CookHistoryEntry, CookSessionCreate, CookSessionResponse, LoginRequest, PushEndpoint, PushSubscriptionIn
 from app import push
-from app.cache import get_latest_telemetry
+from app.cache import clear_device_state, get_latest_telemetry
 
 # Setup logging
 logging.basicConfig(level=logging.INFO)
@@ -102,6 +102,12 @@ def create_session(session_in: CookSessionCreate):
         )
         conn.commit()
         logger.info(f"Created new cook session: {session_id} in Turso.")
+        # A reused device must not carry the previous cook's readings into this one
+        # (that would show stale temperatures and could fire a false pull alert).
+        try:
+            clear_device_state(session_in.device_id, 1)
+        except Exception as e:
+            logger.error(f"Couldn't clear previous readings for device {session_in.device_id}: {e}")
     except Exception as e:
         logger.error(f"Failed to create session: {e}")
         raise HTTPException(status_code=500, detail="Database write failure.")

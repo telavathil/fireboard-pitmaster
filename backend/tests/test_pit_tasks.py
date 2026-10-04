@@ -241,3 +241,20 @@ def test_a_failing_pull_alert_never_breaks_predictions(mock_get_redis):
                         ambient_temp=110.0, target_temp=95.0, timestamp=1700000000.0)
     alert.assert_called_once()
     assert mock_redis.get("telemetry:latest:device_x:1") is not None
+
+
+def test_clear_device_state_removes_latest_reading_and_history():
+    from app import cache
+
+    class DeletableRedis(MockRedis):
+        def delete(self, *keys):
+            for k in keys:
+                self.store.pop(k, None)
+
+    fake = DeletableRedis()
+    with patch("app.cache.get_redis_client", return_value=fake):
+        cache.set_latest_telemetry("dev_c", 1, {"core_temp_filtered": 95.0})
+        cache.push_raw_history("dev_c", 1, 95.0, 1700000000.0)
+        cache.clear_device_state("dev_c", 1)
+        assert cache.get_latest_telemetry("dev_c", 1) is None
+        assert cache.get_raw_history("dev_c", 1) == []

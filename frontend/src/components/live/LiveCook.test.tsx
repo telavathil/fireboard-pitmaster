@@ -49,7 +49,7 @@ function setup(overrides: Record<string, unknown> = {}) {
     peakRestTempC: null,
     tempUnit: "F",
     alarmsEnabled: false,
-    handleUpdateStatus: vi.fn(),
+    handleUpdateStatus: vi.fn().mockResolvedValue(true),
     handleEndCook: vi.fn().mockResolvedValue(true),
     activeTab: "dashboard",
     setActiveTab: vi.fn(),
@@ -76,6 +76,12 @@ describe("LiveCook", () => {
     expect(screen.getByRole("alert")).toHaveTextContent("Pull now");
     await userEvent.click(screen.getByRole("button", { name: "I pulled it, start rest" }));
     expect(ctx.handleUpdateStatus).toHaveBeenCalledWith("resting");
+  });
+
+  it("says so when the pull couldn't be saved", async () => {
+    setup({ stage: "pull", telemetry: reading({ core_temp_filtered: 90.8 }), handleUpdateStatus: vi.fn().mockResolvedValue(false) });
+    await userEvent.click(screen.getByRole("button", { name: "I pulled it, start rest" }));
+    expect(await screen.findByText(/couldn't save the pull/i)).toBeInTheDocument();
   });
 
   it("only ends the cook after confirmation", async () => {

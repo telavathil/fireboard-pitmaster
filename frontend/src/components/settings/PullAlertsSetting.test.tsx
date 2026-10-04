@@ -11,6 +11,7 @@ vi.mock("../pwa/pushClient", async (importOriginal) => {
     isPushSupported: vi.fn(),
     fetchPublicKey: vi.fn(),
     getCurrentSubscription: vi.fn(),
+    hasServiceWorker: vi.fn(),
     enablePullAlerts: vi.fn(),
     disablePullAlerts: vi.fn(),
     sendTestAlert: vi.fn(),
@@ -19,11 +20,12 @@ vi.mock("../pwa/pushClient", async (importOriginal) => {
 const m = vi.mocked(pushClient);
 const fakeSub = { endpoint: "https://push.example/abc" } as PushSubscription;
 
-function env({ secure = true, supported = true, permission = "default" as NotificationPermission, key = "BKey" as string | null, sub = null as PushSubscription | null } = {}) {
+function env({ secure = true, supported = true, worker = true, permission = "default" as NotificationPermission, key = "BKey" as string | null, sub = null as PushSubscription | null } = {}) {
   Object.defineProperty(window, "isSecureContext", { value: secure, configurable: true });
   vi.stubGlobal("matchMedia", () => ({ matches: false }));
   vi.stubGlobal("Notification", { permission });
   m.isPushSupported.mockReturnValue(supported);
+  m.hasServiceWorker.mockResolvedValue(worker);
   m.fetchPublicKey.mockResolvedValue(key);
   m.getCurrentSubscription.mockResolvedValue(sub);
 }
@@ -68,6 +70,13 @@ describe("PullAlertsSetting", () => {
     env({ secure: false });
     render(<PullAlertsSetting />);
     expect(await screen.findByText(/need the app served over HTTPS/i)).toBeInTheDocument();
+    expect(screen.queryByRole("button")).not.toBeInTheDocument();
+  });
+
+  it("says when the app's service worker didn't load, rather than hanging", async () => {
+    env({ worker: false });
+    render(<PullAlertsSetting />);
+    expect(await screen.findByText(/reload the page/i)).toBeInTheDocument();
     expect(screen.queryByRole("button")).not.toBeInTheDocument();
   });
 

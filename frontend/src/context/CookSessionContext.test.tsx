@@ -2,6 +2,9 @@ import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { CookSessionProvider, useCookSession } from "./CookSessionContext";
+import { unsubscribeThisDevice } from "../components/pwa/pushClient";
+
+vi.mock("../components/pwa/pushClient", () => ({ unsubscribeThisDevice: vi.fn().mockResolvedValue(undefined) }));
 
 const session = {
   id: "s1",
@@ -24,11 +27,16 @@ class FakeEventSource {
 }
 
 function Probe() {
-  const { activeSession, handleEndCook } = useCookSession();
+  const { activeSession, handleEndCook, handleLogout, isLoadingSession, sessionLoadError, retryActiveSession, token } = useCookSession();
   return (
     <div>
       <p>{activeSession ? `session:${activeSession.id}:${activeSession.status}` : "no session"}</p>
+      <p>{isLoadingSession ? "loading" : "loaded"}</p>
+      <p>{sessionLoadError ?? "no load error"}</p>
+      <p>{token ? "signed in" : "signed out"}</p>
       <button onClick={() => handleEndCook()}>end</button>
+      <button onClick={() => handleLogout()}>logout</button>
+      <button onClick={() => retryActiveSession()}>retry</button>
     </div>
   );
 }
@@ -80,5 +88,35 @@ describe("ending a cook", () => {
     await new Promise((r) => setTimeout(r, 20));
 
     expect(screen.getByText("session:s1:bare")).toBeInTheDocument();
+  });
+});
+
+describe("loading the active cook", () => {
+  it("reports an unreachable backend instead of implying no cook is running, and retries", async () => {
+    let up = false;
+    vi.stubGlobal("fetch", vi.fn(async (url: string) => {
+      if (!up) throw new TypeError("Failed to fetch");
+      if (url.endsWith("/api/sessions/active")) return new Response(JSON.stringify(session), { status: 200 });
+      return new Response("{}", { status: 404 });
+    }));
+    render(<CookSessionProvider><Probe /></CookSessionProvider>);
+    expect(await screen.findByText(/couldn't reach the server/i)).toBeInTheDocument();
+    expect(screen.getByText("loaded")).toBeInTheDocument();
+
+    up = true;
+    await userEvent.click(screen.getByRole("button", { name: "retry" }));
+    expect(await screen.findByText("session:s1:bare")).toBeInTheDocument();
+    expect(screen.getByText("no load error")).toBeInTheDocument();
+  });
+});
+
+describe("signing out", () => {
+  it("unsubscribes this device from pull alerts", async () => {
+    mockBackend(true);
+    render(<CookSessionProvider><Probe /></CookSessionProvider>);
+    await screen.findByText("session:s1:bare");
+    await userEvent.click(screen.getByRole("button", { name: "logout" }));
+    expect(await screen.findByText("signed out")).toBeInTheDocument();
+    expect(unsubscribeThisDevice).toHaveBeenCalled();
   });
 });

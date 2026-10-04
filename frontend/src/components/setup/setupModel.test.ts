@@ -99,7 +99,15 @@ describe("stepTarget", () => {
   });
 
   it("stays within the allowed range", () => {
-    expect(stepTarget(104, "C", 1)).toBe(104);
+    expect(stepTarget(104, "C", 1)).toBeCloseTo(((220 - 32) * 5) / 9, 5);
+  });
+
+  it("reaches 220 °F, the documented upper limit, and stops there", () => {
+    const at219 = ((219 - 32) * 5) / 9;
+    const up = stepTarget(at219, "F", 1);
+    expect(Math.round((up * 9) / 5 + 32)).toBe(220);
+    expect(Math.round((stepTarget(up, "F", 1) * 9) / 5 + 32)).toBe(220);
+    expect(validateDraft({ ...draft, targetC: up }).targetC).toBeUndefined();
   });
 });
 

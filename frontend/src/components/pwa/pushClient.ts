@@ -8,22 +8,25 @@ export type PushState =
   | "insecure"
   | "needs-install"
   | "unsupported"
-  | "server-off";
+  | "server-off"
+  | "worker-missing";
 
 interface PushInputs {
   supported: boolean;
   secure: boolean;
   installState: InstallState;
+  workerReady: boolean;
   serverReady: boolean;
   permission: NotificationPermission;
   subscribed: boolean;
 }
 
 /** What the pull-alerts control should offer on this device, in priority order. */
-export function derivePushState({ supported, secure, installState, serverReady, permission, subscribed }: PushInputs): PushState {
+export function derivePushState({ supported, secure, installState, workerReady, serverReady, permission, subscribed }: PushInputs): PushState {
   if (!secure) return "insecure";
   // iPhone and iPad only expose push to apps added to the Home Screen.
   if (!supported) return installState === "ios" ? "needs-install" : "unsupported";
+  if (!workerReady) return "worker-missing";
   if (!serverReady) return "server-off";
   if (permission === "denied") return "denied";
   return subscribed && permission === "granted" ? "on" : "off";
@@ -51,9 +54,32 @@ export async function fetchPublicKey(): Promise<string | null> {
   return typeof key === "string" && key.length > 0 ? key : null;
 }
 
+const WORKER_ACTIVATION_TIMEOUT_MS = 10_000;
+
+/** Whether the app's service worker is registered. Unlike `serviceWorker.ready`, this never hangs. */
+export async function hasServiceWorker(): Promise<boolean> {
+  return (await navigator.serviceWorker.getRegistration()) !== undefined;
+}
+
+/** The registration, waiting (bounded) for activation; throws instead of hanging if it never arrives. */
+async function activeRegistration(): Promise<ServiceWorkerRegistration> {
+  const registration = await navigator.serviceWorker.getRegistration();
+  if (!registration) throw new Error("Service worker isn't registered");
+  if (registration.active) return registration;
+  let timer: ReturnType<typeof setTimeout> | undefined;
+  const timeout = new Promise<never>((_, reject) => {
+    timer = setTimeout(() => reject(new Error("Service worker didn't activate")), WORKER_ACTIVATION_TIMEOUT_MS);
+  });
+  try {
+    return await Promise.race([navigator.serviceWorker.ready, timeout]);
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
 export async function getCurrentSubscription(): Promise<PushSubscription | null> {
-  const registration = await navigator.serviceWorker.ready;
-  return registration.pushManager.getSubscription();
+  const registration = await navigator.serviceWorker.getRegistration();
+  return registration ? registration.pushManager.getSubscription() : null;
 }
 
 async function postJson(path: string, body: unknown): Promise<Response> {
@@ -68,7 +94,7 @@ async function postJson(path: string, body: unknown): Promise<Response> {
 export async function enablePullAlerts(publicKey: string): Promise<"on" | "denied"> {
   const permission = await Notification.requestPermission();
   if (permission !== "granted") return "denied";
-  const registration = await navigator.serviceWorker.ready;
+  const registration = await activeRegistration();
   const subscription =
     (await registration.pushManager.getSubscription()) ??
     (await registration.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: urlBase64ToUint8Array(publicKey) }));
@@ -88,4 +114,15 @@ export async function disablePullAlerts(subscription: PushSubscription): Promise
 export async function sendTestAlert(subscription: PushSubscription): Promise<void> {
   const res = await postJson("/api/push/test", { endpoint: subscription.endpoint });
   if (!res.ok) throw new Error(`Test alert failed (${res.status})`);
+}
+
+/** Best-effort: stop pull alerts to this device (used on sign-out). Never throws. */
+export async function unsubscribeThisDevice(): Promise<void> {
+  if (!isPushSupported()) return;
+  try {
+    const subscription = await getCurrentSubscription();
+    if (subscription) await disablePullAlerts(subscription);
+  } catch {
+    // Offline or already gone; the server prunes dead subscriptions on its next send.
+  }
 }

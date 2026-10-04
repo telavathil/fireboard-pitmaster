@@ -65,8 +65,8 @@ export const DEFAULT_DRAFT: SetupDraft = {
   deviceName: "",
 };
 
-/** Allowed target range: 100-220 °F. */
-export const TARGET_RANGE_C = { min: 38, max: 104 } as const;
+/** Allowed target range: exactly 100-220 °F, so both ends are reachable in either unit. */
+export const TARGET_RANGE_C = { min: fToC(100), max: fToC(220) } as const;
 
 const TO_METRIC: Record<EntryUnit, number> = { kg: 1, lb: 0.45359237, mm: 1, in: 25.4 };
 

@@ -5,6 +5,7 @@ import { CookSession, TelemetryPayload } from "../types";
 import { BACKEND_URL } from "../lib/api";
 import { Stage, deriveStage, parseServerTime } from "../components/live/cookModel";
 import { SessionPayload } from "../components/setup/setupModel";
+import { unsubscribeThisDevice } from "../components/pwa/pushClient";
 
 interface CookSessionContextType {
   // Auth State
@@ -21,6 +22,9 @@ interface CookSessionContextType {
   // Active Session State
   activeSession: CookSession | null;
   isLoadingSession: boolean;
+  /** Set when the running cook couldn't be checked; the app then offers a retry, never the setup form. */
+  sessionLoadError: string | null;
+  retryActiveSession: () => void;
   isCreatingSession: boolean;
   sessionError: string | null;
   startCook: (payload: SessionPayload) => Promise<boolean>;
@@ -128,6 +132,7 @@ export function CookSessionProvider({ children }: { children: React.ReactNode })
   // Cook Session State
   const [activeSession, setActiveSession] = useState<CookSession | null>(null);
   const [isLoadingSession, setIsLoadingSession] = useState<boolean>(savedAuth !== null);
+  const [sessionLoadError, setSessionLoadError] = useState<string | null>(null);
   const [isCreatingSession, setIsCreatingSession] = useState<boolean>(false);
 
   const [sessionError, setSessionError] = useState<string | null>(null);
@@ -166,11 +171,14 @@ export function CookSessionProvider({ children }: { children: React.ReactNode })
       const res = await fetch(`${BACKEND_URL}/api/sessions/active`, {
         headers: { Authorization: `Bearer ${authToken}` },
       });
+      // 404 means no cook is running; any other failure means we couldn't tell.
+      if (!res.ok && res.status !== 404) throw new Error(`Active session check failed (${res.status})`);
       const data: CookSession | null = res.ok ? await res.json() : null;
       setActiveSession(data);
+      setSessionLoadError(null);
       if (data?.status === "resting") setRestStart(restStartFor(data.id));
     } catch {
-      // Backend unreachable: stay signed in; the setup screen's start action reports the problem.
+      setSessionLoadError("Couldn't reach the server to check for a running cook.");
     } finally {
       setIsLoadingSession(false);
     }
@@ -230,7 +238,8 @@ export function CookSessionProvider({ children }: { children: React.ReactNode })
         writePref(TOKEN_KEY, data.access_token);
         writePref(USERNAME_KEY, username);
         setToken(data.access_token);
-        fetchActiveSession(data.access_token);
+        setIsLoadingSession(true);
+        void fetchActiveSession(data.access_token);
       } else {
         const errData = await res.json();
         setAuthError(errData.detail || "Sign-in failed. Check your username and password.");
@@ -242,7 +251,16 @@ export function CookSessionProvider({ children }: { children: React.ReactNode })
     }
   };
 
+  const retryActiveSession = () => {
+    if (!token) return;
+    setSessionLoadError(null);
+    setIsLoadingSession(true);
+    void fetchActiveSession(token);
+  };
+
   const handleLogout = () => {
+    // Signing out stops pull alerts to this device (best effort; never blocks sign-out).
+    void unsubscribeThisDevice();
     try {
       localStorage.removeItem(TOKEN_KEY);
       localStorage.removeItem(USERNAME_KEY);
@@ -357,6 +375,8 @@ export function CookSessionProvider({ children }: { children: React.ReactNode })
         handleLogout,
         activeSession,
         isLoadingSession,
+        sessionLoadError,
+        retryActiveSession,
         isCreatingSession,
         sessionError,
         startCook,

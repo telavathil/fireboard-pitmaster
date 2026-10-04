@@ -161,3 +161,24 @@ def test_history_limit_is_validated_and_applied():
     assert len(client.get("/api/sessions/history?limit=2").json()) == 2
     assert client.get("/api/sessions/history?limit=0").status_code == 422
     assert client.get("/api/sessions/history?limit=500").status_code == 422
+
+
+def test_starting_a_cook_clears_the_devices_previous_readings():
+    from unittest.mock import patch
+    payload = {
+        "device_id": "device_reused", "device_name": "Grill", "meat_type": "beef", "cut_type": "Brisket flat",
+        "cooker_type": "kamado", "status": "bare", "weight_kg": 5.4, "thickness_mm": 75.0, "target_temp_c": 95.0,
+    }
+    with patch("app.main.clear_device_state") as clear:
+        assert client.post("/api/sessions", json=payload).status_code == 200
+    clear.assert_called_once_with("device_reused", 1)
+
+
+def test_a_cache_outage_does_not_block_starting_a_cook():
+    from unittest.mock import patch
+    payload = {
+        "device_id": "device_x", "device_name": "Grill", "meat_type": "beef", "cut_type": "Ribs",
+        "cooker_type": "kamado", "status": "bare", "weight_kg": 2.0, "thickness_mm": 50.0, "target_temp_c": 93.0,
+    }
+    with patch("app.main.clear_device_state", side_effect=ConnectionError("redis down")):
+        assert client.post("/api/sessions", json=payload).status_code == 200

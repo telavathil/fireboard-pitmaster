@@ -7,17 +7,24 @@ import SettingsScreen from "../components/settings/SettingsScreen";
 import SetupScreen from "../components/setup/SetupScreen";
 import LiveCook from "../components/live/LiveCook";
 import LoginScreen from "../components/login/LoginScreen";
+import StatusScreen from "../components/tide/StatusScreen";
 import { registerServiceWorker } from "../components/pwa/pwa";
 
 function DashboardContent() {
-  const { token, activeSession, activeTab, debugPhaseOverride } = useCookSession();
+  const { token, activeSession, activeTab, isLoadingSession, sessionLoadError, retryActiveSession } = useCookSession();
 
   if (!token) return <LoginScreen />;
+  // Never show the setup form until we know no cook is running: it could start a duplicate.
+  if (isLoadingSession) return <StatusScreen message="Checking for a running cook…" />;
+  if (sessionLoadError && !activeSession) {
+    return <StatusScreen message={sessionLoadError} action={{ label: "Try again", onClick: retryActiveSession }} />;
+  }
 
   // Every signed-in screen owns its whole viewport (its own band and navigation).
   if (activeTab === "history") return <HistoryScreen />;
   if (activeTab === "settings") return <SettingsScreen />;
-  return activeSession || debugPhaseOverride !== null ? <LiveCook /> : <SetupScreen />;
+  // ?phase=N only restyles a running cook for review; without one, the Cook tab is setup.
+  return activeSession ? <LiveCook /> : <SetupScreen />;
 }
 
 const noopSubscribe = () => () => {};

@@ -136,3 +136,54 @@ def test_nothing_is_sent_when_push_is_not_configured(monkeypatch, sent):
     push.save_subscription(SUB["endpoint"], SUB["keys"]["p256dh"], SUB["keys"]["auth"])
     assert push.maybe_send_pull_alert("s4", "Brisket", core_c=95.0, target_c=95.0, carryover_c=0.0, status="bare") is False
     assert sent == []
+
+
+def test_pull_alert_is_retried_until_a_device_receives_it(sent):
+    # No device subscribed yet: nothing is delivered, so nothing is recorded as sent.
+    assert push.maybe_send_pull_alert("s5", "Brisket", core_c=95.0, target_c=95.0, carryover_c=0.0, status="bare") is False
+    push.save_subscription(SUB["endpoint"], SUB["keys"]["p256dh"], SUB["keys"]["auth"])
+    # The next reading delivers it, and only then is it marked sent.
+    assert push.maybe_send_pull_alert("s5", "Brisket", core_c=95.1, target_c=95.0, carryover_c=0.0, status="bare") is True
+    assert push.maybe_send_pull_alert("s5", "Brisket", core_c=95.2, target_c=95.0, carryover_c=0.0, status="bare") is False
+    assert len(sent) == 1
+
+
+def test_connection_errors_are_contained_and_other_devices_still_get_the_alert(monkeypatch):
+    push.save_subscription("https://push.example/down", "k", "a")
+    push.save_subscription(SUB["endpoint"], SUB["keys"]["p256dh"], SUB["keys"]["auth"])
+    delivered = []
+
+    def flaky_webpush(subscription_info, data, **kwargs):
+        if subscription_info["endpoint"] == "https://push.example/down":
+            raise ConnectionError("push service unreachable")
+        delivered.append(subscription_info["endpoint"])
+
+    monkeypatch.setattr(push, "webpush", flaky_webpush)
+    assert push.send_to_all({"title": "t", "body": "b"}) == 1
+    assert delivered == [SUB["endpoint"]]
+    # A transient failure doesn't remove the subscription.
+    assert len(push.list_subscriptions()) == 2
+
+
+def test_failed_delivery_does_not_mark_the_pull_alert_sent(monkeypatch):
+    push.save_subscription(SUB["endpoint"], SUB["keys"]["p256dh"], SUB["keys"]["auth"])
+
+    def down(subscription_info, data, **kwargs):
+        raise ConnectionError("down")
+
+    monkeypatch.setattr(push, "webpush", down)
+    assert push.maybe_send_pull_alert("s6", "Brisket", core_c=95.0, target_c=95.0, carryover_c=0.0, status="bare") is False
+    calls = []
+    monkeypatch.setattr(push, "webpush", lambda subscription_info, data, **kw: calls.append(1))
+    assert push.maybe_send_pull_alert("s6", "Brisket", core_c=95.0, target_c=95.0, carryover_c=0.0, status="bare") is True
+    assert calls == [1]
+
+
+def test_test_alert_reports_an_unreachable_push_service_as_502(monkeypatch):
+    client.post("/api/push/subscribe", json=SUB)
+
+    def down(subscription_info, data, **kwargs):
+        raise ConnectionError("down")
+
+    monkeypatch.setattr(push, "webpush", down)
+    assert client.post("/api/push/test", json={"endpoint": SUB["endpoint"]}).status_code == 502

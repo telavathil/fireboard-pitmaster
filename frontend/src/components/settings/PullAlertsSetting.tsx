@@ -10,6 +10,7 @@ import {
   enablePullAlerts,
   fetchPublicKey,
   getCurrentSubscription,
+  hasServiceWorker,
   isPushSupported,
   sendTestAlert,
 } from "../pwa/pushClient";
@@ -23,6 +24,7 @@ const COPY: Record<PushState | "checking", string> = {
   "needs-install": "On iPhone and iPad, install the app first (see App), then turn pull alerts on from the installed app.",
   unsupported: "This browser can't receive push notifications. The screen still takes over at the pull while the app is open.",
   "server-off": "Pull alerts aren't set up on the server yet.",
+  "worker-missing": "Pull alerts can't start because the app's background worker didn't load. Reload the page and try again.",
 };
 
 const primary =
@@ -45,9 +47,11 @@ export default function PullAlertsSetting() {
       const supported = isPushSupported();
       let key: string | null = null;
       let sub: PushSubscription | null = null;
+      let workerReady = false;
       if (secure && supported) {
+        workerReady = await hasServiceWorker().catch(() => false);
         key = await fetchPublicKey().catch(() => null);
-        sub = await getCurrentSubscription().catch(() => null);
+        sub = workerReady ? await getCurrentSubscription().catch(() => null) : null;
       }
       if (cancelled) return;
       setPublicKey(key);
@@ -57,6 +61,7 @@ export default function PullAlertsSetting() {
           supported,
           secure,
           installState: getInstallState(window),
+          workerReady,
           serverReady: key !== null,
           permission: supported ? Notification.permission : "default",
           subscribed: sub !== null,

@@ -40,6 +40,7 @@ export default function LiveCook() {
   const now = useNow(1000);
   const [confirmingEnd, setConfirmingEnd] = useState(false);
   const [endError, setEndError] = useState<string | null>(null);
+  const [pullError, setPullError] = useState<string | null>(null);
 
   if (!activeSession || !stage) {
     return (
@@ -80,7 +81,12 @@ export default function LiveCook() {
           <PullAlarm
             explanation={pullExplanation(telemetry?.core_temp_filtered ?? null, carryoverC, tempUnit)}
             audible={alarmsEnabled}
-            onPulled={() => handleUpdateStatus("resting")}
+            error={pullError}
+            onPulled={async () => {
+              setPullError(null);
+              if (await handleUpdateStatus("resting")) return;
+              setPullError("Couldn't save the pull. Check the connection and tap again.");
+            }}
           />
         )}
       </CookBand>

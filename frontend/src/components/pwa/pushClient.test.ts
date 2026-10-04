@@ -9,7 +9,7 @@ describe("urlBase64ToUint8Array", () => {
 });
 
 describe("derivePushState", () => {
-  const ready = { supported: true, secure: true, installState: "browser" as const, serverReady: true, permission: "default" as NotificationPermission, subscribed: false };
+  const ready = { supported: true, secure: true, installState: "browser" as const, workerReady: true, serverReady: true, permission: "default" as NotificationPermission, subscribed: false };
 
   it("is off when everything is available but not yet enabled", () => {
     expect(derivePushState(ready)).toBe("off");
@@ -29,6 +29,10 @@ describe("derivePushState", () => {
 
   it("reports browsers without push support", () => {
     expect(derivePushState({ ...ready, supported: false })).toBe("unsupported");
+  });
+
+  it("reports a service worker that never registered instead of hanging", () => {
+    expect(derivePushState({ ...ready, workerReady: false })).toBe("worker-missing");
   });
 
   it("reports when the server isn't configured", () => {

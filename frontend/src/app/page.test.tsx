@@ -26,6 +26,9 @@ function setSession(overrides: Record<string, unknown>) {
     activeTab: "dashboard",
     currentPhase: 1,
     debugPhaseOverride: null,
+    isLoadingSession: false,
+    sessionLoadError: null,
+    retryActiveSession: vi.fn(),
     ...overrides,
   });
 }
@@ -41,16 +44,32 @@ describe("Dashboard routing (page.tsx)", () => {
     expect(screen.getByText("MockLoginScreen")).toBeInTheDocument();
   });
 
+  it("doesn't show the setup screen while the active cook is still loading", () => {
+    setSession({ token: "t", activeTab: "dashboard", activeSession: null, isLoadingSession: true });
+    render(<Dashboard />);
+    expect(screen.getByText(/checking for a running cook/i)).toBeInTheDocument();
+    expect(screen.queryByText("MockSetupScreen")).not.toBeInTheDocument();
+  });
+
+  it("offers a retry, not the setup screen, when the running cook couldn't be checked", async () => {
+    const retryActiveSession = vi.fn();
+    setSession({ token: "t", activeTab: "dashboard", activeSession: null, sessionLoadError: "Couldn't reach the server.", retryActiveSession });
+    render(<Dashboard />);
+    expect(screen.queryByText("MockSetupScreen")).not.toBeInTheDocument();
+    screen.getByRole("button", { name: "Try again" }).click();
+    expect(retryActiveSession).toHaveBeenCalled();
+  });
+
   it("shows the setup screen on the Cook tab when nothing is cooking", () => {
     setSession({ token: "t", activeTab: "dashboard", activeSession: null, currentPhase: 1, debugPhaseOverride: null });
     render(<Dashboard />);
     expect(screen.getByText("MockSetupScreen")).toBeInTheDocument();
   });
 
-  it("shows the live cook screen on the dashboard tab for a debug phase override", () => {
+  it("shows setup, not an empty live screen, when a debug phase override has no cook behind it", () => {
     setSession({ token: "t", activeTab: "dashboard", activeSession: null, currentPhase: 3, debugPhaseOverride: 3 });
     render(<Dashboard />);
-    expect(screen.getByText("MockLiveCook")).toBeInTheDocument();
+    expect(screen.getByText("MockSetupScreen")).toBeInTheDocument();
   });
 
   it("shows the live cook screen, without the old shell, for an active session", () => {

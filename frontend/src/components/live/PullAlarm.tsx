@@ -8,10 +8,12 @@ interface PullAlarmProps {
   explanation: string;
   audible: boolean;
   onPulled: () => void;
+  /** Shown when logging the pull failed; the alarm keeps going until it succeeds. */
+  error?: string | null;
 }
 
 /** The pull takeover: lives inside the band, which has already turned red. */
-export default function PullAlarm({ explanation, audible, onPulled }: PullAlarmProps) {
+export default function PullAlarm({ explanation, audible, onPulled, error }: PullAlarmProps) {
   const [silenced, setSilenced] = useState(false);
   usePullAlarm(true, audible && !silenced);
 
@@ -21,6 +23,7 @@ export default function PullAlarm({ explanation, audible, onPulled }: PullAlarmP
         Pull now
       </p>
       <p className="mt-3 max-w-[42ch] text-[17px] leading-snug">{explanation}</p>
+      {error && <p className="mt-3 max-w-[42ch] text-[15px] font-bold">{error}</p>}
       <div className="mt-5 flex gap-3">
         <button
           type="button"

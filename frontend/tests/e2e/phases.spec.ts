@@ -57,6 +57,8 @@ test("?phase=5: Finish cook ends the cook after confirmation", async ({ page }) 
   await gotoPhase(page, 5);
   await page.getByRole("button", { name: "Finish cook" }).click();
   await page.getByRole("dialog").getByRole("button", { name: "End cook" }).click();
+  // Ending waits for the backend to save it; reload only after the app has moved on.
+  await expect(page.getByRole("heading", { name: "Start a cook" })).toBeVisible();
   await page.goto("/");
   await page.waitForLoadState("domcontentloaded");
   await expect(page.getByRole("heading", { name: "Start a cook" })).toBeVisible();

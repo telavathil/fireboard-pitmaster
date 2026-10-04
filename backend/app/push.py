@@ -3,7 +3,8 @@ Web Push for pull alerts.
 
 Subscriptions are stored per device. The pull alert for a cook is sent once,
 when the smoothed core first reaches the pull temperature (target minus the
-predicted carryover) while the cook is still on the heat.
+predicted carryover) while the cook is still on the heat. It is recorded as sent
+only after at least one device has received it, so a failed delivery is retried.
 """
 import json
 import logging
@@ -79,6 +80,10 @@ def _send(subscription: Dict[str, Any], payload: Dict[str, Any]) -> bool:
         else:
             logger.error(f"Push delivery failed (status {status}).")
         return False
+    except Exception as e:
+        # Network errors, timeouts: transient, so keep the subscription and let other devices proceed.
+        logger.error(f"Push delivery failed: {type(e).__name__}.")
+        return False
 
 
 def send_to_all(payload: Dict[str, Any]) -> int:
@@ -95,17 +100,24 @@ def send_to_endpoint(endpoint: str, payload: Dict[str, Any]) -> Optional[bool]:
     return _send(matches[0], payload)
 
 
-def _claim_alert(session_id: str, kind: str) -> bool:
-    """Records an alert as sent. Returns False if it was already sent for this cook."""
+def _alert_already_sent(session_id: str, kind: str) -> bool:
     conn = get_db_connection()
     try:
         cursor = conn.cursor()
         cursor.execute("SELECT 1 FROM push_alerts WHERE session_id = ? AND kind = ?", (session_id, kind))
-        if cursor.fetchone():
-            return False
-        cursor.execute("INSERT INTO push_alerts (session_id, kind) VALUES (?, ?)", (session_id, kind))
+        return cursor.fetchone() is not None
+    finally:
+        conn.close()
+
+
+def _record_alert_sent(session_id: str, kind: str) -> None:
+    conn = get_db_connection()
+    try:
+        conn.execute(
+            "INSERT INTO push_alerts (session_id, kind) VALUES (?, ?) ON CONFLICT(session_id, kind) DO NOTHING",
+            (session_id, kind),
+        )
         conn.commit()
-        return True
     finally:
         conn.close()
 
@@ -124,9 +136,9 @@ def maybe_send_pull_alert(
     pull_c = target_c - (carryover_c or 0.0)
     if core_c < pull_c:
         return False
-    if not _claim_alert(session_id, "pull"):
+    if _alert_already_sent(session_id, "pull"):
         return False
-    send_to_all(
+    delivered = send_to_all(
         {
             "title": "Pull now",
             "body": f"{cut_type} has reached its pull temperature. Open Pitmaster to log the pull.",
@@ -134,4 +146,8 @@ def maybe_send_pull_alert(
             "url": "/",
         }
     )
+    # Marked sent only once a device has it; otherwise the next reading (about 20 s later) retries.
+    if delivered == 0:
+        return False
+    _record_alert_sent(session_id, "pull")
     return True
