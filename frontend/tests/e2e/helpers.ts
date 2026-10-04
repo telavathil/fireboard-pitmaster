@@ -27,7 +27,7 @@ export async function loginAsDemo(page: Page) {
 
   await page.getByRole("textbox", { name: "Username" }).fill("demo");
   await page.getByRole("textbox", { name: "Password" }).fill("demo");
-  await page.getByRole("button", { name: "SIGN IN" }).click();
+  await page.getByRole("button", { name: "Sign in", exact: true }).click();
   await page.getByRole("navigation", { name: "Primary navigation" }).waitFor();
   await page.waitForLoadState("networkidle");
 }

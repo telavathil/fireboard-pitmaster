@@ -1,9 +1,11 @@
 "use client";
 
-import React, { createContext, useContext, useState, useEffect } from "react";
+import React, { createContext, useCallback, useContext, useEffect, useRef, useState } from "react";
 import { CookSession, TelemetryPayload } from "../types";
-import { formatEta, formatStopwatch, getMeatLabel } from "../lib/formatters";
-import { getSvgPathF, getSvgPathAmbientF } from "../lib/chartPaths";
+import { BACKEND_URL } from "../lib/api";
+import { Stage, deriveStage, parseServerTime } from "../components/live/cookModel";
+import { SessionPayload } from "../components/setup/setupModel";
+import { unsubscribeThisDevice } from "../components/pwa/pushClient";
 
 interface CookSessionContextType {
   // Auth State
@@ -20,286 +22,204 @@ interface CookSessionContextType {
   // Active Session State
   activeSession: CookSession | null;
   isLoadingSession: boolean;
+  /** Set when the running cook couldn't be checked; the app then offers a retry, never the setup form. */
+  sessionLoadError: string | null;
+  retryActiveSession: () => void;
   isCreatingSession: boolean;
-  handleCreateSession: (e: React.FormEvent) => Promise<void>;
-  handleUpdateStatus: (status: string) => Promise<void>;
-  handleEndCook: () => void;
+  sessionError: string | null;
+  startCook: (payload: SessionPayload) => Promise<boolean>;
+  handleUpdateStatus: (status: string) => Promise<boolean>;
+  handleEndCook: () => Promise<boolean>;
 
   // Navigation
-  activeTab: "dashboard" | "probes" | "history" | "settings";
-  setActiveTab: (tab: "dashboard" | "probes" | "history" | "settings") => void;
-
-  // Setup Form
-  deviceId: string;
-  setDeviceId: (id: string) => void;
-  deviceName: string;
-  setDeviceName: (name: string) => void;
-  meatType: string;
-  setMeatType: (type: string) => void;
-  cutType: string;
-  setCutType: (cut: string) => void;
-  cookerType: string;
-  setCookerType: (cooker: string) => void;
-  weightKg: string;
-  setWeightKg: (w: string) => void;
-  thicknessMm: string;
-  setThicknessMm: (t: string) => void;
-  targetTempF: number;
-  setTargetTempF: (t: number) => void;
-  applyPresetF: (meat: string, cut: string, targetF: number) => void;
+  /** "dashboard" is the Cook tab: setup with no session, the live screen during one. */
+  activeTab: "dashboard" | "history" | "settings";
+  setActiveTab: (tab: "dashboard" | "history" | "settings") => void;
 
   // Settings
   tempUnit: "F" | "C";
   setTempUnit: (unit: "F" | "C") => void;
-  updateRate: number;
-  setUpdateRate: (rate: number) => void;
-  estimationModel: string;
-  setEstimationModel: (model: string) => void;
   alarmsEnabled: boolean;
   setAlarmsEnabled: (enabled: boolean) => void;
-  probeOffset: string;
-  setProbeOffset: (offset: string) => void;
 
   // Telemetry & Connection
   telemetry: TelemetryPayload | null;
   history: TelemetryPayload[];
   isConnected: boolean;
 
-  // Stall & Rest Simulated States
-  moistureBudget: number;
-  spritzCount: number;
-  handleSpritz: () => void;
-  restDurationSeconds: number;
-  peakRestTempC: number;
-  pullTimeSeconds: number;
-
-  // Derived Values
-  coreTempF: number;
-  targetTempFDisplay: number;
-  carryoverRiseF: number;
-  pullTempF: number;
+  // Live cook (derived only from real session and telemetry data)
+  stage: Stage | null;
+  carryoverC: number | null;
+  restStartedAt: number | null;
+  peakRestTempC: number | null;
   currentPhase: number;
-  progressPercent: number;
   debugPhaseOverride: number | null;
   setDebugPhaseOverride: (p: number | null) => void;
-
-  // Helpers
-  formatEta: (seconds: number) => string;
-  formatStopwatch: (totalSeconds: number) => string;
-  getMeatLabel: (meat: string) => string;
-  getSvgPathF: (data: TelemetryPayload[], minValF: number, maxValF: number) => string;
-  getSvgPathAmbientF: (data: TelemetryPayload[], minValF: number, maxValF: number) => string;
-  minTempF: number;
-  maxTempF: number;
 }
+
+const PREF_KEYS = { unit: "pitmaster_temp_unit", alarms: "pitmaster_alarm_sound" } as const;
+
+function readPref(key: string): string | null {
+  if (typeof window === "undefined") return null;
+  try {
+    return localStorage.getItem(key);
+  } catch {
+    return null;
+  }
+}
+
+function writePref(key: string, value: string) {
+  try {
+    localStorage.setItem(key, value);
+  } catch {
+    // Storage unavailable (private mode); the choice still applies for this visit.
+  }
+}
+
+const TOKEN_KEY = "pitmaster_token";
+const USERNAME_KEY = "pitmaster_username";
+
+/** A saved sign-in counts only when both the token and username are present. */
+function readSavedAuth(): { token: string; username: string } | null {
+  const token = readPref(TOKEN_KEY);
+  const username = readPref(USERNAME_KEY);
+  return token && username ? { token, username } : null;
+}
+
+/** `?phase=N` forces a stage for design review; it only exercises rendering. */
+function readPhaseOverride(): number | null {
+  if (typeof window === "undefined") return null;
+  const value = new URLSearchParams(window.location.search).get("phase");
+  const phase = value ? parseInt(value, 10) : Number.NaN;
+  return Number.isFinite(phase) ? phase : null;
+}
+
+/** When the rest began on this device; if the pull was never logged here, the rest clock starts now. */
+function restStartFor(sessionId: string): number {
+  const key = `rest_start_${sessionId}`;
+  const saved = Number(readPref(key));
+  if (saved > 0) return saved;
+  const now = Date.now();
+  writePref(key, String(now));
+  return now;
+}
+
+declare global {
+  interface Window {
+    /** Exposed for Playwright e2e checks. */
+    activeTab?: string;
+    currentPhase?: number;
+  }
+}
+
+/** Keeps roughly 12 hours of readings at the backend's 20 s polling cadence. */
+const MAX_HISTORY_POINTS = 2160;
+
+const PHASE_BY_STAGE: Record<Stage, number> = { stabilizing: 2, stall: 3, pull: 4, rest: 5, cooking: 6 };
+const STAGE_BY_PHASE: Record<number, Stage> = { 2: "stabilizing", 3: "stall", 4: "pull", 5: "rest", 6: "cooking" };
 
 const CookSessionContext = createContext<CookSessionContextType | undefined>(undefined);
 
 export function CookSessionProvider({ children }: { children: React.ReactNode }) {
-  // Authentication State
-  const [token, setToken] = useState<string | null>(null);
-  const [username, setUsername] = useState<string>("");
+  // The provider mounts client-side only (see page.tsx), so saved state is read directly at init.
+  const [savedAuth] = useState(readSavedAuth);
+  const [token, setToken] = useState<string | null>(savedAuth?.token ?? null);
+  const [username, setUsername] = useState<string>(savedAuth?.username ?? "");
   const [password, setPassword] = useState<string>("");
   const [authError, setAuthError] = useState<string | null>(null);
   const [isLoggingIn, setIsLoggingIn] = useState<boolean>(false);
 
   // Cook Session State
   const [activeSession, setActiveSession] = useState<CookSession | null>(null);
-  const [isLoadingSession, setIsLoadingSession] = useState<boolean>(true);
+  const [isLoadingSession, setIsLoadingSession] = useState<boolean>(savedAuth !== null);
+  const [sessionLoadError, setSessionLoadError] = useState<string | null>(null);
   const [isCreatingSession, setIsCreatingSession] = useState<boolean>(false);
 
-  // Cook Session Form Inputs (Pre-Cook Setup)
-  const [deviceId, setDeviceId] = useState<string>("device_sim_123");
-  const [deviceName, setDeviceName] = useState<string>("Hearth Grill");
-  const [meatType, setMeatType] = useState<string>("beef");
-  const [cutType, setCutType] = useState<string>("Brisket Flat");
-  const [cookerType, setCookerType] = useState<string>("kamado");
-  const [weightKg, setWeightKg] = useState<string>("5.4");
-  const [thicknessMm, setThicknessMm] = useState<string>("75.0");
-  const [targetTempF, setTargetTempF] = useState<number>(203);
   const [sessionError, setSessionError] = useState<string | null>(null);
 
   // Active Navigation Tab State
-  const [activeTab, setActiveTab] = useState<"dashboard" | "probes" | "history" | "settings">("probes");
+  const [activeTab, setActiveTab] = useState<"dashboard" | "history" | "settings">("dashboard");
 
   // Settings view inputs
-  const [tempUnit, setTempUnit] = useState<"F" | "C">("F");
-  const [updateRate, setUpdateRate] = useState<number>(1);
-  const [estimationModel, setEstimationModel] = useState<string>("thermal_mass");
-  const [alarmsEnabled, setAlarmsEnabled] = useState<boolean>(true);
-  const [probeOffset, setProbeOffset] = useState<string>("0.0");
+  // Display preferences, remembered on this device. Authenticated screens never
+  // server-render, so reading storage in the initializer can't cause a hydration mismatch.
+  const [tempUnit, setTempUnitState] = useState<"F" | "C">(() => (readPref(PREF_KEYS.unit) === "C" ? "C" : "F"));
+  const [alarmsEnabled, setAlarmsEnabledState] = useState<boolean>(() => readPref(PREF_KEYS.alarms) !== "off");
+  const setTempUnit = (unit: "F" | "C") => {
+    setTempUnitState(unit);
+    writePref(PREF_KEYS.unit, unit);
+  };
+  const setAlarmsEnabled = (enabled: boolean) => {
+    setAlarmsEnabledState(enabled);
+    writePref(PREF_KEYS.alarms, enabled ? "on" : "off");
+  };
 
   // Live Telemetry States
   const [telemetry, setTelemetry] = useState<TelemetryPayload | null>(null);
   const [history, setHistory] = useState<TelemetryPayload[]>([]);
-  const [isConnected, setIsConnected] = useState<boolean>(false);
+  const [connectionLost, setConnectionLost] = useState<boolean>(false);
 
-  // Phase 3 & 5 UI Simulated/Derived States
-  const [moistureBudget, setMoistureBudget] = useState<number>(85);
-  const [spritzCount, setSpritzCount] = useState<number>(0);
-  const [restDurationSeconds, setRestDurationSeconds] = useState<number>(18 * 60 + 27); // default starting time matching design: 18:27
-  const [peakRestTempC, setPeakRestTempC] = useState<number>(93.2);
-  const [pullTimeSeconds, setPullTimeSeconds] = useState<number>(3 * 60 + 1);
+  // When the current rest began (persisted per session in localStorage).
+  const [restStart, setRestStart] = useState<number | null>(null);
 
-  // Debug override check via URL query parameters
-  const [debugPhaseOverride, setDebugPhaseOverride] = useState<number | null>(null);
+  const [debugPhaseOverride, setDebugPhaseOverride] = useState<number | null>(readPhaseOverride);
 
-  const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:8000";
+  const backendUrl = BACKEND_URL;
 
-  // Load token and active session on mount
-  useEffect(() => {
-    const savedToken = localStorage.getItem("pitmaster_token");
-    const savedUser = localStorage.getItem("pitmaster_username");
-    
-    if (savedToken && savedUser) {
-      setToken(savedToken);
-      setUsername(savedUser);
-      fetchActiveSession(savedToken);
-    } else {
-      setIsLoadingSession(false);
-    }
-  }, []);
-
-  // Sync Navigation Tab State based on active cook session status
-  useEffect(() => {
-    if (activeSession) {
-      setActiveTab("dashboard");
-    } else {
-      setActiveTab("probes");
-    }
-  }, [activeSession ? activeSession.id : null]);
-
-  // Sync Rest Duration timer (counts up during Phase 5)
-  useEffect(() => {
-    let interval: NodeJS.Timeout;
-    if (activeSession?.status === "resting") {
-      const restStart = localStorage.getItem(`rest_start_${activeSession.id}`);
-      const startTime = restStart ? parseInt(restStart, 10) : new Date().getTime() - (18 * 60 + 27) * 1000;
-      if (!restStart) {
-        localStorage.setItem(`rest_start_${activeSession.id}`, startTime.toString());
-      }
-      
-      interval = setInterval(() => {
-        setRestDurationSeconds(Math.floor((new Date().getTime() - startTime) / 1000));
-      }, 1000);
-    }
-    return () => clearInterval(interval);
-  }, [activeSession]);
-
-  // Pull timer countdown in Phase 4
-  useEffect(() => {
-    let interval: NodeJS.Timeout;
-    if (activeSession && telemetry && currentCoreFiltered >= (currentTarget - carryoverRise) && activeSession.status === "bare") {
-      interval = setInterval(() => {
-        setPullTimeSeconds((prev) => Math.max(0, prev - 1));
-      }, 1000);
-    }
-    return () => clearInterval(interval);
-  }, [activeSession, telemetry]);
-
-  // Keep track of peak temperature during resting
-  useEffect(() => {
-    if (activeSession?.status === "resting" && telemetry) {
-      setPeakRestTempC((prev) => Math.max(prev, telemetry.core_temp_filtered));
-    }
-  }, [activeSession, telemetry]);
-
-  // Simulate Moisture Budget depletion in Stall phase
-  useEffect(() => {
-    let interval: NodeJS.Timeout;
-    if (activeSession && telemetry?.stall_detected && activeSession.status === "bare") {
-      interval = setInterval(() => {
-        setMoistureBudget((prev) => Math.max(15, prev - 1));
-      }, 12000);
-    } else if (!telemetry?.stall_detected) {
-      setMoistureBudget(85);
-    }
-    return () => clearInterval(interval);
-  }, [activeSession, telemetry]);
-
-  // Check URL phase override
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      const params = new URLSearchParams(window.location.search);
-      const p = params.get("phase");
-      if (p) {
-        const phaseNum = parseInt(p, 10);
-        setDebugPhaseOverride(phaseNum);
-        if (phaseNum === 1) {
-          setActiveTab("probes");
-        } else {
-          setActiveTab("dashboard");
-        }
-      }
-    }
-  }, []);
-
-  const fetchActiveSession = async (authToken: string) => {
+  const fetchActiveSession = useCallback(async (authToken: string) => {
     try {
-      const res = await fetch(`${backendUrl}/api/sessions/active`, {
-        headers: {
-          Authorization: `Bearer ${authToken}`,
-        },
+      const res = await fetch(`${BACKEND_URL}/api/sessions/active`, {
+        headers: { Authorization: `Bearer ${authToken}` },
       });
-      if (res.ok) {
-        const data = await res.json();
-        setActiveSession(data);
-        if (data.status === "resting") {
-          setPeakRestTempC(data.target_temp_c + 0.2);
-        }
-      } else {
-        setActiveSession(null);
-      }
-    } catch (err) {
-      console.error("Failed to fetch active session:", err);
+      // 404 means no cook is running; any other failure means we couldn't tell.
+      if (!res.ok && res.status !== 404) throw new Error(`Active session check failed (${res.status})`);
+      const data: CookSession | null = res.ok ? await res.json() : null;
+      setActiveSession(data);
+      setSessionLoadError(null);
+      if (data?.status === "resting") setRestStart(restStartFor(data.id));
+    } catch {
+      setSessionLoadError("Couldn't reach the server to check for a running cook.");
     } finally {
       setIsLoadingSession(false);
     }
-  };
+  }, []);
 
-  // SSE Stream Handler for Telemetry
+  // Load the active cook once for a saved sign-in.
+  const initialToken = useRef(savedAuth?.token ?? null);
   useEffect(() => {
-    if (!activeSession) {
-      setTelemetry(null);
-      setHistory([]);
-      setIsConnected(false);
-      return;
-    }
+    if (initialToken.current) void fetchActiveSession(initialToken.current);
+  }, [fetchActiveSession]);
 
-    const sseUrl = `${backendUrl}/api/telemetry/stream/${activeSession.device_id}/1`;
-    console.log("Connecting to SSE telemetry stream:", sseUrl);
-    const eventSource = new EventSource(sseUrl);
-
-    setIsConnected(true);
-
+  // Live telemetry for the active cook. EventSource reconnects on its own;
+  // the UI shows a lost connection only after a real error.
+  const streamDeviceId = activeSession?.device_id ?? null;
+  const streamSessionId = activeSession?.id ?? null;
+  useEffect(() => {
+    if (!streamDeviceId) return;
+    const eventSource = new EventSource(`${BACKEND_URL}/api/telemetry/stream/${streamDeviceId}/1`);
+    eventSource.onopen = () => setConnectionLost(false);
     eventSource.onmessage = (event) => {
+      setConnectionLost(false);
       try {
         const payload: TelemetryPayload = JSON.parse(event.data);
         setTelemetry(payload);
-        
-        // Maintain rolling history of the last 30 telemetry points
+        // Maintain a rolling history covering the whole cook
         setHistory((prev) => {
-          if (prev.length > 0 && prev[prev.length - 1].timestamp === payload.timestamp) {
-            return prev;
-          }
-          const updated = [...prev, payload];
-          return updated.slice(-30);
+          if (prev.length > 0 && prev[prev.length - 1].timestamp === payload.timestamp) return prev;
+          return [...prev, payload].slice(-MAX_HISTORY_POINTS);
         });
-      } catch (err) {
-        console.error("Failed to parse SSE payload:", err);
+      } catch {
+        // Ignore a malformed frame; the next reading replaces it.
       }
     };
-
-    eventSource.onerror = (err) => {
-      console.error("SSE stream experienced an error:", err);
-      setIsConnected(false);
-    };
-
+    eventSource.onerror = () => setConnectionLost(true);
     return () => {
       eventSource.close();
-      setIsConnected(false);
+      setConnectionLost(false);
+      setTelemetry(null);
+      setHistory([]);
     };
-  }, [activeSession]);
+  }, [streamDeviceId, streamSessionId]);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -315,49 +235,47 @@ export function CookSessionProvider({ children }: { children: React.ReactNode })
 
       if (res.ok) {
         const data = await res.json();
-        localStorage.setItem("pitmaster_token", data.access_token);
-        localStorage.setItem("pitmaster_username", username);
+        writePref(TOKEN_KEY, data.access_token);
+        writePref(USERNAME_KEY, username);
         setToken(data.access_token);
-        fetchActiveSession(data.access_token);
+        setIsLoadingSession(true);
+        void fetchActiveSession(data.access_token);
       } else {
         const errData = await res.json();
-        setAuthError(errData.detail || "Login failed. Please check your credentials.");
+        setAuthError(errData.detail || "Sign-in failed. Check your username and password.");
       }
-    } catch (err) {
-      setAuthError("Network error. Could not connect to API server.");
+    } catch {
+      setAuthError("Couldn't reach the server. Check that the backend is running, then try again.");
     } finally {
       setIsLoggingIn(false);
     }
   };
 
-  const handleLogout = () => {
-    localStorage.removeItem("pitmaster_token");
-    localStorage.removeItem("pitmaster_username");
-    setToken(null);
-    setActiveSession(null);
-    setTelemetry(null);
-    setHistory([]);
+  const retryActiveSession = () => {
+    if (!token) return;
+    setSessionLoadError(null);
+    setIsLoadingSession(true);
+    void fetchActiveSession(token);
   };
 
-  const handleCreateSession = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleLogout = () => {
+    // Signing out stops pull alerts to this device (best effort; never blocks sign-out).
+    void unsubscribeThisDevice();
+    try {
+      localStorage.removeItem(TOKEN_KEY);
+      localStorage.removeItem(USERNAME_KEY);
+    } catch {
+      // Storage unavailable; the in-memory sign-out below still applies.
+    }
+    setToken(null);
+    setActiveSession(null);
+    setActiveTab("dashboard");
+  };
+
+  /** Creates a cook from a validated setup payload. Resolves true when the session started. */
+  const startCook = async (payload: SessionPayload): Promise<boolean> => {
     setSessionError(null);
     setIsCreatingSession(true);
-
-    // Convert target Temp from F (slider) to C for database
-    const targetC = parseFloat(((targetTempF - 32) * 5 / 9).toFixed(1));
-
-    const payload = {
-      device_id: deviceId,
-      device_name: deviceName,
-      meat_type: meatType,
-      cut_type: cutType,
-      cooker_type: cookerType,
-      status: "bare",
-      weight_kg: parseFloat(weightKg),
-      thickness_mm: parseFloat(thicknessMm),
-      target_temp_c: targetC,
-    };
 
     try {
       const res = await fetch(`${backendUrl}/api/sessions`, {
@@ -372,23 +290,23 @@ export function CookSessionProvider({ children }: { children: React.ReactNode })
       if (res.ok) {
         const data = await res.json();
         setActiveSession(data);
-        setMoistureBudget(85);
-        setSpritzCount(0);
-        setPeakRestTempC(93.2);
-        setPullTimeSeconds(3 * 60 + 1);
-      } else {
-        const errData = await res.json();
-        setSessionError(errData.detail || "Failed to create session.");
+        setActiveTab("dashboard");
+        return true;
       }
-    } catch (err) {
-      setSessionError("Failed to communicate with the server.");
+      const errData = await res.json().catch(() => ({}));
+      setSessionError(errData.detail || "The cook couldn't be started. Check the details and try again.");
+      return false;
+    } catch {
+      setSessionError("Couldn't reach the server. Check that the backend is running, then try again.");
+      return false;
     } finally {
       setIsCreatingSession(false);
     }
   };
 
-  const handleUpdateStatus = async (newStatus: string) => {
-    if (!activeSession) return;
+  /** Saves a status change. Resolves true once the backend has it; the session is left as-is otherwise. */
+  const handleUpdateStatus = async (newStatus: string): Promise<boolean> => {
+    if (!activeSession) return false;
     try {
       const res = await fetch(`${backendUrl}/api/sessions/${activeSession.id}`, {
         method: "PATCH",
@@ -398,81 +316,50 @@ export function CookSessionProvider({ children }: { children: React.ReactNode })
         },
         body: JSON.stringify({ status: newStatus }),
       });
-      if (res.ok) {
-        const updatedSession = { ...activeSession, status: newStatus };
-        setActiveSession(updatedSession);
-        if (newStatus === "resting") {
-          localStorage.setItem(`rest_start_${activeSession.id}`, new Date().getTime().toString());
-          setPeakRestTempC(telemetry?.core_temp_filtered || activeSession.target_temp_c);
-        }
+      if (!res.ok) return false;
+      if (newStatus === "completed") {
+        // A finished cook is never restored as the active session.
+        setActiveSession(null);
+        setActiveTab("dashboard");
+        return true;
       }
-    } catch (err) {
-      console.error("Failed to update status:", err);
+      setActiveSession({ ...activeSession, status: newStatus });
+      if (newStatus === "resting") {
+        const startedAt = Date.now();
+        writePref(`rest_start_${activeSession.id}`, String(startedAt));
+        setRestStart(startedAt);
+      }
+      return true;
+    } catch {
+      return false;
     }
   };
 
-  const handleEndCook = () => {
-    handleUpdateStatus("completed");
-    setActiveSession(null);
-    setTelemetry(null);
-    setHistory([]);
-  };
+  /** Ends the cook only once the backend has saved it, so a failed save never loses a running cook. */
+  const handleEndCook = () => handleUpdateStatus("completed");
 
-  const handleSpritz = () => {
-    setSpritzCount((prev) => prev + 1);
-    setMoistureBudget((prev) => Math.min(95, prev + 8));
-  };
+  // Live cook derivation. Nothing here falls back to invented readings.
+  const carryoverC = telemetry?.carryover_rise ?? null;
+  const overrideStage = debugPhaseOverride !== null ? STAGE_BY_PHASE[debugPhaseOverride] ?? null : null;
+  const stage: Stage | null =
+    overrideStage ??
+    (activeSession
+      ? deriveStage({ status: activeSession.status, telemetry, targetC: activeSession.target_temp_c, carryoverC })
+      : null);
+  const currentPhase = debugPhaseOverride ?? (stage ? PHASE_BY_STAGE[stage] : 1);
 
-  const applyPresetF = (meat: string, cut: string, targetF: number) => {
-    setMeatType(meat);
-    setCutType(cut);
-    setTargetTempF(targetF);
-  };
+  const restStartedAt = activeSession?.status === "resting" ? restStart : null;
+  const isConnected = !connectionLost;
 
-  // Temperature Conversions / Calculations
-  const currentCoreRaw = telemetry ? telemetry.core_temp_raw : 15.0;
-  const currentCoreFiltered = telemetry ? telemetry.core_temp_filtered : currentCoreRaw;
-  const currentTarget = activeSession ? activeSession.target_temp_c : 95.0;
-  const carryoverRise = telemetry?.carryover_rise || 4.2;
+  // Carryover peak: the highest core reading since the rest began.
+  const restReadings = restStartedAt !== null ? history.filter((r) => parseServerTime(r.timestamp) >= restStartedAt) : [];
+  const peakRestTempC = restReadings.length > 0 ? Math.max(...restReadings.map((r) => r.core_temp_filtered)) : null;
 
-  const coreTempF = Math.round(currentCoreFiltered * 9/5 + 32);
-  const targetTempFDisplay = activeSession ? Math.round(currentTarget * 9/5 + 32) : targetTempF;
-  const carryoverRiseF = Math.round(carryoverRise * 9/5);
-  const pullTempF = targetTempFDisplay - carryoverRiseF;
-
-  // SVG Gauge progress
-  const progressPercent = Math.max(
-    0,
-    Math.min(100, ((currentCoreFiltered - 4.0) / (currentTarget - 4.0)) * 100)
-  );
-
-  const minTempF = 40;
-  const maxTempF = 250;
-
-  // Render logic currentPhase
-  let currentPhase = 1;
-  if (debugPhaseOverride !== null) {
-    currentPhase = debugPhaseOverride;
-  } else if (!activeSession) {
-    currentPhase = 1;
-  } else if (activeSession?.status === "resting") {
-    currentPhase = 5;
-  } else if (telemetry && currentCoreFiltered >= (currentTarget - carryoverRise)) {
-    currentPhase = 4;
-  } else if (!telemetry || telemetry.confidence === "low" || telemetry.confidence === "none") {
-    currentPhase = 2;
-  } else if (telemetry.stall_detected) {
-    currentPhase = 3;
-  } else {
-    currentPhase = 6; // Regular Active Cook
-  }
-
-
-  // Sync state variables onto window for E2E headless validation testing
-  if (typeof window !== "undefined") {
-    (window as any).activeTab = activeTab;
-    (window as any).currentPhase = currentPhase;
-  }
+  // Expose navigation state for Playwright e2e checks.
+  useEffect(() => {
+    window.activeTab = activeTab;
+    window.currentPhase = currentPhase;
+  }, [activeTab, currentPhase]);
 
   return (
     <CookSessionContext.Provider
@@ -488,63 +375,29 @@ export function CookSessionProvider({ children }: { children: React.ReactNode })
         handleLogout,
         activeSession,
         isLoadingSession,
+        sessionLoadError,
+        retryActiveSession,
         isCreatingSession,
-        handleCreateSession,
+        sessionError,
+        startCook,
         handleUpdateStatus,
         handleEndCook,
         activeTab,
         setActiveTab,
-        deviceId,
-        setDeviceId,
-        deviceName,
-        setDeviceName,
-        meatType,
-        setMeatType,
-        cutType,
-        setCutType,
-        cookerType,
-        setCookerType,
-        weightKg,
-        setWeightKg,
-        thicknessMm,
-        setThicknessMm,
-        targetTempF,
-        setTargetTempF,
-        applyPresetF,
         tempUnit,
         setTempUnit,
-        updateRate,
-        setUpdateRate,
-        estimationModel,
-        setEstimationModel,
         alarmsEnabled,
         setAlarmsEnabled,
-        probeOffset,
-        setProbeOffset,
         telemetry,
         history,
         isConnected,
-        moistureBudget,
-        spritzCount,
-        handleSpritz,
-        restDurationSeconds,
+        stage,
+        carryoverC,
+        restStartedAt,
         peakRestTempC,
-        pullTimeSeconds,
-        coreTempF,
-        targetTempFDisplay,
-        carryoverRiseF,
-        pullTempF,
         currentPhase,
-        progressPercent,
         debugPhaseOverride,
         setDebugPhaseOverride,
-        formatEta,
-        formatStopwatch,
-        getMeatLabel,
-        getSvgPathF,
-        getSvgPathAmbientF,
-        minTempF,
-        maxTempF,
       }}
     >
       {children}

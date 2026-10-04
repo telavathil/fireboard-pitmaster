@@ -13,35 +13,45 @@ test.beforeEach(async ({ request, page }) => {
   await loginAsDemo(page);
 });
 
-test("History tab renders the session history log", async ({ page }) => {
+test("History lists a cook after it ends, from the backend's saved history", async ({ page }) => {
+  await page.getByLabel("Cut").fill("E2E history brisket");
+  await page.getByRole("button", { name: "Start cook" }).click();
+  await page.getByRole("region", { name: "Core temperature" }).waitFor({ timeout: 10000 });
+  await page.getByRole("button", { name: "Cook options" }).click();
+  await page.getByRole("menuitem", { name: /End cook/ }).click();
+  await page.getByRole("dialog").getByRole("button", { name: "End cook" }).click();
+
   await navLink(page, "History").click();
-  await expect(page.getByRole("heading", { name: "SESSION HISTORY LOG" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "History" })).toBeVisible();
+  const row = page.getByRole("row").filter({ hasText: "E2E history brisket" }).first();
+  await expect(row).toBeVisible();
+  await expect(row).toContainText("203°");
 });
 
-test("Settings: temperature unit toggle updates active styling", async ({ page }) => {
+test("Settings: the temperature unit applies everywhere and survives a reload", async ({ page }) => {
   await navLink(page, "Settings").click();
-  const celsiusBtn = page.getByRole("button", { name: /CELSIUS/ });
-  await celsiusBtn.click();
-  await expect(celsiusBtn).toHaveClass(/forge-btn-active/);
+  await page.getByText("Celsius (°C)", { exact: true }).click();
+  await expect(page.getByRole("radio", { name: "Celsius (°C)" })).toBeChecked();
+
+  await page.reload();
+  await navLink(page, "Settings").click();
+  await expect(page.getByRole("radio", { name: "Celsius (°C)" })).toBeChecked();
+
+  await navLink(page, "Cook").click();
+  await expect(page.getByLabel("Target temperature")).toHaveText("95°");
 });
 
-test("Settings: SSE stream interval buttons toggle active styling", async ({ page }) => {
+test("Settings: alarm sound can be turned off and stays off", async ({ page }) => {
   await navLink(page, "Settings").click();
-  const rateBtn = page.getByRole("button", { name: "5 SECONDS" });
-  await rateBtn.click();
-  await expect(rateBtn).toHaveClass(/forge-btn-active/);
+  await page.getByText("Off", { exact: true }).click();
+  await page.reload();
+  await navLink(page, "Settings").click();
+  await expect(page.getByRole("radio", { name: "Off" })).toBeChecked();
 });
 
-test("Settings: prediction model dropdown updates", async ({ page }) => {
+test("Settings: sign out returns to the sign-in screen", async ({ page }) => {
   await navLink(page, "Settings").click();
-  await page.getByRole("combobox").selectOption("exponential");
-  await expect(page.getByRole("combobox")).toHaveValue("exponential");
-});
-
-test("Settings: audio alarm toggle relabels the button", async ({ page }) => {
-  await navLink(page, "Settings").click();
-  const alarmBtn = page.getByRole("button", { name: /AUDIO ALARMS/ });
-  await expect(alarmBtn).toHaveText("AUDIO ALARMS: ON");
-  await alarmBtn.click();
-  await expect(alarmBtn).toHaveText("AUDIO ALARMS: MUTED");
+  await expect(page.getByText(/Signed in as/)).toContainText("demo");
+  await page.getByRole("button", { name: "Sign out" }).click();
+  await expect(page.getByRole("button", { name: "Sign in", exact: true })).toBeVisible();
 });

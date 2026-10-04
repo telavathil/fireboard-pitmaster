@@ -173,6 +173,8 @@ def test_kalman_prediction_with_history(mock_get_redis):
     assert payload["eta_seconds"] > 0
     assert "carryover_rise" in payload
     assert payload["carryover_rise"] > 0.0
+    # Reading time is sent as explicit UTC so browsers in other zones don't misread its age.
+    assert payload["timestamp"] == "2023-11-14T22:18:00+00:00"
     
     # 6. Verify telemetry logs were written to the database
     conn = get_db_connection()
@@ -189,3 +191,70 @@ def test_kalman_prediction_with_history(mock_get_redis):
     assert logs[0][2] > 0
     conn.close()
 
+
+
+@patch("app.cache.get_redis_client")
+def test_predictions_check_for_the_pull_alert_with_session_details(mock_get_redis):
+    mock_get_redis.return_value = MockRedis()
+    conn = get_db_connection()
+    conn.execute(
+        """
+        INSERT INTO cook_sessions (id, device_id, meat_type, cut_type, cooker_type, status, weight_kg, thickness_mm, target_temp_c)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+        """,
+        ("session_pull", "device_pull", "beef", "Brisket flat", "kamado", "bare", 5.4, 75.0, 95.0),
+    )
+    conn.commit()
+    conn.close()
+
+    from app.pit_tasks import run_predictions
+    with patch("app.pit_tasks.maybe_send_pull_alert") as alert:
+        run_predictions(session_id="session_pull", device_id="device_pull", core_temp=80.0,
+                        ambient_temp=110.0, target_temp=95.0, timestamp=1700000000.0)
+
+    alert.assert_called_once()
+    kwargs = alert.call_args.kwargs
+    assert kwargs["session_id"] == "session_pull"
+    assert kwargs["cut_type"] == "Brisket flat"
+    assert kwargs["status"] == "bare"
+    assert kwargs["target_c"] == 95.0
+    assert "core_c" in kwargs and "carryover_c" in kwargs
+
+
+@patch("app.cache.get_redis_client")
+def test_a_failing_pull_alert_never_breaks_predictions(mock_get_redis):
+    mock_redis = MockRedis()
+    mock_get_redis.return_value = mock_redis
+    conn = get_db_connection()
+    conn.execute(
+        """
+        INSERT INTO cook_sessions (id, device_id, meat_type, cut_type, cooker_type, status, weight_kg, thickness_mm, target_temp_c)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+        """,
+        ("session_x", "device_x", "beef", "Brisket flat", "kamado", "bare", 5.4, 75.0, 95.0),
+    )
+    conn.commit()
+    conn.close()
+    from app.pit_tasks import run_predictions
+    with patch("app.pit_tasks.maybe_send_pull_alert", side_effect=RuntimeError("push down")) as alert:
+        run_predictions(session_id="session_x", device_id="device_x", core_temp=60.0,
+                        ambient_temp=110.0, target_temp=95.0, timestamp=1700000000.0)
+    alert.assert_called_once()
+    assert mock_redis.get("telemetry:latest:device_x:1") is not None
+
+
+def test_clear_device_state_removes_latest_reading_and_history():
+    from app import cache
+
+    class DeletableRedis(MockRedis):
+        def delete(self, *keys):
+            for k in keys:
+                self.store.pop(k, None)
+
+    fake = DeletableRedis()
+    with patch("app.cache.get_redis_client", return_value=fake):
+        cache.set_latest_telemetry("dev_c", 1, {"core_temp_filtered": 95.0})
+        cache.push_raw_history("dev_c", 1, 95.0, 1700000000.0)
+        cache.clear_device_state("dev_c", 1)
+        assert cache.get_latest_telemetry("dev_c", 1) is None
+        assert cache.get_raw_history("dev_c", 1) == []

@@ -6,17 +6,11 @@ import { useCookSession } from "../context/CookSessionContext";
 // Stub every heavy child so this test isolates page.tsx's own routing
 // switch (activeTab / activeSession / currentPhase / debugPhaseOverride ->
 // which view renders), not the children's own rendering logic.
-vi.mock("../components/Sidebar", () => ({ default: () => <div>MockSidebar</div> }));
-vi.mock("../components/Header", () => ({ default: () => <div>MockHeader</div> }));
-vi.mock("../components/EmptyDashboard", () => ({ default: () => <div>MockEmptyDashboard</div> }));
-vi.mock("../components/HistoryView", () => ({ default: () => <div>MockHistoryView</div> }));
-vi.mock("../components/SettingsView", () => ({ default: () => <div>MockSettingsView</div> }));
-vi.mock("../components/Phase1Setup", () => ({ default: () => <div>MockPhase1Setup</div> }));
-vi.mock("../components/Phase2Stabilizing", () => ({ default: () => <div>MockPhase2</div> }));
-vi.mock("../components/Phase3Stall", () => ({ default: () => <div>MockPhase3</div> }));
-vi.mock("../components/Phase4Pull", () => ({ default: () => <div>MockPhase4</div> }));
-vi.mock("../components/Phase5Resting", () => ({ default: () => <div>MockPhase5</div> }));
-vi.mock("../components/Phase6Active", () => ({ default: () => <div>MockPhase6</div> }));
+vi.mock("../components/history/HistoryScreen", () => ({ default: () => <div>MockHistoryScreen</div> }));
+vi.mock("../components/settings/SettingsScreen", () => ({ default: () => <div>MockSettingsScreen</div> }));
+vi.mock("../components/setup/SetupScreen", () => ({ default: () => <div>MockSetupScreen</div> }));
+vi.mock("../components/live/LiveCook", () => ({ default: () => <div>MockLiveCook</div> }));
+vi.mock("../components/login/LoginScreen", () => ({ default: () => <div>MockLoginScreen</div> }));
 
 vi.mock("../context/CookSessionContext", () => ({
   CookSessionProvider: ({ children }: { children: React.ReactNode }) => children,
@@ -29,9 +23,12 @@ function setSession(overrides: Record<string, unknown>) {
   mockedUseCookSession.mockReturnValue({
     token: "mock-token",
     activeSession: null,
-    activeTab: "probes",
+    activeTab: "dashboard",
     currentPhase: 1,
     debugPhaseOverride: null,
+    isLoadingSession: false,
+    sessionLoadError: null,
+    retryActiveSession: vi.fn(),
     ...overrides,
   });
 }
@@ -44,45 +41,53 @@ describe("Dashboard routing (page.tsx)", () => {
   it("shows the login panel when there is no token", () => {
     setSession({ token: null });
     render(<Dashboard />);
-    expect(screen.getByText(/HEARTH COMMAND/i)).toBeInTheDocument();
-    expect(screen.queryByText("MockSidebar")).not.toBeInTheDocument();
+    expect(screen.getByText("MockLoginScreen")).toBeInTheDocument();
   });
 
-  it("shows Phase1Setup when activeTab is 'probes'", () => {
-    setSession({ token: "t", activeTab: "probes", activeSession: null, currentPhase: 1 });
+  it("doesn't show the setup screen while the active cook is still loading", () => {
+    setSession({ token: "t", activeTab: "dashboard", activeSession: null, isLoadingSession: true });
     render(<Dashboard />);
-    expect(screen.getByText("MockPhase1Setup")).toBeInTheDocument();
+    expect(screen.getByText(/checking for a running cook/i)).toBeInTheDocument();
+    expect(screen.queryByText("MockSetupScreen")).not.toBeInTheDocument();
   });
 
-  it("shows EmptyDashboard on the dashboard tab with no active session (regression: was previously hijacked by the Phase1Setup branch)", () => {
+  it("offers a retry, not the setup screen, when the running cook couldn't be checked", async () => {
+    const retryActiveSession = vi.fn();
+    setSession({ token: "t", activeTab: "dashboard", activeSession: null, sessionLoadError: "Couldn't reach the server.", retryActiveSession });
+    render(<Dashboard />);
+    expect(screen.queryByText("MockSetupScreen")).not.toBeInTheDocument();
+    screen.getByRole("button", { name: "Try again" }).click();
+    expect(retryActiveSession).toHaveBeenCalled();
+  });
+
+  it("shows the setup screen on the Cook tab when nothing is cooking", () => {
     setSession({ token: "t", activeTab: "dashboard", activeSession: null, currentPhase: 1, debugPhaseOverride: null });
     render(<Dashboard />);
-    expect(screen.getByText("MockEmptyDashboard")).toBeInTheDocument();
-    expect(screen.queryByText("MockPhase1Setup")).not.toBeInTheDocument();
+    expect(screen.getByText("MockSetupScreen")).toBeInTheDocument();
   });
 
-  it("shows the debug-overridden phase view on the dashboard tab even with no active session", () => {
+  it("shows setup, not an empty live screen, when a debug phase override has no cook behind it", () => {
     setSession({ token: "t", activeTab: "dashboard", activeSession: null, currentPhase: 3, debugPhaseOverride: 3 });
     render(<Dashboard />);
-    expect(screen.getByText("MockPhase3")).toBeInTheDocument();
+    expect(screen.getByText("MockSetupScreen")).toBeInTheDocument();
   });
 
-  it("shows the correct phase view on the dashboard tab for an active session", () => {
+  it("shows the live cook screen, without the old shell, for an active session", () => {
     const activeSession = { id: "s1", status: "bare" };
     setSession({ token: "t", activeTab: "dashboard", activeSession, currentPhase: 4, debugPhaseOverride: null });
     render(<Dashboard />);
-    expect(screen.getByText("MockPhase4")).toBeInTheDocument();
+    expect(screen.getByText("MockLiveCook")).toBeInTheDocument();
   });
 
   it("shows HistoryView on the history tab regardless of session/phase state", () => {
     setSession({ token: "t", activeTab: "history", activeSession: null, currentPhase: 1 });
     render(<Dashboard />);
-    expect(screen.getByText("MockHistoryView")).toBeInTheDocument();
+    expect(screen.getByText("MockHistoryScreen")).toBeInTheDocument();
   });
 
   it("shows SettingsView on the settings tab regardless of session/phase state", () => {
     setSession({ token: "t", activeTab: "settings", activeSession: null, currentPhase: 1 });
     render(<Dashboard />);
-    expect(screen.getByText("MockSettingsView")).toBeInTheDocument();
+    expect(screen.getByText("MockSettingsScreen")).toBeInTheDocument();
   });
 });

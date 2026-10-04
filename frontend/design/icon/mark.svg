@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <!-- FireBoard Pitmaster mark: a cook's curve rising through the stall to the pull (red, the One Red Rule). -->
+  <rect width="512" height="512" fill="#f2c230"/>
+  <path d="M104 392 C 140 300 178 262 228 256 L 296 251 C 338 248 358 196 396 150"
+        fill="none" stroke="#13233a" stroke-width="40" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="396" cy="150" r="38" fill="#c8372d"/>
+</svg>

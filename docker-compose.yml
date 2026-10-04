@@ -30,6 +30,9 @@ services:
       - FIREBOARD_PASSWORD=${FIREBOARD_PASSWORD}
       - JWT_SECRET=${JWT_SECRET:-supersecretjwttokenkey}
       - ENVIRONMENT=${ENVIRONMENT:-development}
+      - VAPID_PUBLIC_KEY=${VAPID_PUBLIC_KEY}
+      - VAPID_PRIVATE_KEY=${VAPID_PRIVATE_KEY}
+      - VAPID_SUBJECT=${VAPID_SUBJECT:-mailto:pitmaster@localhost}
     depends_on:
       - redis
     deploy:
@@ -48,6 +51,9 @@ services:
       - REDIS_URL=redis://redis:6379/0
       - DB_URL=${DB_URL:-sqlite:///docs/research/local.db}
       - DB_AUTH_TOKEN=${DB_AUTH_TOKEN}
+      - VAPID_PUBLIC_KEY=${VAPID_PUBLIC_KEY}
+      - VAPID_PRIVATE_KEY=${VAPID_PRIVATE_KEY}
+      - VAPID_SUBJECT=${VAPID_SUBJECT:-mailto:pitmaster@localhost}
     depends_on:
       - redis
     deploy:

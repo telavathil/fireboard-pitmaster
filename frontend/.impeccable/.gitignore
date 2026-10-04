@@ -1,0 +1,5 @@
+# Session-only Impeccable scratch: decision-page logs, generation prompts, review captures
+questions/
+review/
+mocks/decision/*.json
+mocks/decision/*.txt

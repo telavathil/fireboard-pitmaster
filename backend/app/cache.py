@@ -94,3 +94,15 @@ def get_raw_history(device_id: str, channel_id: int) -> list:
         except (ValueError, TypeError):
             continue
     return history
+
+
+def clear_device_state(device_id: str, channel_id: int) -> None:
+    """
+    Forgets a device's latest reading and raw history. Called when a cook starts,
+    so a reused device never carries the previous cook's temperatures into the new one.
+    """
+    client = get_redis_client()
+    client.delete(
+        f"telemetry:latest:{device_id}:{channel_id}",
+        f"telemetry:history:{device_id}:{channel_id}",
+    )

@@ -29,6 +29,24 @@ All technical specifications, architectural decisions, and research are stored i
 
 ---
 
+## Pull Alerts (Web Push)
+
+The app is an installable PWA and can send a "Pull now" notification when a cook reaches its pull temperature, even with the app closed. Each device opts in from **Settings → Pull alerts**.
+
+1. Generate a VAPID key pair once and put it in the root `.env` (never commit it):
+
+   ```bash
+   docker compose run --rm backend python -c "from py_vapid import Vapid01; from cryptography.hazmat.primitives import serialization as s; import base64; v=Vapid01(); v.generate_keys(); b=lambda x: base64.urlsafe_b64encode(x).rstrip(b'=').decode(); print('VAPID_PUBLIC_KEY='+b(v.public_key.public_bytes(s.Encoding.X962, s.PublicFormat.UncompressedPoint))); print('VAPID_PRIVATE_KEY='+b(v.private_key.private_numbers().private_value.to_bytes(32,'big')))" >> .env
+   ```
+
+   Also set `VAPID_SUBJECT=mailto:you@example.com` (a contact address push services may use).
+2. Rebuild: `docker compose up -d --build backend pit_boss stoker`.
+3. Push needs HTTPS (or `localhost`). On iPhone/iPad, add the app to the Home Screen first (iOS 16.4+), then turn alerts on from the installed app.
+
+The `pit_boss` worker sends the alert once per cook, while the cook is still on the heat; expired device subscriptions are removed automatically.
+
+---
+
 ## Technical Stack
 
 - **Frontend**: Next.js (React), TailwindCSS, Tremor / D3.js (live charting).

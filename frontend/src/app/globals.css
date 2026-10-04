@@ -1,346 +1,133 @@
 @import "tailwindcss";
 
-@theme {
-  --color-primary: #ffb59e;                 /* Peach/Light Orange */
-  --color-primary-container: #ff571a;       /* Vermillion/Deep Orange */
-  --color-on-primary: #5e1700;
-  --color-on-primary-container: #521300;
-  --color-secondary: #fff9ef;
-  --color-secondary-container: #ffdb3c;
-  --color-on-secondary: #3a3000;
-  --color-on-secondary-container: #725f00;
-  --color-tertiary: #c8c6c6;
-  --color-tertiary-container: #919090;
-  --color-on-tertiary: #303030;
-  --color-on-tertiary-container: #292a2a;
-  --color-background: #131314;              /* Dark background */
-  --color-on-background: #e5e2e3;
-  --color-surface: #131314;
-  --color-on-surface: #e5e2e3;
-  --color-surface-variant: #353436;
-  --color-on-surface-variant: #e6beb2;
-  --color-outline: #ad897e;
-  --color-outline-variant: #5c4037;
-  --color-error: #ffb4ab;
-  --color-error-container: #93000a;
-  --color-on-error: #690005;
-  --color-on-error-container: #ffdad6;
-  
-  --color-secondary-fixed: #ffe16d;
-  --color-secondary-fixed-dim: #e9c400;
-  --color-on-secondary-fixed: #221b00;
-  --color-on-secondary-fixed-variant: #544600;
-  
-  --color-primary-fixed: #ffdbd0;
-  --color-primary-fixed-dim: #ffb59e;
-  --color-on-primary-fixed: #3a0b00;
-  --color-on-primary-fixed-variant: #852400;
-
-  --color-tertiary-fixed: #e4e2e2;
-  --color-tertiary-fixed-dim: #c8c6c6;
-  --color-on-tertiary-fixed: #1b1c1c;
-  --color-on-tertiary-fixed-variant: #474747;
-
-  --color-surface-dim: #131314;
-  --color-surface-bright: #3a393a;
-  --color-surface-container-lowest: #0e0e0f;
-  --color-surface-container-low: #1c1b1c;
-  --color-surface-container: #201f20;
-  --color-surface-container-high: #2a2a2b;
-  --color-surface-container-highest: #353436;
-  --color-surface-tint: #ffb59e;
-  --color-inverse-surface: #e5e2e3;
-  --color-inverse-on-surface: #313031;
-  --color-inverse-primary: #ae3200;
-
-  /* Border Radii matching Stitch */
-  --border-radius-DEFAULT: 0px;
-  --border-radius-lg: 2px;
-  --border-radius-xl: 4px;
-  --border-radius-full: 9999px;
-
-  /* Spacing matching Stitch */
-  --spacing-xs: 8px;
-  --spacing-sm: 16px;
-  --spacing-md: 24px;
-  --spacing-lg: 40px;
-  --spacing-xl: 64px;
-  --spacing-margin-mobile: 16px;
-  --spacing-margin-desktop: 48px;
-  --spacing-gutter: 20px;
-  --spacing-base: 4px;
-
-  /* Fonts matching Stitch */
-  --font-label-mono: var(--font-jetbrains-mono);
-  --font-headline-md: var(--font-bebas-neue);
-  --font-title-lg: var(--font-source-sans-3);
-  --font-display-lg: var(--font-bebas-neue);
-  --font-body-lg: var(--font-source-sans-3);
-  --font-headline-lg: var(--font-bebas-neue);
-  --font-body-md: var(--font-source-sans-3);
-
-  /* Font Sizes matching Stitch */
-  --font-size-label-mono: 14px;
-  --font-size-headline-md: 32px;
-  --font-size-title-lg: 20px;
-  --font-size-display-lg: 72px;
-  --font-size-body-lg: 18px;
-  --font-size-headline-lg: 48px;
-  --font-size-body-md: 16px;
+/* ------------------------------------------------------------------
+   The Cook's Tide Table world (see DESIGN.md).
+   Daylight palette by default; night-vision palette after dark.
+   Red belongs to the pull and nothing else.
+   ------------------------------------------------------------------ */
+@theme inline {
+  --color-tide-band: var(--tide-band);
+  --color-tide-on-band: var(--tide-on-band);
+  --color-tide-ground: var(--tide-ground);
+  --color-tide-ink: var(--tide-ink);
+  --color-tide-muted: var(--tide-muted);
+  --color-tide-rule: var(--tide-rule);
+  --color-tide-blue: var(--tide-blue);
+  --color-tide-pull: var(--tide-pull);
+  --color-tide-on-pull: var(--tide-on-pull);
+  --color-tide-field: var(--tide-field);
+  --font-tide: var(--font-archivo), system-ui, sans-serif;
 }
 
-:root {
-  --background: #0A0A0B;
-  --foreground: #e5e2e3;
+.tide-world {
+  --tide-band: #f2c230;
+  --tide-on-band: #13233a;
+  --tide-ground: #f5f6f2;
+  --tide-ink: #13233a;
+  --tide-muted: #566273;
+  --tide-rule: #cdd2d8;
+  --tide-blue: #2e6db4;
+  --tide-blue-soft: rgb(46 109 180 / 0.16);
+  --tide-pull: #c8372d;
+  --tide-on-pull: #fff7f5;
+  --tide-field: #ffffff;
+  background: var(--tide-ground);
+  color: var(--tide-ink);
+  font-family: var(--font-archivo), system-ui, sans-serif;
+  font-variant-numeric: tabular-nums;
+  caret-color: var(--tide-blue);
+  scrollbar-color: var(--tide-rule) transparent;
 }
 
-body {
-  background-color: var(--background);
-  color: var(--foreground);
-  -webkit-font-smoothing: antialiased;
-}
-
-.glass-card {
-  background: rgba(20, 20, 22, 0.7);
-  backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 77, 0, 0.1);
-  box-shadow: inset 0 0 20px rgba(255, 77, 0, 0.03);
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.glass-card:hover {
-  border-color: rgba(255, 77, 0, 0.4);
-  box-shadow: inset 0 0 30px rgba(255, 77, 0, 0.08);
-  background: rgba(20, 20, 22, 0.85);
-}
-
-.text-glow-ember {
-  text-shadow: 0 0 20px rgba(255, 77, 0, 0.6);
-}
-
-.ember-glow {
-  box-shadow: 0 0 30px rgba(255, 77, 0, 0.3);
-}
-
-.glow-ember-inner {
-  box-shadow: inset 0 0 12px rgba(255, 77, 0, 0.4);
-}
-
-@utility forge-surface {
-  background-color: #121214;
-  border: 1px solid #262626;
-  position: relative;
-  
-  &::before {
-    content: "";
-    position: absolute;
-    top: 0; left: 0; right: 0; height: 1px;
-    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.05), transparent);
+@media (prefers-color-scheme: dark) {
+  .tide-world {
+    --tide-band: #1d2a44;
+    --tide-on-band: #f2b544;
+    --tide-ground: #0d1524;
+    --tide-ink: #f2b544;
+    --tide-muted: #a3a089;
+    --tide-rule: #2a3754;
+    --tide-blue: #7fa8de;
+    --tide-blue-soft: rgb(127 168 222 / 0.16);
+    --tide-pull: #d9443a;
+    --tide-on-pull: #fff3f1;
+    --tide-field: #142039;
   }
 }
 
-.forge-texture {
-  background-image: linear-gradient(to bottom, rgba(255,255,255,0.02) 1px, transparent 1px),
-                    linear-gradient(to right, rgba(255,255,255,0.02) 1px, transparent 1px);
-  background-size: 20px 20px;
+/* Browser autofill paints its own fill; hold the field surface and ink instead (box-shadow is left to the ring). */
+.tide-world input:-webkit-autofill,
+.tide-world input:autofill {
+  -webkit-text-fill-color: var(--tide-ink);
+  caret-color: var(--tide-ink);
+  transition: background-color 600000s 0s, color 600000s 0s;
 }
 
-.stall-banner {
-  background: linear-gradient(90deg, rgba(255, 77, 0, 0.15) 0%, rgba(255, 77, 0, 0.02) 100%);
-  border-left: 4px solid #FF4D00;
+.tide-world ::selection {
+  background: var(--tide-band);
+  color: var(--tide-on-band);
 }
 
-.stall-zone-bg {
-  background: repeating-linear-gradient(
-    45deg,
-    rgba(255, 181, 158, 0.05),
-    rgba(255, 181, 158, 0.05) 10px,
-    transparent 10px,
-    transparent 20px
-  );
+.tide-world :focus-visible {
+  outline: 2px solid var(--tide-blue);
+  outline-offset: 2px;
 }
 
-.progress-ring__circle {
-  transition: stroke-dashoffset 0.35s;
-  transform: rotate(-90deg);
-  transform-origin: 50% 50%;
+.tide-world.is-pull {
+  --tide-band: var(--tide-pull);
+  --tide-on-band: var(--tide-on-pull);
 }
 
-.shimmer {
-  background: linear-gradient(90deg, #1c1b1c 25%, #2a2a2b 50%, #1c1b1c 75%);
-  background-size: 200% 100%;
-  animation: shimmer-anim 1.5s infinite;
+.tide-band {
+  background: var(--tide-band);
+  color: var(--tide-on-band);
+  transition: background-color 420ms cubic-bezier(0.16, 1, 0.3, 1), color 420ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-@keyframes shimmer-anim {
-  0% { background-position: -200% 0; }
-  100% { background-position: 200% 0; }
+/* The one authored moment: the pull takes over the band. */
+.tide-alarm {
+  animation: tide-alarm-in 520ms cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
-.pulsing-ring {
-  animation: pulse-ring-anim 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+@keyframes tide-alarm-in {
+  from { clip-path: inset(0 0 100% 0); }
+  to { clip-path: inset(0 0 0 0); }
 }
 
-@keyframes pulse-ring-anim {
-  0%, 100% { transform: scale(1); opacity: 0.8; }
-  50% { transform: scale(1.05); opacity: 0.4; }
+@media (prefers-reduced-motion: reduce) {
+  .tide-band { transition: none; }
+  .tide-alarm { animation: none; }
 }
 
-@keyframes pulse-heat-anim {
-  0%, 100% { opacity: 0.4; transform: scale(1); }
-  50% { opacity: 0.7; transform: scale(1.05); }
+.tide-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-areas: "readout" "stages" "chart" "table" "meta" "details";
 }
 
-.animate-heat {
-  animation: pulse-heat-anim 4s ease-in-out infinite;
-}
-
-.chart-grid {
-  background-image: 
-    linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
-  background-size: 40px 40px;
-}
-
-@utility dashboard-sidebar {
-  @apply hidden md:flex flex-col py-md bg-surface-container h-screen w-64 fixed left-0 top-0 border-r border-outline-variant z-50;
-}
-
-@utility dashboard-header {
-  @apply flex justify-between items-center px-4 md:px-margin-desktop w-full md:w-[calc(100%-16rem)] ml-0 md:ml-64 bg-surface h-20 border-b border-outline-variant z-40 fixed top-0 left-0 right-0;
-}
-
-@utility nav-item {
-  @apply px-4 py-3 flex items-center gap-3 cursor-pointer transition-colors text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface;
-}
-
-@utility nav-item-active {
-  @apply bg-primary-container text-on-primary-container font-bold border-l-4 border-primary;
-}
-
-@utility forge-input {
-  width: 100%;
-  background-color: var(--color-surface-container-high);
-  border: 1px solid rgba(92, 64, 55, 0.6);
-  padding-inline: var(--spacing-sm);
-  padding-block: var(--spacing-xs);
-  font-size: var(--font-size-body-md);
-  color: var(--color-on-surface);
-  font-family: var(--font-label-mono);
-  transition: border-color 0.15s;
-  
-  &:focus {
-    outline: none;
-    border-color: var(--color-primary);
+@media (min-width: 900px) {
+  .tide-layout {
+    grid-template-columns: minmax(320px, 5fr) minmax(0, 7fr);
+    grid-template-areas:
+      "readout chart"
+      "stages chart"
+      "table chart"
+      "meta chart"
+      "details chart";
+    grid-template-rows: auto auto auto auto 1fr;
+    column-gap: 48px;
   }
 }
 
-@utility forge-select {
-  width: 100%;
-  background-color: var(--color-surface-container-high);
-  border: 1px solid var(--color-outline-variant);
-  padding-inline: var(--spacing-sm);
-  padding-block: var(--spacing-xs);
-  font-size: var(--font-size-body-md);
-  color: var(--color-on-surface);
-  font-family: var(--font-label-mono);
-  transition: border-color 0.15s;
-  
-  &:focus {
-    outline: none;
-    border-color: var(--color-primary);
-  }
+.setup-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0 48px;
 }
 
-@utility forge-btn {
-  font-family: var(--font-label-mono);
-  padding-inline: var(--spacing-md);
-  padding-block: var(--spacing-xs);
-  border: 1px solid var(--color-outline-variant);
-  font-size: var(--font-size-label-mono);
-  cursor: pointer;
-  background-color: var(--color-surface-container-high);
-  color: var(--color-on-surface-variant);
-  transition: border-color 0.15s, color 0.15s, background-color 0.15s;
-  
-  &:hover {
-    border-color: var(--color-primary);
-  }
-}
-
-@utility forge-btn-active {
-  background-color: var(--color-primary-container);
-  color: var(--color-on-primary-container);
-  border-color: var(--color-primary);
-  font-weight: 700;
-}
-
-@utility action-btn {
-  width: 100%;
-  padding-block: var(--spacing-md);
-  font-family: var(--font-headline-md);
-  font-size: var(--font-size-headline-md);
-  letter-spacing: 0.05em;
-  transition: all 0.1s;
-  text-transform: uppercase;
-  cursor: pointer;
-  border: none;
-  
-  &:active {
-    transform: scale(0.98);
-  }
-  &:hover {
-    filter: brightness(1.05);
-  }
-  &:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-  }
-}
-
-@utility action-btn-primary {
-  background-color: var(--color-primary-container);
-  color: var(--color-on-primary-container);
-  box-shadow: 0 10px 15px -3px rgba(255, 87, 26, 0.1), 0 4px 6px -4px rgba(255, 87, 26, 0.1);
-  
-  &:hover {
-    box-shadow: 0 20px 25px -5px rgba(255, 87, 26, 0.2), 0 8px 10px -6px rgba(255, 87, 26, 0.2);
-  }
-}
-
-@utility action-btn-secondary {
-  background-color: var(--color-secondary-fixed);
-  color: var(--color-on-secondary-fixed);
-  box-shadow: 0 10px 15px -3px rgba(255, 225, 109, 0.1), 0 4px 6px -4px rgba(255, 225, 109, 0.1);
-  
-  &:hover {
-    box-shadow: 0 20px 25px -5px rgba(255, 225, 109, 0.2), 0 8px 10px -6px rgba(255, 225, 109, 0.2);
-  }
-}
-
-@utility action-btn-accent {
-  background-color: var(--color-primary);
-  color: var(--color-on-primary);
-  box-shadow: 0 10px 15px -3px rgba(255, 181, 158, 0.2);
-}
-
-@utility action-btn-outline {
-  border: 1px solid var(--color-outline-variant);
-  color: var(--color-on-surface);
-  font-family: var(--font-label-mono);
-  font-size: var(--font-size-label-mono);
-  letter-spacing: 0.05em;
-  padding-block: var(--spacing-sm);
-  text-transform: uppercase;
-  cursor: pointer;
-  background-color: transparent;
-  transition: all 0.1s;
-  
-  &:hover {
-    border-color: var(--color-outline);
-    background-color: var(--color-surface-container-low);
-  }
-  &:active {
-    transform: scale(0.95);
+@media (min-width: 900px) {
+  .setup-layout {
+    grid-template-columns: minmax(0, 7fr) minmax(300px, 5fr);
+    align-items: start;
   }
 }
