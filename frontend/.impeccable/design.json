@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-10-04T13:29:42.044570+00:00",
+  "generatedAt": "2026-10-04T14:11:51.351859+00:00",
   "title": "Design System: FireBoard Pitmaster",
   "extensions": {
     "colorMeta": {
@@ -275,6 +275,40 @@
           "#d2c6c4",
           "#f7ebe9"
         ]
+      },
+      "field-white": {
+        "role": "neutral",
+        "displayName": "Field White",
+        "canonical": "#ffffff",
+        "purpose": "Input surface (daylight): one step brighter than the table stock so a field reads as a place to write.",
+        "cssVar": "--tide-field",
+        "tonalRamp": [
+          "#0b0b0b",
+          "#252525",
+          "#424242",
+          "#616161",
+          "#828282",
+          "#a5a5a5",
+          "#c9c9c9",
+          "#eeeeee"
+        ]
+      },
+      "night-field": {
+        "role": "neutral",
+        "displayName": "Night Field",
+        "canonical": "#142039",
+        "purpose": "Input surface after dark: one step lifted off the night ground.",
+        "cssVar": "--tide-field (dark)",
+        "tonalRamp": [
+          "#020920",
+          "#18243e",
+          "#34425d",
+          "#52617f",
+          "#7383a1",
+          "#95a5c6",
+          "#b8caeb",
+          "#ddefff"
+        ]
       }
     },
     "typographyMeta": {
@@ -298,9 +332,17 @@
         "displayName": "Title",
         "purpose": "Dialog headings."
       },
+      "section": {
+        "displayName": "Section",
+        "purpose": "Setup section headings (22px bold, 85% width)."
+      },
       "body": {
         "displayName": "Body",
-        "purpose": "Labels, notes, button text (15-17px)."
+        "purpose": "Labels, notes, row labels, regular button text (15-16px)."
+      },
+      "action": {
+        "displayName": "Action",
+        "purpose": "17px: band title (semibold), large primary buttons (bold), text-field values (semibold)."
       },
       "label": {
         "displayName": "Label",
@@ -342,6 +384,11 @@
     ],
     "breakpoints": [
       {
+        "name": "pair",
+        "value": "640px",
+        "purpose": "Setup field pairs (weight and thickness, device and nickname) sit side by side."
+      },
+      {
         "name": "rail",
         "value": "768px",
         "purpose": "Bottom tab bar becomes an 88px left rail; gutter 20px to 40px."
@@ -349,7 +396,7 @@
       {
         "name": "split",
         "value": "900px",
-        "purpose": "Single column becomes 5fr / 7fr with the chart on the right."
+        "purpose": "Live: single column becomes 5fr / 7fr with the chart on the right. Setup: single column becomes 7fr / 5fr with a sticky summary on the right; the start bar gives way to the summary's button."
       }
     ]
   },
@@ -360,7 +407,7 @@
       "refersTo": "button-primary",
       "description": "Navy fill for the main action: Finish cook, End cook.",
       "html": "<button class=\"ds-btn-primary\">Finish cook</button>",
-      "css": ":host{--tide-band:#f2c230;--tide-on-band:#13233a;--tide-ground:#f5f6f2;--tide-ink:#13233a;--tide-muted:#566273;--tide-rule:#cdd2d8;--tide-blue:#2e6db4;--tide-pull:#c8372d;--tide-on-pull:#fff7f5;font-family:Archivo,system-ui,sans-serif;font-variant-numeric:tabular-nums;}.ds-btn-primary{min-height:48px;padding:0 20px;border:none;border-radius:10px;background:var(--tide-ink);color:var(--tide-ground);font:700 16px Archivo,system-ui,sans-serif;cursor:pointer;}.ds-btn-primary:hover{opacity:.9;}.ds-btn-primary:focus-visible{outline:2px solid var(--tide-blue);outline-offset:2px;}"
+      "css": ":host{--tide-band:#f2c230;--tide-on-band:#13233a;--tide-ground:#f5f6f2;--tide-ink:#13233a;--tide-muted:#566273;--tide-rule:#cdd2d8;--tide-blue:#2e6db4;--tide-pull:#c8372d;--tide-on-pull:#fff7f5;--tide-field:#ffffff;font-family:Archivo,system-ui,sans-serif;font-variant-numeric:tabular-nums;}.ds-btn-primary{min-height:48px;padding:0 20px;border:none;border-radius:10px;background:var(--tide-ink);color:var(--tide-ground);font:700 16px Archivo,system-ui,sans-serif;cursor:pointer;}.ds-btn-primary:hover{opacity:.9;}.ds-btn-primary:focus-visible{outline:2px solid var(--tide-blue);outline-offset:2px;}"
     },
     {
       "name": "Secondary Button",
@@ -368,7 +415,15 @@
       "refersTo": "button-secondary",
       "description": "Ring-only button for the safe choice, such as Keep cooking.",
       "html": "<button class=\"ds-btn-secondary\">Keep cooking</button>",
-      "css": ":host{--tide-band:#f2c230;--tide-on-band:#13233a;--tide-ground:#f5f6f2;--tide-ink:#13233a;--tide-muted:#566273;--tide-rule:#cdd2d8;--tide-blue:#2e6db4;--tide-pull:#c8372d;--tide-on-pull:#fff7f5;font-family:Archivo,system-ui,sans-serif;font-variant-numeric:tabular-nums;}.ds-btn-secondary{min-height:48px;padding:0 20px;border:none;border-radius:10px;background:transparent;color:var(--tide-ink);box-shadow:0 0 0 1.5px var(--tide-rule);font:600 16px Archivo,system-ui,sans-serif;cursor:pointer;}.ds-btn-secondary:hover{box-shadow:0 0 0 1.5px var(--tide-ink);}.ds-btn-secondary:focus-visible{outline:2px solid var(--tide-blue);outline-offset:2px;}"
+      "css": ":host{--tide-band:#f2c230;--tide-on-band:#13233a;--tide-ground:#f5f6f2;--tide-ink:#13233a;--tide-muted:#566273;--tide-rule:#cdd2d8;--tide-blue:#2e6db4;--tide-pull:#c8372d;--tide-on-pull:#fff7f5;--tide-field:#ffffff;font-family:Archivo,system-ui,sans-serif;font-variant-numeric:tabular-nums;}.ds-btn-secondary{min-height:48px;padding:0 20px;border:none;border-radius:10px;background:transparent;color:var(--tide-ink);box-shadow:0 0 0 1.5px var(--tide-rule);font:600 16px Archivo,system-ui,sans-serif;cursor:pointer;}.ds-btn-secondary:hover{box-shadow:0 0 0 1.5px var(--tide-ink);}.ds-btn-secondary:focus-visible{outline:2px solid var(--tide-blue);outline-offset:2px;}"
+    },
+    {
+      "name": "Large Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary-large",
+      "description": "The 56px navy action at the action size: Start cook (setup summary and start bar).",
+      "html": "<button class=\"ds-btn-start\">Start cook</button>",
+      "css": ":host{--tide-band:#f2c230;--tide-on-band:#13233a;--tide-ground:#f5f6f2;--tide-ink:#13233a;--tide-muted:#566273;--tide-rule:#cdd2d8;--tide-blue:#2e6db4;--tide-pull:#c8372d;--tide-on-pull:#fff7f5;--tide-field:#ffffff;font-family:Archivo,system-ui,sans-serif;font-variant-numeric:tabular-nums;}.ds-btn-start{min-height:56px;padding:0 24px;border:none;border-radius:10px;background:var(--tide-ink);color:var(--tide-ground);font:700 17px Archivo,system-ui,sans-serif;cursor:pointer;transition:transform 150ms;}.ds-btn-start:hover{opacity:.9;}.ds-btn-start:active{transform:scale(.98);}.ds-btn-start:disabled{opacity:.5;cursor:not-allowed;}.ds-btn-start:focus-visible{outline:2px solid var(--tide-blue);outline-offset:2px;}"
     },
     {
       "name": "Pull Alarm",
@@ -376,7 +431,7 @@
       "refersTo": "band-pull",
       "description": "The red band takeover with the pull action and silence toggle.",
       "html": "<div class=\"ds-pull\" role=\"alert\"><p class=\"ds-pull-head\">Pull now</p><p class=\"ds-pull-text\">Core is 94°. Expect it to coast about 3° higher during the rest.</p><div class=\"ds-pull-row\"><button class=\"ds-btn-pull\">I pulled it, start rest</button><button class=\"ds-btn-silence\" aria-label=\"Silence alarm\"><svg width=\"24\" height=\"24\" viewBox=\"0 0 256 256\" fill=\"currentColor\"><path d=\"M155.51,24.81a8,8,0,0,0-8.42.88L77.25,80H32A16,16,0,0,0,16,96v64a16,16,0,0,0,16,16H77.25l69.84,54.31A8,8,0,0,0,160,224V32A8,8,0,0,0,155.51,24.81ZM144,207.64,84.91,161.69A7.94,7.94,0,0,0,80,160H32V96H80a7.94,7.94,0,0,0,4.91-1.69L144,48.36Z\"/></svg></button></div></div>",
-      "css": ":host{--tide-band:#f2c230;--tide-on-band:#13233a;--tide-ground:#f5f6f2;--tide-ink:#13233a;--tide-muted:#566273;--tide-rule:#cdd2d8;--tide-blue:#2e6db4;--tide-pull:#c8372d;--tide-on-pull:#fff7f5;font-family:Archivo,system-ui,sans-serif;font-variant-numeric:tabular-nums;}.ds-pull{background:var(--tide-pull);color:var(--tide-on-pull);padding:20px 20px 24px;animation:ds-in 520ms cubic-bezier(0.16,1,0.3,1) both;}@keyframes ds-in{from{clip-path:inset(0 0 100% 0)}to{clip-path:inset(0 0 0 0)}}@media (prefers-reduced-motion:reduce){.ds-pull{animation:none}}.ds-pull-head{margin:0;font-size:clamp(3.75rem,17vw,6rem);font-weight:800;line-height:.88;letter-spacing:-0.02em;font-stretch:66%;}.ds-pull-text{margin:12px 0 0;max-width:42ch;font-size:16px;line-height:1.375;}.ds-pull-row{display:flex;gap:12px;margin-top:20px;}.ds-btn-pull{min-height:56px;padding:0 20px;border:none;border-radius:10px;background:var(--tide-on-pull);color:var(--tide-pull);font:700 17px Archivo,system-ui,sans-serif;cursor:pointer;transition:transform 150ms;}.ds-btn-pull:active{transform:scale(.98);}.ds-btn-silence{width:56px;min-height:56px;display:flex;align-items:center;justify-content:center;border:none;border-radius:10px;background:transparent;color:inherit;box-shadow:0 0 0 1.5px rgb(255 247 245 / .7);cursor:pointer;}.ds-btn-pull:focus-visible,.ds-btn-silence:focus-visible{outline:2px solid var(--tide-on-pull);outline-offset:2px;}"
+      "css": ":host{--tide-band:#f2c230;--tide-on-band:#13233a;--tide-ground:#f5f6f2;--tide-ink:#13233a;--tide-muted:#566273;--tide-rule:#cdd2d8;--tide-blue:#2e6db4;--tide-pull:#c8372d;--tide-on-pull:#fff7f5;--tide-field:#ffffff;font-family:Archivo,system-ui,sans-serif;font-variant-numeric:tabular-nums;}.ds-pull{background:var(--tide-pull);color:var(--tide-on-pull);padding:20px 20px 24px;animation:ds-in 520ms cubic-bezier(0.16,1,0.3,1) both;}@keyframes ds-in{from{clip-path:inset(0 0 100% 0)}to{clip-path:inset(0 0 0 0)}}@media (prefers-reduced-motion:reduce){.ds-pull{animation:none}}.ds-pull-head{margin:0;font-size:clamp(3.75rem,17vw,6rem);font-weight:800;line-height:.88;letter-spacing:-0.02em;font-stretch:66%;}.ds-pull-text{margin:12px 0 0;max-width:42ch;font-size:16px;line-height:1.375;}.ds-pull-row{display:flex;gap:12px;margin-top:20px;}.ds-btn-pull{min-height:56px;padding:0 20px;border:none;border-radius:10px;background:var(--tide-on-pull);color:var(--tide-pull);font:700 17px Archivo,system-ui,sans-serif;cursor:pointer;transition:transform 150ms;}.ds-btn-pull:active{transform:scale(.98);}.ds-btn-silence{width:56px;min-height:56px;display:flex;align-items:center;justify-content:center;border:none;border-radius:10px;background:transparent;color:inherit;box-shadow:0 0 0 1.5px rgb(255 247 245 / .7);cursor:pointer;}.ds-btn-pull:focus-visible,.ds-btn-silence:focus-visible{outline:2px solid var(--tide-on-pull);outline-offset:2px;}"
     },
     {
       "name": "Cook Band",
@@ -384,7 +439,7 @@
       "refersTo": "band",
       "description": "The almanac-yellow header with the cook name and overflow menu.",
       "html": "<header class=\"ds-band\"><h1 class=\"ds-band-title\">Brisket · 5.4 kg · Offset</h1><button class=\"ds-band-menu\" aria-label=\"Cook options\"><svg width=\"24\" height=\"24\" viewBox=\"0 0 256 256\" fill=\"currentColor\"><circle cx=\"128\" cy=\"60\" r=\"16\"/><circle cx=\"128\" cy=\"128\" r=\"16\"/><circle cx=\"128\" cy=\"196\" r=\"16\"/></svg></button></header>",
-      "css": ":host{--tide-band:#f2c230;--tide-on-band:#13233a;--tide-ground:#f5f6f2;--tide-ink:#13233a;--tide-muted:#566273;--tide-rule:#cdd2d8;--tide-blue:#2e6db4;--tide-pull:#c8372d;--tide-on-pull:#fff7f5;font-family:Archivo,system-ui,sans-serif;font-variant-numeric:tabular-nums;}.ds-band{display:flex;justify-content:space-between;align-items:flex-start;padding:18px 20px 16px;background:var(--tide-band);color:var(--tide-on-band);transition:background-color 420ms cubic-bezier(0.16,1,0.3,1),color 420ms cubic-bezier(0.16,1,0.3,1);}.ds-band-title{margin:0;padding-top:8px;font-size:17px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}.ds-band-menu{width:44px;height:44px;margin-right:-8px;display:flex;align-items:center;justify-content:center;border:none;border-radius:9999px;background:transparent;color:inherit;cursor:pointer;}.ds-band-menu:hover{background:rgb(19 35 58 / .08);}.ds-band-menu:focus-visible{outline:2px solid var(--tide-blue);outline-offset:2px;}"
+      "css": ":host{--tide-band:#f2c230;--tide-on-band:#13233a;--tide-ground:#f5f6f2;--tide-ink:#13233a;--tide-muted:#566273;--tide-rule:#cdd2d8;--tide-blue:#2e6db4;--tide-pull:#c8372d;--tide-on-pull:#fff7f5;--tide-field:#ffffff;font-family:Archivo,system-ui,sans-serif;font-variant-numeric:tabular-nums;}.ds-band{display:flex;justify-content:space-between;align-items:flex-start;padding:18px 20px 16px;background:var(--tide-band);color:var(--tide-on-band);transition:background-color 420ms cubic-bezier(0.16,1,0.3,1),color 420ms cubic-bezier(0.16,1,0.3,1);}.ds-band-title{margin:0;padding-top:8px;font-size:17px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}.ds-band-menu{width:44px;height:44px;margin-right:-8px;display:flex;align-items:center;justify-content:center;border:none;border-radius:9999px;background:transparent;color:inherit;cursor:pointer;}.ds-band-menu:hover{background:rgb(19 35 58 / .08);}.ds-band-menu:focus-visible{outline:2px solid var(--tide-blue);outline-offset:2px;}"
     },
     {
       "name": "Core Readout",
@@ -392,7 +447,7 @@
       "refersTo": "",
       "description": "Core temperature at specimen size beside the pull target.",
       "html": "<section class=\"ds-readout\"><div class=\"ds-readout-row\"><p class=\"ds-figure\">168°</p><p class=\"ds-target\">Pull at 200°</p></div><p class=\"ds-note\">Smoothed reading, updated 12 s ago</p></section>",
-      "css": ":host{--tide-band:#f2c230;--tide-on-band:#13233a;--tide-ground:#f5f6f2;--tide-ink:#13233a;--tide-muted:#566273;--tide-rule:#cdd2d8;--tide-blue:#2e6db4;--tide-pull:#c8372d;--tide-on-pull:#fff7f5;font-family:Archivo,system-ui,sans-serif;font-variant-numeric:tabular-nums;}.ds-readout{background:var(--tide-ground);color:var(--tide-ink);padding:20px;}.ds-readout-row{display:flex;align-items:flex-end;gap:16px;}.ds-figure{margin:0;font-size:clamp(5.5rem,27vw,8.5rem);font-weight:800;line-height:.8;letter-spacing:-0.02em;font-stretch:66%;}.ds-target{margin:0 0 4px;white-space:nowrap;font-size:clamp(1.4rem,6vw,1.75rem);font-weight:700;line-height:1.25;font-stretch:80%;}.ds-note{margin:12px 0 0;font-size:15px;color:var(--tide-muted);}"
+      "css": ":host{--tide-band:#f2c230;--tide-on-band:#13233a;--tide-ground:#f5f6f2;--tide-ink:#13233a;--tide-muted:#566273;--tide-rule:#cdd2d8;--tide-blue:#2e6db4;--tide-pull:#c8372d;--tide-on-pull:#fff7f5;--tide-field:#ffffff;font-family:Archivo,system-ui,sans-serif;font-variant-numeric:tabular-nums;}.ds-readout{background:var(--tide-ground);color:var(--tide-ink);padding:20px;}.ds-readout-row{display:flex;align-items:flex-end;gap:16px;}.ds-figure{margin:0;font-size:clamp(5.5rem,27vw,8.5rem);font-weight:800;line-height:.8;letter-spacing:-0.02em;font-stretch:66%;}.ds-target{margin:0 0 4px;white-space:nowrap;font-size:clamp(1.4rem,6vw,1.75rem);font-weight:700;line-height:1.25;font-stretch:80%;}.ds-note{margin:12px 0 0;font-size:15px;color:var(--tide-muted);}"
     },
     {
       "name": "Forecast Table",
@@ -400,7 +455,7 @@
       "refersTo": "",
       "description": "Tide-table rows: event left, time large right, pull value in red.",
       "html": "<dl class=\"ds-table\"><div class=\"ds-row\"><dt>Pull at</dt><dd class=\"ds-val ds-val-pull\">200°</dd></div><div class=\"ds-row\"><dt>Ready around</dt><dd class=\"ds-val\">4:40 PM</dd><dd class=\"ds-rnote\">about 3 h 10 min</dd></div></dl>",
-      "css": ":host{--tide-band:#f2c230;--tide-on-band:#13233a;--tide-ground:#f5f6f2;--tide-ink:#13233a;--tide-muted:#566273;--tide-rule:#cdd2d8;--tide-blue:#2e6db4;--tide-pull:#c8372d;--tide-on-pull:#fff7f5;font-family:Archivo,system-ui,sans-serif;font-variant-numeric:tabular-nums;}.ds-table{margin:0;padding:0 20px;background:var(--tide-ground);color:var(--tide-ink);}.ds-table .ds-row{display:grid;grid-template-columns:1fr auto;align-items:baseline;column-gap:16px;padding:12px 0;border-bottom:1px solid var(--tide-rule);}.ds-table .ds-row:first-child{border-top:1.5px solid var(--tide-ink);}.ds-table dt{font-size:15px;font-weight:500;}.ds-table dd{margin:0;}.ds-val{text-align:right;font-size:28px;font-weight:700;line-height:1;font-stretch:76%;}.ds-val-pull{color:var(--tide-pull);}.ds-rnote{grid-column-start:2;margin-top:4px!important;text-align:right;font-size:13px;color:var(--tide-muted);}"
+      "css": ":host{--tide-band:#f2c230;--tide-on-band:#13233a;--tide-ground:#f5f6f2;--tide-ink:#13233a;--tide-muted:#566273;--tide-rule:#cdd2d8;--tide-blue:#2e6db4;--tide-pull:#c8372d;--tide-on-pull:#fff7f5;--tide-field:#ffffff;font-family:Archivo,system-ui,sans-serif;font-variant-numeric:tabular-nums;}.ds-table{margin:0;padding:0 20px;background:var(--tide-ground);color:var(--tide-ink);}.ds-table .ds-row{display:grid;grid-template-columns:1fr auto;align-items:baseline;column-gap:16px;padding:12px 0;border-bottom:1px solid var(--tide-rule);}.ds-table .ds-row:first-child{border-top:1.5px solid var(--tide-ink);}.ds-table dt{font-size:15px;font-weight:500;}.ds-table dd{margin:0;}.ds-val{text-align:right;font-size:28px;font-weight:700;line-height:1;font-stretch:76%;}.ds-val-pull{color:var(--tide-pull);}.ds-rnote{grid-column-start:2;margin-top:4px!important;text-align:right;font-size:13px;color:var(--tide-muted);}"
     },
     {
       "name": "Tide Chart",
@@ -408,24 +463,64 @@
       "refersTo": "",
       "description": "Signature: solid past, dashed projection with no range band, right-gutter scale, now hairline, red pull line drawn last.",
       "html": "<figure class=\"ds-chart\"><svg width=\"340\" height=\"210\" viewBox=\"0 0 340 210\"><line x1=\"0\" y1=\"50\" x2=\"304\" y2=\"50\" stroke=\"var(--tide-rule)\" opacity=\".6\"/><text x=\"340\" y=\"54\" text-anchor=\"end\" font-size=\"11\" fill=\"var(--tide-muted)\">200</text><line x1=\"0\" y1=\"120\" x2=\"304\" y2=\"120\" stroke=\"var(--tide-rule)\" opacity=\".6\"/><text x=\"340\" y=\"124\" text-anchor=\"end\" font-size=\"11\" fill=\"var(--tide-muted)\">150</text><path d=\"M170,92 C220,92 250,40 290,36\" fill=\"none\" stroke=\"var(--tide-blue)\" stroke-width=\"2.5\" stroke-dasharray=\"7 5\" stroke-linecap=\"round\"/><path d=\"M0,170 C50,140 90,100 120,96 L170,92\" fill=\"none\" stroke=\"var(--tide-ink)\" stroke-width=\"2.75\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><line x1=\"0\" y1=\"44\" x2=\"304\" y2=\"44\" stroke=\"var(--tide-pull)\" stroke-width=\"1.5\" stroke-dasharray=\"5 4\"/><text x=\"0\" y=\"37\" font-size=\"12\" font-weight=\"600\" fill=\"var(--tide-pull)\">Pull 200°</text><line x1=\"170\" y1=\"6\" x2=\"170\" y2=\"184\" stroke=\"var(--tide-ink)\"/><text x=\"176\" y=\"14\" font-size=\"12\" font-weight=\"700\" fill=\"var(--tide-ink)\">now</text><line x1=\"0\" y1=\"184\" x2=\"304\" y2=\"184\" stroke=\"var(--tide-rule)\"/><text x=\"60\" y=\"202\" text-anchor=\"middle\" font-size=\"12\" fill=\"var(--tide-muted)\">10 AM</text><text x=\"200\" y=\"202\" text-anchor=\"middle\" font-size=\"12\" fill=\"var(--tide-muted)\">2 PM</text></svg><figcaption>Solid: readings. Dashed: the model's projected path to target, not a range.</figcaption></figure>",
-      "css": ":host{--tide-band:#f2c230;--tide-on-band:#13233a;--tide-ground:#f5f6f2;--tide-ink:#13233a;--tide-muted:#566273;--tide-rule:#cdd2d8;--tide-blue:#2e6db4;--tide-pull:#c8372d;--tide-on-pull:#fff7f5;font-family:Archivo,system-ui,sans-serif;font-variant-numeric:tabular-nums;}.ds-chart{margin:0;padding:20px;background:var(--tide-ground);}.ds-chart svg{display:block;overflow:visible;font-family:Archivo,system-ui,sans-serif;}.ds-chart figcaption{margin-top:8px;font-size:13px;color:var(--tide-muted);}"
+      "css": ":host{--tide-band:#f2c230;--tide-on-band:#13233a;--tide-ground:#f5f6f2;--tide-ink:#13233a;--tide-muted:#566273;--tide-rule:#cdd2d8;--tide-blue:#2e6db4;--tide-pull:#c8372d;--tide-on-pull:#fff7f5;--tide-field:#ffffff;font-family:Archivo,system-ui,sans-serif;font-variant-numeric:tabular-nums;}.ds-chart{margin:0;padding:20px;background:var(--tide-ground);}.ds-chart svg{display:block;overflow:visible;font-family:Archivo,system-ui,sans-serif;}.ds-chart figcaption{margin-top:8px;font-size:13px;color:var(--tide-muted);}"
+    },
+    {
+      "name": "Text Field",
+      "kind": "input",
+      "refersTo": "text-field",
+      "description": "Label above, 52px field on the field surface, hint and ink error below. Errors are ink with a warning icon, never red.",
+      "html": "<div class=\"ds-field\"><label class=\"ds-field-label\" for=\"ds-cut\">Cut</label><input id=\"ds-cut\" class=\"ds-input\" placeholder=\"e.g. Pork shoulder\"></div><div class=\"ds-field\"><label class=\"ds-field-label\" for=\"ds-dev\">FireBoard device ID</label><input id=\"ds-dev\" class=\"ds-input is-error\" aria-invalid=\"true\" value=\"\"><p class=\"ds-field-hint\">The core probe reads from channel 1.</p><p class=\"ds-field-error\"><svg width=\"18\" height=\"18\" viewBox=\"0 0 256 256\" fill=\"currentColor\" aria-hidden=\"true\"><path d=\"M128,20A108,108,0,1,0,236,128,108.12,108.12,0,0,0,128,20Zm0,192a84,84,0,1,1,84-84A84.09,84.09,0,0,1,128,212Zm-12-80V80a12,12,0,0,1,24,0v52a12,12,0,0,1-24,0Zm28,40a16,16,0,1,1-16-16A16,16,0,0,1,144,172Z\"/></svg>Enter the FireBoard device ID.</p></div>",
+      "css": ":host{--tide-band:#f2c230;--tide-on-band:#13233a;--tide-ground:#f5f6f2;--tide-ink:#13233a;--tide-muted:#566273;--tide-rule:#cdd2d8;--tide-blue:#2e6db4;--tide-pull:#c8372d;--tide-on-pull:#fff7f5;--tide-field:#ffffff;font-family:Archivo,system-ui,sans-serif;font-variant-numeric:tabular-nums;}.ds-field{margin-bottom:20px;color:var(--tide-ink);}.ds-field-label{display:block;margin-bottom:8px;font-size:14px;font-weight:600;}.ds-input{box-sizing:border-box;width:100%;min-height:52px;padding:0 16px;border:none;border-radius:10px;background:var(--tide-field);color:var(--tide-ink);font:600 17px Archivo,system-ui,sans-serif;outline:none;box-shadow:0 0 0 1.5px var(--tide-rule);}.ds-input::placeholder{font-weight:400;color:var(--tide-muted);}.ds-input.is-error{box-shadow:0 0 0 2.5px var(--tide-ink);}.ds-input:focus-visible{box-shadow:0 0 0 2px var(--tide-blue);}.ds-field-hint{margin:8px 0 0;font-size:13px;color:var(--tide-muted);}.ds-field-error{display:flex;align-items:flex-start;gap:6px;margin:8px 0 0;font-size:14px;font-weight:600;color:var(--tide-ink);}.ds-field-error svg{flex-shrink:0;margin-top:1px;}"
+    },
+    {
+      "name": "Segmented Control",
+      "kind": "custom",
+      "refersTo": "segmented",
+      "description": "Native radios as a segmented control; the selected option is an ink fill with ground-colored text.",
+      "html": "<fieldset class=\"ds-seg\"><legend>Protein</legend><div class=\"ds-seg-row\"><label><input type=\"radio\" name=\"ds-meat\" checked><span>Beef</span></label><label><input type=\"radio\" name=\"ds-meat\"><span>Pork</span></label><label><input type=\"radio\" name=\"ds-meat\"><span>Poultry</span></label><label><input type=\"radio\" name=\"ds-meat\"><span>Fish</span></label></div></fieldset>",
+      "css": ":host{--tide-band:#f2c230;--tide-on-band:#13233a;--tide-ground:#f5f6f2;--tide-ink:#13233a;--tide-muted:#566273;--tide-rule:#cdd2d8;--tide-blue:#2e6db4;--tide-pull:#c8372d;--tide-on-pull:#fff7f5;--tide-field:#ffffff;font-family:Archivo,system-ui,sans-serif;font-variant-numeric:tabular-nums;}.ds-seg{margin:0;padding:0;border:none;color:var(--tide-ink);}.ds-seg legend{margin-bottom:8px;padding:0;font-size:14px;font-weight:600;}.ds-seg-row{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;}.ds-seg label{position:relative;}.ds-seg input{position:absolute;opacity:0;width:1px;height:1px;}.ds-seg span{display:flex;align-items:center;justify-content:center;min-height:48px;padding:0 12px;border-radius:10px;box-shadow:0 0 0 1.5px var(--tide-rule);font-size:15px;font-weight:600;cursor:pointer;transition:background-color 150ms,color 150ms;}.ds-seg span:hover{box-shadow:0 0 0 1.5px var(--tide-ink);}.ds-seg input:checked+span{background:var(--tide-ink);color:var(--tide-ground);box-shadow:0 0 0 1.5px var(--tide-ink);}.ds-seg input:focus-visible+span{outline:2px solid var(--tide-blue);outline-offset:2px;}"
+    },
+    {
+      "name": "Preset Chip",
+      "kind": "chip",
+      "refersTo": "chip-preset",
+      "description": "Full-pill 44px preset; pressed state is an ink fill.",
+      "html": "<div class=\"ds-chips\"><button class=\"ds-chip\" aria-pressed=\"true\">Brisket · 203°</button><button class=\"ds-chip\" aria-pressed=\"false\">Pork butt · 205°</button><button class=\"ds-chip\" aria-pressed=\"false\">Whole chicken · 165°</button></div>",
+      "css": ":host{--tide-band:#f2c230;--tide-on-band:#13233a;--tide-ground:#f5f6f2;--tide-ink:#13233a;--tide-muted:#566273;--tide-rule:#cdd2d8;--tide-blue:#2e6db4;--tide-pull:#c8372d;--tide-on-pull:#fff7f5;--tide-field:#ffffff;font-family:Archivo,system-ui,sans-serif;font-variant-numeric:tabular-nums;}.ds-chips{display:flex;flex-wrap:wrap;gap:8px;}.ds-chip{min-height:44px;padding:0 16px;border:none;border-radius:9999px;background:transparent;color:var(--tide-ink);box-shadow:0 0 0 1.5px var(--tide-rule);font:600 14px Archivo,system-ui,sans-serif;cursor:pointer;}.ds-chip:hover{box-shadow:0 0 0 1.5px var(--tide-ink);}.ds-chip[aria-pressed=true]{background:var(--tide-ink);color:var(--tide-ground);box-shadow:0 0 0 1.5px var(--tide-ink);}.ds-chip:focus-visible{outline:2px solid var(--tide-blue);outline-offset:2px;}"
+    },
+    {
+      "name": "Target Stepper",
+      "kind": "custom",
+      "refersTo": "stepper-button",
+      "description": "The target at display scale between 56px square step buttons, for imprecise taps.",
+      "html": "<div class=\"ds-stepper\"><button class=\"ds-step\" aria-label=\"Lower target by one degree\"><svg width=\"22\" height=\"22\" viewBox=\"0 0 256 256\" fill=\"currentColor\"><path d=\"M228,128a12,12,0,0,1-12,12H40a12,12,0,0,1,0-24H216A12,12,0,0,1,228,128Z\"/></svg></button><output class=\"ds-step-figure\">203°</output><button class=\"ds-step\" aria-label=\"Raise target by one degree\"><svg width=\"22\" height=\"22\" viewBox=\"0 0 256 256\" fill=\"currentColor\"><path d=\"M228,128a12,12,0,0,1-12,12H140v76a12,12,0,0,1-24,0V140H40a12,12,0,0,1,0-24h76V40a12,12,0,0,1,24,0v76h76A12,12,0,0,1,228,128Z\"/></svg></button></div>",
+      "css": ":host{--tide-band:#f2c230;--tide-on-band:#13233a;--tide-ground:#f5f6f2;--tide-ink:#13233a;--tide-muted:#566273;--tide-rule:#cdd2d8;--tide-blue:#2e6db4;--tide-pull:#c8372d;--tide-on-pull:#fff7f5;--tide-field:#ffffff;font-family:Archivo,system-ui,sans-serif;font-variant-numeric:tabular-nums;}.ds-stepper{display:flex;align-items:center;gap:12px;color:var(--tide-ink);}.ds-step{width:56px;height:56px;flex-shrink:0;display:flex;align-items:center;justify-content:center;border:none;border-radius:10px;background:transparent;color:inherit;box-shadow:0 0 0 1.5px var(--tide-rule);cursor:pointer;transition:transform 150ms;}.ds-step:hover{box-shadow:0 0 0 1.5px var(--tide-ink);}.ds-step:active{transform:scale(.97);}.ds-step:focus-visible{outline:2px solid var(--tide-blue);outline-offset:2px;}.ds-step-figure{min-width:3.2ch;text-align:center;font-size:clamp(4rem,18vw,5.5rem);font-weight:800;line-height:.85;letter-spacing:-0.02em;font-stretch:66%;}"
+    },
+    {
+      "name": "Setup Summary",
+      "kind": "custom",
+      "refersTo": "setup-summary",
+      "description": "The cook as it will start, in the forecast table's rhythm: ink top rule, hairline rows, values at 22px / 80% width.",
+      "html": "<aside class=\"ds-summary\"><dl><div class=\"ds-srow\"><dt>Cut</dt><dd>Brisket flat</dd></div><div class=\"ds-srow\"><dt>Size</dt><dd>5.4 kg · 75 mm thick</dd></div><div class=\"ds-srow\"><dt>Cooker</dt><dd>Offset smoker</dd></div><div class=\"ds-srow\"><dt>Target</dt><dd>203°F</dd></div></dl></aside>",
+      "css": ":host{--tide-band:#f2c230;--tide-on-band:#13233a;--tide-ground:#f5f6f2;--tide-ink:#13233a;--tide-muted:#566273;--tide-rule:#cdd2d8;--tide-blue:#2e6db4;--tide-pull:#c8372d;--tide-on-pull:#fff7f5;--tide-field:#ffffff;font-family:Archivo,system-ui,sans-serif;font-variant-numeric:tabular-nums;}.ds-summary{padding:20px;background:var(--tide-ground);color:var(--tide-ink);}.ds-summary dl{margin:0;border-top:1.5px solid var(--tide-ink);}.ds-srow{display:grid;grid-template-columns:auto 1fr;align-items:baseline;column-gap:16px;padding:12px 0;border-bottom:1px solid var(--tide-rule);}.ds-srow dt{font-size:15px;font-weight:500;}.ds-srow dd{margin:0;text-align:right;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:22px;font-weight:700;line-height:1.25;font-stretch:80%;}"
     },
     {
       "name": "Navigation",
       "kind": "nav",
       "refersTo": "nav-item",
-      "description": "Bottom tab bar (phone) / 88px rail (desktop); active tab gets a band-colored marker and filled icon.",
-      "html": "<nav class=\"ds-nav\"><button class=\"ds-nav-item is-active\" aria-current=\"page\"><span class=\"ds-mark\"></span><svg width=\"24\" height=\"24\" viewBox=\"0 0 256 256\" fill=\"currentColor\"><path d=\"M152,150.64V40a24,24,0,0,0-48,0V150.64a48,48,0,1,0,48,0Z\"/></svg>Cook</button><button class=\"ds-nav-item\"><svg width=\"24\" height=\"24\" viewBox=\"0 0 256 256\" fill=\"currentColor\"><path d=\"M136,80v43.47l36.12,21.67a8,8,0,0,1-8.24,13.72l-40-24A8,8,0,0,1,120,128V80a8,8,0,0,1,16,0Zm-8-48A95.44,95.44,0,0,0,60.08,60.15C52.81,67.51,46.35,74.59,40,82V64a8,8,0,0,0-16,0v40a8,8,0,0,0,8,8H72a8,8,0,0,0,0-16H49c7.15-8.42,14.27-16.35,22.39-24.57a80,80,0,1,1,1.66,114.75,8,8,0,1,0-11,11.64A96,96,0,1,0,128,32Z\"/></svg>History</button></nav>",
-      "css": ":host{--tide-band:#f2c230;--tide-on-band:#13233a;--tide-ground:#f5f6f2;--tide-ink:#13233a;--tide-muted:#566273;--tide-rule:#cdd2d8;--tide-blue:#2e6db4;--tide-pull:#c8372d;--tide-on-pull:#fff7f5;font-family:Archivo,system-ui,sans-serif;font-variant-numeric:tabular-nums;}.ds-nav{display:flex;border-top:1px solid var(--tide-rule);background:var(--tide-ground);}.ds-nav-item{position:relative;flex:1;min-height:52px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;border:none;background:transparent;color:var(--tide-muted);font:600 12px Archivo,system-ui,sans-serif;cursor:pointer;transition:color 150ms;}.ds-nav-item:hover,.ds-nav-item.is-active{color:var(--tide-ink);}.ds-mark{position:absolute;top:0;width:32px;height:3px;border-radius:0 0 2px 2px;background:var(--tide-band);}.ds-nav-item:focus-visible{outline:2px solid var(--tide-blue);outline-offset:2px;}"
+      "description": "Three tabs, Cook / History / Settings: bottom tab bar (phone) / 88px rail (from 768px). Setup lives under Cook when no cook is running. Active tab gets a band-colored marker and filled icon.",
+      "html": "<nav class=\"ds-nav\"><button class=\"ds-nav-item is-active\" aria-current=\"page\"><span class=\"ds-mark\"></span><svg width=\"24\" height=\"24\" viewBox=\"0 0 256 256\" fill=\"currentColor\"><path d=\"M152,150.64V40a24,24,0,0,0-48,0V150.64a48,48,0,1,0,48,0Z\"/></svg>Cook</button><button class=\"ds-nav-item\"><svg width=\"24\" height=\"24\" viewBox=\"0 0 256 256\" fill=\"currentColor\"><path d=\"M136,80v43.47l36.12,21.67a8,8,0,0,1-8.24,13.72l-40-24A8,8,0,0,1,120,128V80a8,8,0,0,1,16,0Zm-8-48A95.44,95.44,0,0,0,60.08,60.15C52.81,67.51,46.35,74.59,40,82V64a8,8,0,0,0-16,0v40a8,8,0,0,0,8,8H72a8,8,0,0,0,0-16H49c7.15-8.42,14.27-16.35,22.39-24.57a80,80,0,1,1,1.66,114.75,8,8,0,1,0-11,11.64A96,96,0,1,0,128,32Z\"/></svg>History</button><button class=\"ds-nav-item\"><svg width=\"24\" height=\"24\" viewBox=\"0 0 256 256\" fill=\"currentColor\"><path d=\"M128,80a48,48,0,1,0,48,48A48.05,48.05,0,0,0,128,80Zm0,80a32,32,0,1,1,32-32A32,32,0,0,1,128,160Zm109.94-52.79a8,8,0,0,0-3.89-5.4l-29.83-17-.12-33.62a8,8,0,0,0-2.83-6.08,111.91,111.91,0,0,0-36.72-20.67,8,8,0,0,0-6.46.59L128,41.85,97.88,25a8,8,0,0,0-6.47-.6A112.1,112.1,0,0,0,54.73,45.15a8,8,0,0,0-2.83,6.07l-.15,33.65-29.83,17a8,8,0,0,0-3.89,5.4,106.47,106.47,0,0,0,0,41.56,8,8,0,0,0,3.89,5.4l29.83,17,.12,33.62a8,8,0,0,0,2.83,6.08,111.91,111.91,0,0,0,36.72,20.67,8,8,0,0,0,6.46-.59L128,214.15,158.12,231a7.91,7.91,0,0,0,3.9,1,8.09,8.09,0,0,0,2.57-.42,112.1,112.1,0,0,0,36.68-20.73,8,8,0,0,0,2.83-6.07l.15-33.65,29.83-17a8,8,0,0,0,3.89-5.4A106.47,106.47,0,0,0,237.94,107.21Zm-15,34.91-28.57,16.25a8,8,0,0,0-3,3c-.58,1-1.19,2.06-1.81,3.06a7.94,7.94,0,0,0-1.22,4.21l-.15,32.25a95.89,95.89,0,0,1-25.37,14.3L134,199.13a8,8,0,0,0-3.91-1h-.19c-1.21,0-2.43,0-3.64,0a8.08,8.08,0,0,0-4.1,1l-28.84,16.1A96,96,0,0,1,67.88,201l-.11-32.2a8,8,0,0,0-1.22-4.22c-.62-1-1.23-2-1.8-3.06a8.09,8.09,0,0,0-3-3.06l-28.6-16.29a90.49,90.49,0,0,1,0-28.26L61.67,97.63a8,8,0,0,0,3-3c.58-1,1.19-2.06,1.81-3.06a7.94,7.94,0,0,0,1.22-4.21l.15-32.25a95.89,95.89,0,0,1,25.37-14.3L122,56.87a8,8,0,0,0,4.1,1c1.21,0,2.43,0,3.64,0a8.08,8.08,0,0,0,4.1-1l28.84-16.1A96,96,0,0,1,188.12,55l.11,32.2a8,8,0,0,0,1.22,4.22c.62,1,1.23,2,1.8,3.06a8.09,8.09,0,0,0,3,3.06l28.6,16.29A90.49,90.49,0,0,1,222.9,142.12Z\"/></svg>Settings</button></nav>",
+      "css": ":host{--tide-band:#f2c230;--tide-on-band:#13233a;--tide-ground:#f5f6f2;--tide-ink:#13233a;--tide-muted:#566273;--tide-rule:#cdd2d8;--tide-blue:#2e6db4;--tide-pull:#c8372d;--tide-on-pull:#fff7f5;--tide-field:#ffffff;font-family:Archivo,system-ui,sans-serif;font-variant-numeric:tabular-nums;}.ds-nav{display:flex;border-top:1px solid var(--tide-rule);background:var(--tide-ground);}.ds-nav-item{position:relative;flex:1;min-height:52px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;border:none;background:transparent;color:var(--tide-muted);font:600 12px Archivo,system-ui,sans-serif;cursor:pointer;transition:color 150ms;}.ds-nav-item:hover,.ds-nav-item.is-active{color:var(--tide-ink);}.ds-mark{position:absolute;top:0;width:32px;height:3px;border-radius:0 0 2px 2px;background:var(--tide-band);}.ds-nav-item:focus-visible{outline:2px solid var(--tide-blue);outline-offset:2px;}"
     }
   ],
   "narrative": {
     "northStar": "The Cook's Tide Table",
-    "overview": "The cook is read like a tide forecast. One curve runs over clock time, and the next event is printed as a time of day. The reference is a farmer's almanac and a printed tide table: a yellow header band, cool white paper, navy ink, a blue projected line, and condensed figures set large enough to read from a few feet away at the grill. The screen answers three things in order: where the meat is, when it will be ready, and whether to act. Model detail opens on demand.\n\nDensity is low and vertical. On a phone the screen is one column of type and rules: band, core figure beside the pull target, stage line, full-width tide chart, forecast rows, pit reading, tab bar. On desktop it splits into a figure-and-table column on the left and a tall chart on the right. Nothing sits in a card. Sections are separated by hairline rules and spacing, the way a printed table is.\n\nTwo palettes share one structure. Daylight is yellow, white and navy for direct sun. After dark the ground turns navy and the figures turn amber. Red is kept for one event, the pull, and when the pull comes the whole band turns red.",
+    "overview": "The cook is read like a tide forecast. One curve runs over clock time, and the next event is printed as a time of day. The reference is a farmer's almanac and a printed tide table: a yellow header band, cool white paper, navy ink, a blue projected line, and condensed figures set large enough to read from a few feet away at the grill. The screen answers three things in order: where the meat is, when it will be ready, and whether to act. Model detail opens on demand.\n\nDensity is low and vertical. On a phone the screen is one column of type and rules: band, core figure beside the pull target, stage line, full-width tide chart, forecast rows, pit reading, tab bar. On desktop it splits into a figure-and-table column on the left and a tall chart on the right. Nothing sits in a card. Sections are separated by hairline rules and spacing, the way a printed table is.\n\nThe same world carries the second surface, \"Start a cook\". With no cook running, the Cook tab opens a setup form under the same band: titled sections divided by hairlines, large tap targets, and on the right (or pinned at the bottom on a phone) a summary of the cook as it will start, set in the forecast table's rhythm.\n\nTwo palettes share one structure. Daylight is yellow, white and navy for direct sun. After dark the ground turns navy and the figures turn amber. Red is kept for one event, the pull, and when the pull comes the whole band turns red.",
     "keyCharacteristics": [
       "One condensed grotesk (Archivo, width axis) with tabular figures for everything.",
       "A yellow band at the top that carries the cook name, data problems, and the pull takeover.",
-      "Hairline rules instead of containers; flat surfaces.",
+      "Hairline rules instead of containers; flat surfaces, on the live screen and in setup alike.",
       "The tide chart: solid past, dashed projection, now line, red pull line.",
       "Red only for the pull.",
       "Daylight and night palettes swap through the same tokens."
@@ -433,7 +528,7 @@
     "rules": [
       {
         "name": "The One Red Rule",
-        "body": "Red belongs to the pull. It shows up as the band during the pull stage, the pull row value, and the pull line on the chart. Never use it for errors, warnings, stale data or decoration.",
+        "body": "Red belongs to the pull. It shows up as the band during the pull stage, the pull row value, and the pull line on the chart. Never use it for errors, warnings, stale data or decoration. Problems speak in ink: weight, a heavier ring and a warning icon (form errors), or the band itself (lost data).",
         "section": "colors"
       },
       {
@@ -453,7 +548,7 @@
       },
       {
         "name": "The Rules Not Cards Rule",
-        "body": "Group content with hairline rules and space. The forecast table opens with a 1.5px ink rule and separates rows with 1px hairlines. Shadows belong to floating layers (menu, dialog) only.",
+        "body": "Group content with hairline rules and space. The forecast table and the setup summary open with a 1.5px ink rule and separate rows with 1px hairlines; setup sections are divided by a single hairline. Shadows belong to floating layers (menu, dialog) only.",
         "section": "elevation"
       }
     ],
@@ -462,6 +557,8 @@
       "**Do** set big numbers in Archivo condensed (66–80% width), heavy, with tabular figures.",
       "**Do** separate content with hairline rules (1px hairline-grey, 1.5px ink for a table's top rule) and space.",
       "**Do** put lost or stale data in the band, at band-level readability.",
+      "**Do** show problems in ink: lost data in the band, form errors as semibold ink text with a bold warning icon and a 2.5px ink ring on the field.",
+      "**Do** mark a selection with an ink fill and ground-colored text (segmented options, preset chips).",
       "**Do** keep touch targets at least 44px, and primary actions 48–56px.",
       "**Do** use Phosphor icons (`@phosphor-icons/react`), regular weight, with fill for the active tab.",
       "**Do** honor `prefers-reduced-motion` for any transition."

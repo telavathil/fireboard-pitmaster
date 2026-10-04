@@ -1,14 +1,13 @@
 "use client";
 
 import React from "react";
-import { ClockCounterClockwise, GearSix, Plug, ThermometerSimple, type Icon } from "@phosphor-icons/react";
+import { ClockCounterClockwise, GearSix, ThermometerSimple, type Icon } from "@phosphor-icons/react";
 import { useCookSession } from "../../context/CookSessionContext";
 
-type Tab = "dashboard" | "probes" | "history" | "settings";
+type Tab = "dashboard" | "history" | "settings";
 
 const ITEMS: ReadonlyArray<{ tab: Tab; label: string; icon: Icon }> = [
   { tab: "dashboard", label: "Cook", icon: ThermometerSimple },
-  { tab: "probes", label: "Probes", icon: Plug },
   { tab: "history", label: "History", icon: ClockCounterClockwise },
   { tab: "settings", label: "Settings", icon: GearSix },
 ];

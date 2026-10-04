@@ -280,6 +280,7 @@ body {
   --color-tide-blue: var(--tide-blue);
   --color-tide-pull: var(--tide-pull);
   --color-tide-on-pull: var(--tide-on-pull);
+  --color-tide-field: var(--tide-field);
   --font-tide: var(--font-archivo), system-ui, sans-serif;
 }
 
@@ -294,6 +295,7 @@ body {
   --tide-blue-soft: rgb(46 109 180 / 0.16);
   --tide-pull: #c8372d;
   --tide-on-pull: #fff7f5;
+  --tide-field: #ffffff;
   background: var(--tide-ground);
   color: var(--tide-ink);
   font-family: var(--font-archivo), system-ui, sans-serif;
@@ -314,6 +316,7 @@ body {
     --tide-blue-soft: rgb(127 168 222 / 0.16);
     --tide-pull: #d9443a;
     --tide-on-pull: #fff3f1;
+    --tide-field: #142039;
   }
 }
 
@@ -371,5 +374,18 @@ body {
       "details chart";
     grid-template-rows: auto auto auto auto 1fr;
     column-gap: 48px;
+  }
+}
+
+.setup-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0 48px;
+}
+
+@media (min-width: 900px) {
+  .setup-layout {
+    grid-template-columns: minmax(0, 7fr) minmax(300px, 5fr);
+    align-items: start;
   }
 }

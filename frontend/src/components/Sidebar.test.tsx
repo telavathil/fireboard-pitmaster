@@ -13,7 +13,7 @@ const mockedUseCookSession = useCookSession as unknown as ReturnType<typeof vi.f
 function baseSession(overrides: Record<string, unknown> = {}) {
   return {
     currentPhase: 1,
-    activeTab: "probes",
+    activeTab: "history",
     setActiveTab: vi.fn(),
     activeSession: null,
     handleEndCook: vi.fn(),
@@ -53,9 +53,15 @@ describe("Sidebar", () => {
 
     // Desktop nav items exist alongside a duplicate mobile bottom-nav item
     // with the same label - scope to the desktop `.nav-item` element.
-    const dashboardItems = screen.getAllByText("Dashboard");
-    await userEvent.click(dashboardItems[0]);
+    const cookItems = screen.getAllByText("Cook");
+    await userEvent.click(cookItems[0]);
     expect(setActiveTab).toHaveBeenCalledWith("dashboard");
+  });
+
+  it("has no separate Probes tab; setup lives under Cook", () => {
+    mockedUseCookSession.mockReturnValue(baseSession({}));
+    render(<Sidebar />);
+    expect(screen.queryByText("Probes")).not.toBeInTheDocument();
   });
 
   it("calls handleEndCook when END ACTIVE COOK is clicked", async () => {

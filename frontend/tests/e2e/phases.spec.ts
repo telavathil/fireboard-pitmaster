@@ -4,10 +4,9 @@ import { clearActiveSession, loginAsDemo, expectCurrentPhase } from "./helpers";
 test.beforeEach(async ({ request, page }) => {
   await clearActiveSession(request);
   await loginAsDemo(page);
-  await page.getByRole("button", { name: "INITIALIZE THERMAL MODEL" }).click();
-  await expect
-    .poll(() => page.evaluate(() => (window as unknown as { activeTab?: string }).activeTab))
-    .toBe("dashboard");
+  await page.getByRole("button", { name: "Start cook" }).click();
+  // Setup and the live screen share the Cook tab, so wait for the live screen itself.
+  await page.getByRole("region", { name: "Core temperature" }).waitFor({ timeout: 10000 });
 });
 
 async function gotoPhase(page: import("@playwright/test").Page, phase: number) {
@@ -60,7 +59,7 @@ test("?phase=5: Finish cook ends the cook after confirmation", async ({ page }) 
   await page.getByRole("dialog").getByRole("button", { name: "End cook" }).click();
   await page.goto("/");
   await page.waitForLoadState("domcontentloaded");
-  await expect(page.getByText("STANDBY MODE")).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Start a cook" })).toBeVisible();
 });
 
 test("?phase=6 shows the cooking stage", async ({ page }) => {

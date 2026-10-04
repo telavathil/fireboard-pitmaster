@@ -8,10 +8,9 @@ import { useCookSession } from "../context/CookSessionContext";
 // which view renders), not the children's own rendering logic.
 vi.mock("../components/Sidebar", () => ({ default: () => <div>MockSidebar</div> }));
 vi.mock("../components/Header", () => ({ default: () => <div>MockHeader</div> }));
-vi.mock("../components/EmptyDashboard", () => ({ default: () => <div>MockEmptyDashboard</div> }));
 vi.mock("../components/HistoryView", () => ({ default: () => <div>MockHistoryView</div> }));
 vi.mock("../components/SettingsView", () => ({ default: () => <div>MockSettingsView</div> }));
-vi.mock("../components/Phase1Setup", () => ({ default: () => <div>MockPhase1Setup</div> }));
+vi.mock("../components/setup/SetupScreen", () => ({ default: () => <div>MockSetupScreen</div> }));
 vi.mock("../components/live/LiveCook", () => ({ default: () => <div>MockLiveCook</div> }));
 
 vi.mock("../context/CookSessionContext", () => ({
@@ -25,7 +24,7 @@ function setSession(overrides: Record<string, unknown>) {
   mockedUseCookSession.mockReturnValue({
     token: "mock-token",
     activeSession: null,
-    activeTab: "probes",
+    activeTab: "dashboard",
     currentPhase: 1,
     debugPhaseOverride: null,
     ...overrides,
@@ -44,17 +43,11 @@ describe("Dashboard routing (page.tsx)", () => {
     expect(screen.queryByText("MockSidebar")).not.toBeInTheDocument();
   });
 
-  it("shows Phase1Setup when activeTab is 'probes'", () => {
-    setSession({ token: "t", activeTab: "probes", activeSession: null, currentPhase: 1 });
-    render(<Dashboard />);
-    expect(screen.getByText("MockPhase1Setup")).toBeInTheDocument();
-  });
-
-  it("shows EmptyDashboard on the dashboard tab with no active session (regression: was previously hijacked by the Phase1Setup branch)", () => {
+  it("shows the setup screen on the Cook tab when nothing is cooking", () => {
     setSession({ token: "t", activeTab: "dashboard", activeSession: null, currentPhase: 1, debugPhaseOverride: null });
     render(<Dashboard />);
-    expect(screen.getByText("MockEmptyDashboard")).toBeInTheDocument();
-    expect(screen.queryByText("MockPhase1Setup")).not.toBeInTheDocument();
+    expect(screen.getByText("MockSetupScreen")).toBeInTheDocument();
+    expect(screen.queryByText("MockSidebar")).not.toBeInTheDocument();
   });
 
   it("shows the live cook screen on the dashboard tab for a debug phase override", () => {

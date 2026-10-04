@@ -40,17 +40,8 @@ export default function Sidebar() {
             aria-current={activeTab === "dashboard" ? "page" : undefined}
             className={`nav-item w-full text-left ${activeTab === "dashboard" ? "nav-item-active" : ""}`}
           >
-            <span className="material-symbols-outlined" aria-hidden="true">dashboard</span>
-            <span className="font-label-mono text-label-mono">Dashboard</span>
-          </button>
-          <button
-            type="button"
-            onClick={() => setActiveTab("probes")}
-            aria-current={activeTab === "probes" ? "page" : undefined}
-            className={`nav-item w-full text-left ${activeTab === "probes" ? "nav-item-active" : ""}`}
-          >
             <span className="material-symbols-outlined" aria-hidden="true">thermostat</span>
-            <span className="font-label-mono text-label-mono">Probes</span>
+            <span className="font-label-mono text-label-mono">Cook</span>
           </button>
           <button
             type="button"
@@ -97,19 +88,8 @@ export default function Sidebar() {
             activeTab === "dashboard" ? "text-primary font-bold" : "text-on-surface-variant"
           }`}
         >
-          <span className="material-symbols-outlined text-xl" aria-hidden="true">dashboard</span>
-          <span className="font-label-mono text-[9px] mt-0.5">Dashboard</span>
-        </button>
-        <button
-          type="button"
-          onClick={() => setActiveTab("probes")}
-          aria-current={activeTab === "probes" ? "page" : undefined}
-          className={`flex flex-col items-center justify-center flex-1 py-1 cursor-pointer transition-all ${
-            activeTab === "probes" ? "text-primary font-bold" : "text-on-surface-variant"
-          }`}
-        >
           <span className="material-symbols-outlined text-xl" aria-hidden="true">thermostat</span>
-          <span className="font-label-mono text-[9px] mt-0.5">Probes</span>
+          <span className="font-label-mono text-[9px] mt-0.5">Cook</span>
         </button>
         <button
           type="button"

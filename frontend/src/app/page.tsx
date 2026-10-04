@@ -4,10 +4,9 @@ import React from "react";
 import { CookSessionProvider, useCookSession } from "../context/CookSessionContext";
 import Sidebar from "../components/Sidebar";
 import Header from "../components/Header";
-import EmptyDashboard from "../components/EmptyDashboard";
 import HistoryView from "../components/HistoryView";
 import SettingsView from "../components/SettingsView";
-import Phase1Setup from "../components/Phase1Setup";
+import SetupScreen from "../components/setup/SetupScreen";
 import LiveCook from "../components/live/LiveCook";
 
 function DashboardContent() {
@@ -100,21 +99,16 @@ function DashboardContent() {
     );
   }
 
-  // The live cook screen owns its whole viewport (its own band and navigation).
-  if (activeTab === "dashboard" && (activeSession || debugPhaseOverride !== null)) {
-    return <LiveCook />;
+  // Setup and the live cook screen own their whole viewport (their own band and navigation).
+  if (activeTab === "dashboard") {
+    return activeSession || debugPhaseOverride !== null ? <LiveCook /> : <SetupScreen />;
   }
 
   // Shared layout shell
   const outerClasses = `min-h-screen bg-[#0E0E0F] text-on-surface font-body-md flex${currentPhase === 1 ? " brushed-metal" : ""}`;
   
   // Determine dynamic main tag classes
-  let mainClasses = "ml-0 md:ml-64 mt-20 p-sm md:p-md min-h-[calc(100vh-5rem)] pb-24 md:pb-md bg-background overflow-y-auto";
-  if (activeTab === "dashboard" && !activeSession && debugPhaseOverride === null) {
-    mainClasses += " flex flex-col items-center justify-center";
-  } else {
-    mainClasses += " grid grid-cols-12 content-start gap-md";
-  }
+  const mainClasses = "ml-0 md:ml-64 mt-20 p-sm md:p-md min-h-[calc(100vh-5rem)] pb-24 md:pb-md bg-background overflow-y-auto grid grid-cols-12 content-start gap-md";
 
   return (
     <div className={outerClasses}>
@@ -128,12 +122,6 @@ function DashboardContent() {
             }
             if (activeTab === "settings") {
               return <SettingsView />;
-            }
-            if (activeTab === "probes") {
-              return <Phase1Setup />;
-            }
-            if (activeTab === "dashboard") {
-              return <EmptyDashboard />;
             }
             return null;
           })()}

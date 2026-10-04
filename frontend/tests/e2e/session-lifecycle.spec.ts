@@ -6,52 +6,59 @@ test.beforeEach(async ({ request, page }) => {
   await loginAsDemo(page);
 });
 
-test("Pre-Cook Setup: preset buttons update the displayed target temperature", async ({ page }) => {
-  await page.getByRole("button", { name: /PORK BUTT \(205/ }).click();
-  await expect(page.getByText("205°F").first()).toBeVisible();
+test("Setup: a preset fills protein, cut and target together", async ({ page }) => {
+  await page.getByRole("button", { name: /Pork butt/ }).click();
+  await expect(page.getByLabel("Target temperature")).toHaveText("205°");
+  await expect(page.getByRole("radio", { name: "Pork" })).toBeChecked();
+  await expect(page.getByLabel("Cut")).toHaveValue("Pork butt");
 });
 
-test("Pre-Cook Setup: meat-type quick-select buttons toggle active styling", async ({ page }) => {
-  // exact: true is what actually fixes the ambiguity that used to need an
-  // xpath workaround - "poultry" is also a substring of the visible
-  // "POULTRY (165°F)" preset button's accessible name.
-  const poultryBtn = page.getByRole("button", { name: "poultry", exact: true });
-  await poultryBtn.click();
-  await expect(poultryBtn).toHaveClass(/forge-btn-active/);
+test("Setup: protein and cooker are single-choice radio groups", async ({ page }) => {
+  await page.getByText("Poultry", { exact: true }).click();
+  await expect(page.getByRole("radio", { name: "Poultry" })).toBeChecked();
+  await page.getByText("Offset smoker", { exact: true }).click();
+  await expect(page.getByRole("radio", { name: "Offset smoker" })).toBeChecked();
 });
 
-test("Pre-Cook Setup: cooker profile card selection shows a SELECTED badge", async ({ page }) => {
-  const offsetCard = page.getByRole("button", { name: /Offset Smoker/ });
-  await offsetCard.click();
-  await expect(offsetCard.getByText("SELECTED")).toBeVisible();
+test("Setup: switching weight to pounds converts the entry and still starts a metric cook", async ({ page, request }) => {
+  await page.getByText("lb", { exact: true }).click();
+  await expect(page.getByLabel("Weight")).toHaveValue("11.9");
+  await page.getByLabel("Weight").fill("12");
+  await page.getByRole("button", { name: "Start cook" }).click();
+  await expect
+    .poll(async () => (await request.get("http://localhost:8000/api/sessions/active")).json().then((d) => d.weight_kg))
+    .toBe(5.44);
 });
 
-test("submitting Pre-Cook Setup creates a session and navigates to the dashboard tab", async ({
+test("Setup: an invalid weight is explained and nothing is submitted", async ({ page }) => {
+  await page.getByLabel("Weight").fill("0");
+  await page.getByRole("button", { name: "Start cook" }).click();
+  await expect(page.getByText("Enter a weight between 0.2 and 40 kg.")).toBeVisible();
+  await expect(page.getByLabel("Weight")).toBeFocused();
+});
+
+test("starting a cook creates a session and navigates to the dashboard tab", async ({
   page,
 }) => {
-  await page.getByRole("button", { name: "INITIALIZE THERMAL MODEL" }).click();
-  await expect
-    .poll(() => page.evaluate(() => (window as unknown as { activeTab?: string }).activeTab))
-    .toBe("dashboard");
+  await page.getByRole("button", { name: "Start cook" }).click();
+  await page.getByRole("region", { name: "Core temperature" }).waitFor({ timeout: 10000 });
   await expect(page.getByRole("button", { name: "Cook options" })).toBeVisible();
   await expect(page.getByRole("region", { name: "Core temperature" })).toBeVisible();
 });
 
 test("ending an active cook returns to a sessionless state", async ({ page }) => {
-  await page.getByRole("button", { name: "INITIALIZE THERMAL MODEL" }).click();
-  await expect
-    .poll(() => page.evaluate(() => (window as unknown as { activeTab?: string }).activeTab))
-    .toBe("dashboard");
+  await page.getByRole("button", { name: "Start cook" }).click();
+  await page.getByRole("region", { name: "Core temperature" }).waitFor({ timeout: 10000 });
 
   await page.getByRole("button", { name: "Cook options" }).click();
   await page.getByRole("menuitem", { name: /End cook/ }).click();
   await page.getByRole("dialog").getByRole("button", { name: "End cook" }).click();
-  await expect(page.getByText("STANDBY MODE")).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Start a cook" })).toBeVisible();
   await expect(page.getByRole("button", { name: "Cook options" })).not.toBeVisible();
 });
 
 test("cancelling the end-cook confirmation keeps the cook running", async ({ page }) => {
-  await page.getByRole("button", { name: "INITIALIZE THERMAL MODEL" }).click();
+  await page.getByRole("button", { name: "Start cook" }).click();
   await page.getByRole("button", { name: "Cook options" }).click();
   await page.getByRole("menuitem", { name: /End cook/ }).click();
   await page.getByRole("dialog").getByRole("button", { name: "Keep cooking" }).click();

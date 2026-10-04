@@ -3,6 +3,7 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { CookSession, TelemetryPayload } from "../types";
 import { Stage, deriveStage } from "../components/live/cookModel";
+import { SessionPayload } from "../components/setup/setupModel";
 
 interface CookSessionContextType {
   // Auth State
@@ -20,32 +21,15 @@ interface CookSessionContextType {
   activeSession: CookSession | null;
   isLoadingSession: boolean;
   isCreatingSession: boolean;
-  handleCreateSession: (e: React.FormEvent) => Promise<void>;
+  sessionError: string | null;
+  startCook: (payload: SessionPayload) => Promise<boolean>;
   handleUpdateStatus: (status: string) => Promise<void>;
   handleEndCook: () => void;
 
   // Navigation
-  activeTab: "dashboard" | "probes" | "history" | "settings";
-  setActiveTab: (tab: "dashboard" | "probes" | "history" | "settings") => void;
-
-  // Setup Form
-  deviceId: string;
-  setDeviceId: (id: string) => void;
-  deviceName: string;
-  setDeviceName: (name: string) => void;
-  meatType: string;
-  setMeatType: (type: string) => void;
-  cutType: string;
-  setCutType: (cut: string) => void;
-  cookerType: string;
-  setCookerType: (cooker: string) => void;
-  weightKg: string;
-  setWeightKg: (w: string) => void;
-  thicknessMm: string;
-  setThicknessMm: (t: string) => void;
-  targetTempF: number;
-  setTargetTempF: (t: number) => void;
-  applyPresetF: (meat: string, cut: string, targetF: number) => void;
+  /** "dashboard" is the Cook tab: setup with no session, the live screen during one. */
+  activeTab: "dashboard" | "history" | "settings";
+  setActiveTab: (tab: "dashboard" | "history" | "settings") => void;
 
   // Settings
   tempUnit: "F" | "C";
@@ -95,19 +79,10 @@ export function CookSessionProvider({ children }: { children: React.ReactNode })
   const [isLoadingSession, setIsLoadingSession] = useState<boolean>(true);
   const [isCreatingSession, setIsCreatingSession] = useState<boolean>(false);
 
-  // Cook Session Form Inputs (Pre-Cook Setup)
-  const [deviceId, setDeviceId] = useState<string>("device_sim_123");
-  const [deviceName, setDeviceName] = useState<string>("Hearth Grill");
-  const [meatType, setMeatType] = useState<string>("beef");
-  const [cutType, setCutType] = useState<string>("Brisket Flat");
-  const [cookerType, setCookerType] = useState<string>("kamado");
-  const [weightKg, setWeightKg] = useState<string>("5.4");
-  const [thicknessMm, setThicknessMm] = useState<string>("75.0");
-  const [targetTempF, setTargetTempF] = useState<number>(203);
   const [sessionError, setSessionError] = useState<string | null>(null);
 
   // Active Navigation Tab State
-  const [activeTab, setActiveTab] = useState<"dashboard" | "probes" | "history" | "settings">("probes");
+  const [activeTab, setActiveTab] = useState<"dashboard" | "history" | "settings">("dashboard");
 
   // Settings view inputs
   const [tempUnit, setTempUnit] = useState<"F" | "C">("F");
@@ -143,13 +118,9 @@ export function CookSessionProvider({ children }: { children: React.ReactNode })
     }
   }, []);
 
-  // Sync Navigation Tab State based on active cook session status
+  // Starting or ending a cook returns to the Cook tab (setup or live screen).
   useEffect(() => {
-    if (activeSession) {
-      setActiveTab("dashboard");
-    } else {
-      setActiveTab("probes");
-    }
+    setActiveTab("dashboard");
   }, [activeSession ? activeSession.id : null]);
 
   // Restore when the rest began. If the pull was never logged on this device,
@@ -174,11 +145,7 @@ export function CookSessionProvider({ children }: { children: React.ReactNode })
       if (p) {
         const phaseNum = parseInt(p, 10);
         setDebugPhaseOverride(phaseNum);
-        if (phaseNum === 1) {
-          setActiveTab("probes");
-        } else {
-          setActiveTab("dashboard");
-        }
+        setActiveTab("dashboard");
       }
     }
   }, []);
@@ -285,25 +252,10 @@ export function CookSessionProvider({ children }: { children: React.ReactNode })
     setHistory([]);
   };
 
-  const handleCreateSession = async (e: React.FormEvent) => {
-    e.preventDefault();
+  /** Creates a cook from a validated setup payload. Resolves true when the session started. */
+  const startCook = async (payload: SessionPayload): Promise<boolean> => {
     setSessionError(null);
     setIsCreatingSession(true);
-
-    // Convert target Temp from F (slider) to C for database
-    const targetC = parseFloat(((targetTempF - 32) * 5 / 9).toFixed(1));
-
-    const payload = {
-      device_id: deviceId,
-      device_name: deviceName,
-      meat_type: meatType,
-      cut_type: cutType,
-      cooker_type: cookerType,
-      status: "bare",
-      weight_kg: parseFloat(weightKg),
-      thickness_mm: parseFloat(thicknessMm),
-      target_temp_c: targetC,
-    };
 
     try {
       const res = await fetch(`${backendUrl}/api/sessions`, {
@@ -318,12 +270,14 @@ export function CookSessionProvider({ children }: { children: React.ReactNode })
       if (res.ok) {
         const data = await res.json();
         setActiveSession(data);
-      } else {
-        const errData = await res.json();
-        setSessionError(errData.detail || "Failed to create session.");
+        return true;
       }
-    } catch (err) {
-      setSessionError("Failed to communicate with the server.");
+      const errData = await res.json().catch(() => ({}));
+      setSessionError(errData.detail || "The cook couldn't be started. Check the details and try again.");
+      return false;
+    } catch {
+      setSessionError("Couldn't reach the server. Check that the backend is running, then try again.");
+      return false;
     } finally {
       setIsCreatingSession(false);
     }
@@ -361,12 +315,6 @@ export function CookSessionProvider({ children }: { children: React.ReactNode })
     setHistory([]);
   };
 
-  const applyPresetF = (meat: string, cut: string, targetF: number) => {
-    setMeatType(meat);
-    setCutType(cut);
-    setTargetTempF(targetF);
-  };
-
   // Live cook derivation. Nothing here falls back to invented readings.
   const carryoverC = telemetry?.carryover_rise ?? null;
   const overrideStage = debugPhaseOverride !== null ? STAGE_BY_PHASE[debugPhaseOverride] ?? null : null;
@@ -402,28 +350,12 @@ export function CookSessionProvider({ children }: { children: React.ReactNode })
         activeSession,
         isLoadingSession,
         isCreatingSession,
-        handleCreateSession,
+        sessionError,
+        startCook,
         handleUpdateStatus,
         handleEndCook,
         activeTab,
         setActiveTab,
-        deviceId,
-        setDeviceId,
-        deviceName,
-        setDeviceName,
-        meatType,
-        setMeatType,
-        cutType,
-        setCutType,
-        cookerType,
-        setCookerType,
-        weightKg,
-        setWeightKg,
-        thicknessMm,
-        setThicknessMm,
-        targetTempF,
-        setTargetTempF,
-        applyPresetF,
         tempUnit,
         setTempUnit,
         updateRate,
