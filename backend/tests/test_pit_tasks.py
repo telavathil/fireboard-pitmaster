@@ -173,6 +173,8 @@ def test_kalman_prediction_with_history(mock_get_redis):
     assert payload["eta_seconds"] > 0
     assert "carryover_rise" in payload
     assert payload["carryover_rise"] > 0.0
+    # Reading time is sent as explicit UTC so browsers in other zones don't misread its age.
+    assert payload["timestamp"] == "2023-11-14T22:18:00+00:00"
     
     # 6. Verify telemetry logs were written to the database
     conn = get_db_connection()

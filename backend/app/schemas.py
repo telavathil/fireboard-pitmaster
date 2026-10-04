@@ -57,3 +57,20 @@ class TelemetryPayload(BaseModel):
     confidence: str = "low"
     timestamp: datetime
 
+
+
+# Cook History
+class CookHistoryEntry(BaseModel):
+    """A finished cook, summarised from its session row and logged readings."""
+    id: str
+    device_name: Optional[str] = None
+    meat_type: str
+    cut_type: str
+    cooker_type: str
+    weight_kg: float
+    thickness_mm: float
+    target_temp_c: float
+    started_at: datetime
+    ended_at: Optional[datetime] = Field(None, description="Time of the last logged reading (UTC)")
+    peak_core_c: Optional[float] = Field(None, description="Highest smoothed core reading, including the rest")
+    reading_count: int = 0

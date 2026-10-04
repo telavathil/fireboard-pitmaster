@@ -20,7 +20,7 @@ export default function PullAlarm({ explanation, audible, onPulled }: PullAlarmP
       <p className="text-[clamp(3.75rem,17vw,6rem)] font-extrabold leading-[0.88] tracking-[-0.02em] [font-stretch:66%]">
         Pull now
       </p>
-      <p className="mt-3 max-w-[42ch] text-[16px] leading-snug">{explanation}</p>
+      <p className="mt-3 max-w-[42ch] text-[17px] leading-snug">{explanation}</p>
       <div className="mt-5 flex gap-3">
         <button
           type="button"

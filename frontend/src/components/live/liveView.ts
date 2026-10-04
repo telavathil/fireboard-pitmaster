@@ -7,6 +7,7 @@ import {
   formatClock,
   formatDuration,
   isStale,
+  parseServerTime,
   pullTempC,
   readingAgeSeconds,
   stallStartedAt,
@@ -57,7 +58,7 @@ function ageOf(input: LiveViewInput): number {
 /** Clock time the backend expects the core to reach target, anchored to the reading it came from. */
 export function targetClock(telemetry: TelemetryPayload | null): number | null {
   if (!telemetry || telemetry.confidence === "low" || telemetry.confidence === "none") return null;
-  return etaToClock(new Date(telemetry.timestamp).getTime(), telemetry.eta_seconds);
+  return etaToClock(parseServerTime(telemetry.timestamp), telemetry.eta_seconds);
 }
 
 /** When the figure can't be trusted as live, the note under it says why, in the first viewport. */

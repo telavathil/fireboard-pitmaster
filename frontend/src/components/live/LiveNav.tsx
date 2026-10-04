@@ -24,7 +24,7 @@ function NavButton({ tab, label, icon: IconCmp, active, onSelect }: {
       type="button"
       onClick={() => onSelect(tab)}
       aria-current={active ? "page" : undefined}
-      className={`relative flex min-h-[52px] flex-1 flex-col items-center justify-center gap-1 text-[12px] font-semibold transition-colors md:w-full md:flex-none md:py-3 ${
+      className={`relative flex min-h-[52px] flex-1 flex-col items-center justify-center gap-1 text-[13px] font-semibold transition-colors md:w-full md:flex-none md:py-3 ${
         active ? "text-tide-ink" : "text-tide-muted hover:text-tide-ink"
       }`}
     >

@@ -2,10 +2,8 @@
 
 import React from "react";
 import { CookSessionProvider, useCookSession } from "../context/CookSessionContext";
-import Sidebar from "../components/Sidebar";
-import Header from "../components/Header";
-import HistoryView from "../components/HistoryView";
-import SettingsView from "../components/SettingsView";
+import HistoryScreen from "../components/history/HistoryScreen";
+import SettingsScreen from "../components/settings/SettingsScreen";
 import SetupScreen from "../components/setup/SetupScreen";
 import LiveCook from "../components/live/LiveCook";
 
@@ -21,7 +19,6 @@ function DashboardContent() {
     handleLogin,
     activeSession,
     activeTab,
-    currentPhase,
     debugPhaseOverride,
   } = useCookSession();
 
@@ -99,36 +96,10 @@ function DashboardContent() {
     );
   }
 
-  // Setup and the live cook screen own their whole viewport (their own band and navigation).
-  if (activeTab === "dashboard") {
-    return activeSession || debugPhaseOverride !== null ? <LiveCook /> : <SetupScreen />;
-  }
-
-  // Shared layout shell
-  const outerClasses = `min-h-screen bg-[#0E0E0F] text-on-surface font-body-md flex${currentPhase === 1 ? " brushed-metal" : ""}`;
-  
-  // Determine dynamic main tag classes
-  const mainClasses = "ml-0 md:ml-64 mt-20 p-sm md:p-md min-h-[calc(100vh-5rem)] pb-24 md:pb-md bg-background overflow-y-auto grid grid-cols-12 content-start gap-md";
-
-  return (
-    <div className={outerClasses}>
-      <Sidebar />
-      <div className="flex-grow flex flex-col min-h-screen">
-        <Header />
-        <main className={mainClasses}>
-          {(() => {
-            if (activeTab === "history") {
-              return <HistoryView />;
-            }
-            if (activeTab === "settings") {
-              return <SettingsView />;
-            }
-            return null;
-          })()}
-        </main>
-      </div>
-    </div>
-  );
+  // Every signed-in screen owns its whole viewport (its own band and navigation).
+  if (activeTab === "history") return <HistoryScreen />;
+  if (activeTab === "settings") return <SettingsScreen />;
+  return activeSession || debugPhaseOverride !== null ? <LiveCook /> : <SetupScreen />;
 }
 
 export default function Dashboard() {

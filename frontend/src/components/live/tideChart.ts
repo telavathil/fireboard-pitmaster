@@ -1,5 +1,5 @@
 import { TelemetryPayload } from "../../types";
-import { TempUnit, toUnit } from "./cookModel";
+import { TempUnit, parseServerTime, toUnit } from "./cookModel";
 
 export interface ChartFrame {
   width: number;
@@ -34,7 +34,7 @@ const MIN_PROJECTION_PX = 24;
 const SCALE_STEP: Record<TempUnit, number> = { F: 25, C: 10 };
 
 const hourFormat = new Intl.DateTimeFormat("en-US", { hour: "numeric" });
-const toMs = (r: TelemetryPayload) => new Date(r.timestamp).getTime();
+const toMs = (r: TelemetryPayload) => parseServerTime(r.timestamp);
 const pt = (x: number, y: number) => `${x.toFixed(1)},${y.toFixed(1)}`;
 
 function timeDomain(history: ChartInput["history"], now: number, etaClock: number | null) {

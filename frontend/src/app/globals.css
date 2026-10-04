@@ -114,67 +114,6 @@ body {
   background: rgba(20, 20, 22, 0.85);
 }
 
-.ember-glow {
-  box-shadow: 0 0 30px rgba(255, 77, 0, 0.3);
-}
-
-.glow-ember-inner {
-  box-shadow: inset 0 0 12px rgba(255, 77, 0, 0.4);
-}
-
-@utility forge-surface {
-  background-color: #121214;
-  border: 1px solid #262626;
-  position: relative;
-  
-  &::before {
-    content: "";
-    position: absolute;
-    top: 0; left: 0; right: 0; height: 1px;
-    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.05), transparent);
-  }
-}
-
-.forge-texture {
-  background-image: linear-gradient(to bottom, rgba(255,255,255,0.02) 1px, transparent 1px),
-                    linear-gradient(to right, rgba(255,255,255,0.02) 1px, transparent 1px);
-  background-size: 20px 20px;
-}
-
-.pulsing-ring {
-  animation: pulse-ring-anim 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-}
-
-@keyframes pulse-ring-anim {
-  0%, 100% { transform: scale(1); opacity: 0.8; }
-  50% { transform: scale(1.05); opacity: 0.4; }
-}
-
-@keyframes pulse-heat-anim {
-  0%, 100% { opacity: 0.4; transform: scale(1); }
-  50% { opacity: 0.7; transform: scale(1.05); }
-}
-
-.animate-heat {
-  animation: pulse-heat-anim 4s ease-in-out infinite;
-}
-
-@utility dashboard-sidebar {
-  @apply hidden md:flex flex-col py-md bg-surface-container h-screen w-64 fixed left-0 top-0 border-r border-outline-variant z-50;
-}
-
-@utility dashboard-header {
-  @apply flex justify-between items-center px-4 md:px-margin-desktop w-full md:w-[calc(100%-16rem)] ml-0 md:ml-64 bg-surface h-20 border-b border-outline-variant z-40 fixed top-0 left-0 right-0;
-}
-
-@utility nav-item {
-  @apply px-4 py-3 flex items-center gap-3 cursor-pointer transition-colors text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface;
-}
-
-@utility nav-item-active {
-  @apply bg-primary-container text-on-primary-container font-bold border-l-4 border-primary;
-}
-
 @utility forge-input {
   width: 100%;
   background-color: var(--color-surface-container-high);
@@ -190,46 +129,6 @@ body {
     outline: none;
     border-color: var(--color-primary);
   }
-}
-
-@utility forge-select {
-  width: 100%;
-  background-color: var(--color-surface-container-high);
-  border: 1px solid var(--color-outline-variant);
-  padding-inline: var(--spacing-sm);
-  padding-block: var(--spacing-xs);
-  font-size: var(--font-size-body-md);
-  color: var(--color-on-surface);
-  font-family: var(--font-label-mono);
-  transition: border-color 0.15s;
-  
-  &:focus {
-    outline: none;
-    border-color: var(--color-primary);
-  }
-}
-
-@utility forge-btn {
-  font-family: var(--font-label-mono);
-  padding-inline: var(--spacing-md);
-  padding-block: var(--spacing-xs);
-  border: 1px solid var(--color-outline-variant);
-  font-size: var(--font-size-label-mono);
-  cursor: pointer;
-  background-color: var(--color-surface-container-high);
-  color: var(--color-on-surface-variant);
-  transition: border-color 0.15s, color 0.15s, background-color 0.15s;
-  
-  &:hover {
-    border-color: var(--color-primary);
-  }
-}
-
-@utility forge-btn-active {
-  background-color: var(--color-primary-container);
-  color: var(--color-on-primary-container);
-  border-color: var(--color-primary);
-  font-weight: 700;
 }
 
 @utility action-btn {
@@ -268,7 +167,7 @@ body {
 /* ------------------------------------------------------------------
    Live cook screen: "The Cook's Tide Table" world.
    Daylight palette by default; night-vision palette after dark.
-   Red belongs to the pull, and nothing else.
+   Red belongs to the pull and nothing else.
    ------------------------------------------------------------------ */
 @theme inline {
   --color-tide-band: var(--tide-band);
@@ -328,7 +227,6 @@ body {
 .tide-world :focus-visible {
   outline: 2px solid var(--tide-blue);
   outline-offset: 2px;
-  border-radius: 4px;
 }
 
 .tide-world.is-pull {

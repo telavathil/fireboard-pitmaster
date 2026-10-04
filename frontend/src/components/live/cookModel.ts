@@ -21,6 +21,17 @@ interface StageInput {
   carryoverC: number | null;
 }
 
+const HAS_ZONE = /(Z|[+-]\d{2}:?\d{2})$/i;
+
+/**
+ * Server times are UTC. Older payloads omit the zone, and the browser would
+ * read those as local time, so a zoneless timestamp is treated as UTC.
+ */
+export function parseServerTime(timestamp: string): number {
+  const text = timestamp.trim();
+  return new Date(HAS_ZONE.test(text) ? text : `${text}Z`).getTime();
+}
+
 export function pullTempC(targetC: number, carryoverC: number | null): number {
   return targetC - (carryoverC ?? 0);
 }
@@ -43,7 +54,7 @@ export function toUnit(celsius: number, unit: TempUnit, opts: { delta?: boolean 
 }
 
 export function readingAgeSeconds(timestamp: string, now: number): number {
-  const readAt = new Date(timestamp).getTime();
+  const readAt = parseServerTime(timestamp);
   if (Number.isNaN(readAt)) return Number.POSITIVE_INFINITY;
   return Math.max(0, Math.round((now - readAt) / 1000));
 }
@@ -88,5 +99,5 @@ export function stallStartedAt(history: ReadonlyArray<TelemetryPayload>): number
   while (startIndex > 0 && history[startIndex - 1].stall_detected) {
     startIndex -= 1;
   }
-  return new Date(history[startIndex].timestamp).getTime();
+  return parseServerTime(history[startIndex].timestamp);
 }

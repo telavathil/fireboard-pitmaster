@@ -50,6 +50,13 @@ typography:
     lineHeight: 1
     fontVariation: "'wdth' 76"
     fontFeature: "'tnum'"
+  figure:
+    fontFamily: "Archivo, system-ui, sans-serif"
+    fontSize: "22px"
+    fontWeight: 700
+    lineHeight: 1.25
+    fontVariation: "'wdth' 80"
+    fontFeature: "'tnum'"
   title:
     fontFamily: "Archivo, system-ui, sans-serif"
     fontSize: "24px"
@@ -91,10 +98,12 @@ spacing:
   column-gap: "48px"
   rail: "88px"
   content-max: "1200px"
+  content-narrow: "640px"
 components:
   button-primary:
     backgroundColor: "{colors.navy-ink}"
     textColor: "{colors.table-stock}"
+    typography: "{typography.action}"
     rounded: "{rounded.control}"
     padding: "0 20px"
     height: "48px"
@@ -184,6 +193,19 @@ components:
     backgroundColor: "{colors.table-stock}"
     textColor: "{colors.navy-ink}"
     padding: "12px 20px"
+  screen-band:
+    backgroundColor: "{colors.almanac-yellow}"
+    textColor: "{colors.navy-ink}"
+    typography: "{typography.action}"
+    padding: "18px 20px 16px"
+  history-row:
+    textColor: "{colors.navy-ink}"
+    typography: "{typography.figure}"
+    padding: "12px 0"
+  settings-column:
+    backgroundColor: "{colors.table-stock}"
+    textColor: "{colors.navy-ink}"
+    width: "640px"
 ---
 
 # Design System: FireBoard Pitmaster
@@ -198,12 +220,14 @@ Density is low and vertical. On a phone the screen is one column of type and rul
 
 The same world carries the second surface, "Start a cook". With no cook running, the Cook tab opens a setup form under the same band: titled sections divided by hairlines, large tap targets, and on the right (or pinned at the bottom on a phone) a summary of the cook as it will start, set in the forecast table's rhythm.
 
+History and Settings live in the same world. Every signed-in screen except the live cook shares one shell: navigation, the yellow band with the screen's title, then the content. History is a printed table of finished cooks, each row's figures in the condensed face; Settings is a short column of hairline-separated sections with the same segmented controls setup uses.
+
 Two palettes share one structure. Daylight is yellow, white and navy for direct sun. After dark the ground turns navy and the figures turn amber. Red is kept for one event, the pull, and when the pull comes the whole band turns red.
 
 **Key Characteristics:**
 - One condensed grotesk (Archivo, width axis) with tabular figures for everything.
 - A yellow band at the top that carries the cook name, data problems, and the pull takeover.
-- Hairline rules instead of containers; flat surfaces, on the live screen and in setup alike.
+- Hairline rules instead of containers; flat surfaces on every screen: live, setup, history and settings.
 - The tide chart: solid past, dashed projection, now line, red pull line.
 - Red only for the pull.
 - Daylight and night palettes swap through the same tokens.
@@ -246,12 +270,13 @@ Under `prefers-color-scheme: dark` the same tokens take night values: night-grou
 - **Alarm** (800, clamp(3.75rem, 17vw, 6rem), line-height 0.88, -0.02em, width 66%): "Pull now" inside the red band.
 - **Headline** (700, clamp(1.4rem, 6vw, 1.75rem), width 80%): The pull target beside the core figure.
 - **Table figure** (700, 28px, line-height 1, width 76%): Right-aligned times and values in the forecast rows.
+- **Figure** (700, 22px, line-height 1.25, width 80%): The secondary figure face. Setup summary values, and the duration, target and peak in every history row, at every width including phones.
 - **Title** (700, 24px, width 85%): Dialog headings.
-- **Section** (700, 22px, line-height 1.25, width 85%): Setup section headings ("What's cooking", "Size", "Target"). Summary values use the same size at 80% width.
-- **Action** (17px; 600 for text, 700 for buttons): The band title (cook name or "Start a cook"), large primary buttons (pull, Start cook), and the value typed into a text field. The size that must read at arm's length without being a figure.
-- **Body** (400 to 600, 15–16px, line-height 1.375–1.625): Row labels, notes, segment labels (15px semibold), regular button text (16px bold). Explanatory paragraphs cap at 42–60ch.
-- **Label** (600, 14px): The stage line, pit reading, details rows, field labels and legends, preset chips, compact segments, and form errors.
-- **Caption** (400, 12–13px): Chart captions, row notes, field hints, tab labels (12px semibold), chart axis text (11–12px).
+- **Section** (700, 22px, line-height 1.25, width 85%): Section headings on setup ("What's cooking", "Size", "Target") and settings ("Temperature", "Pull alarm sound", "Account"), and the title of an empty-state message.
+- **Action** (17px; 600 for text, 700 for buttons): The band title on every screen, every primary button (End cook, Finish cook, Start cook, the pull), the end-cook dialog's Keep cooking (semibold), the pull explanation (regular), the cut name in a history row, and the value typed into a text field. The size that must read at arm's length without being a figure.
+- **Body** (400 to 600, 15px, line-height 1.375–1.625): Row labels, notes, status and error messages, segment labels (semibold), secondary button text (semibold). Explanatory paragraphs cap at 42–60ch.
+- **Label** (400 to 600, 14px): The stage line, pit reading, details rows, field labels and legends, history column headers, preset chips, compact segments, form errors (all semibold), and settings helper text (regular, muted).
+- **Caption** (400 to 600, 13px; chart text 11–12px): Chart captions, row notes, field hints, the history date and detail lines on phones, the peak note, and tab labels (13px semibold).
 
 ### Named Rules
 **The Width Axis Rule.** Hierarchy comes from size and width together. Big numbers are condensed and heavy; reading text is normal width. Don't add a second display family.
@@ -266,6 +291,8 @@ From 900px the grid splits into two columns, `minmax(320px, 5fr)` and `minmax(0,
 
 Setup uses its own grid on the same gutters and maximum width. It is one column on phones; from 900px it splits `minmax(0, 7fr)` / `minmax(300px, 5fr)` with a 48px gap, the reverse of the live split: the form is the wide column and the summary aside sits on the right, sticky 24px from the top. Sections run 24px above and 28px below their content, with a hairline between them; fields inside a section are 20px apart and pair up side by side from 640px. Below 900px the summary's button is hidden and a start bar takes its place: fixed above the tab bar (53px plus the safe-area inset; at the bottom edge beside the rail from 768px), table-stock with a hairline top edge, carrying a one-line recap and the Start cook button. The summary keeps enough bottom padding that the start bar never covers it.
 
+History and Settings sit on the same gutters and 1200px maximum, with bottom padding (112px on phones, 48px from 768px) so the tab bar never covers the last row. The history table starts 24px under the band. Settings content is capped at 640px; its sections use setup's section rhythm (24px above, 28px below, hairline between).
+
 Navigation is a bottom tab bar on phones (with safe-area padding) and an 88px left rail from 768px. The band respects the top safe-area inset. The details block carries extra bottom padding on phones so the tab bar never covers it.
 
 ## Elevation & Depth
@@ -277,7 +304,7 @@ The world is flat. Depth comes from the band's color field and from rules, not f
 - **Dialog** (`box-shadow: 0 18px 50px rgb(19 35 58 / 0.28)`, backdrop `rgb(13 21 36 / 0.55)`): The end-cook confirmation.
 
 ### Named Rules
-**The Rules Not Cards Rule.** Group content with hairline rules and space. The forecast table and the setup summary open with a 1.5px ink rule and separate rows with 1px hairlines; setup sections are divided by a single hairline. Shadows belong to floating layers (menu, dialog) only.
+**The Rules Not Cards Rule.** Group content with hairline rules and space. The forecast table, the setup summary and the history table open with a 1.5px ink rule and separate rows with 1px hairlines; setup and settings sections are divided by a single hairline. Shadows belong to floating layers (menu, dialog) only.
 
 ## Shapes
 
@@ -288,9 +315,9 @@ Mostly square. Content areas have no corners at all because they have no contain
 ### Buttons
 Solid, plain and large enough for a greasy thumb.
 - **Shape:** Gently rounded (10px).
-- **Primary:** Navy ink fill, table-stock text, 16px bold, 20px side padding, at least 48px tall (52px for "Finish cook"). Hover drops opacity to 90%.
+- **Primary:** Navy ink fill, table-stock text, the action size (17px bold), 20px side padding, at least 48px tall (52px for "Finish cook"). Hover drops opacity to 90%. Used for End cook and Finish cook.
 - **Large primary:** "Start cook" is 56px tall at the action size (17px bold), scales to 98% on press, and drops to 50% opacity while disabled ("Starting…"). Full width in the summary aside; content width in the start bar.
-- **Secondary:** No fill, a 1.5px hairline-grey ring that darkens to ink on hover. Used for "Keep cooking".
+- **Secondary:** No fill, at least 48px tall, 10px corners, 20px side padding, a 1.5px hairline-grey ring that turns ink on hover, 15px semibold. An optional 20px icon sits before the label with an 8px gap (Sign out). Used for "Try again" and "Start a cook" in history states and "Sign out" in settings. In the end-cook dialog, "Keep cooking" takes the same ring at the action size so it matches End cook beside it.
 - **Pull:** Inside the red band the colors invert: on-pull fill, red text, 17px bold, 56px tall, scales to 98% on press. Paired with a 56px square silence toggle that has a 1.5px ring in the current text color.
 - **Focus:** 2px tide-blue outline, 2px offset, on every focusable element.
 - **Touch targets:** At least 44px everywhere; primary actions 48–56px.
@@ -313,14 +340,17 @@ The narrow-screen stand-in for the summary's button, so starting stays one tap a
 
 ### Navigation
 - **Tabs:** Three, Cook / History / Settings (ThermometerSimple, ClockCounterClockwise, GearSix). Setup lives under Cook whenever no cook is running; the live screen takes over that tab once one starts. There is no separate Probes tab.
-- **Style:** Table-stock surface with a hairline border on its inner edge. Each item is a 24px Phosphor icon over a 12px semibold label, at least 52px tall.
+- **Style:** Table-stock surface with a hairline border on its inner edge. Each item is a 24px Phosphor icon over a 13px semibold label (caption size), at least 52px tall.
 - **States:** Inactive items are slate-muted and turn ink on hover. The active item is ink, its icon switches to the fill weight, and a 3px by 32px band-colored marker sits on the top edge (phone) or left edge (rail).
 
+### Screen Shell
+Every signed-in screen except the live cook is wrapped in one shell (`src/components/tide/TideScreen.tsx`): the navigation, then the band with the screen title at 17px semibold and optional band content under it (such as a status line), then the screen's content. Setup ("Start a cook"), History and Settings all use it. The live cook screen builds its own band (`CookBand`) because it carries the overflow menu and the red pull takeover. A new screen uses the shell rather than its own header.
+
 ### Band
-The yellow header. On the live screen it holds the cook name (action size, semibold, truncated) and the overflow menu; on setup it holds "Start a cook" at the same size. Lost or stale data appears inside the band as a 15px semibold message with a Wi-Fi-off icon, so it reads in sun like the pull does. During the pull the band turns red and the pull alarm opens inside it.
+The yellow header. On the live screen it holds the cook name (action size, semibold, truncated) and the overflow menu; on every other screen it holds that screen's title at the same size, through the shell. Lost or stale data appears inside the band as a 15px semibold message with a Wi-Fi-off icon, so it reads in sun like the pull does. During the pull the band turns red and the pull alarm opens inside it.
 
 ### Pull Alarm
-"Pull now" at alarm size, one sentence on carryover, then the pull button and silence toggle. It enters with a clip-path reveal from the top (520ms, `cubic-bezier(0.16, 1, 0.3, 1)`) while the band color crossfades (420ms, same curve). Both are turned off under `prefers-reduced-motion`. This is the world's only motion moment.
+"Pull now" at alarm size, one sentence on carryover at the action size (17px regular, max 42ch), then the pull button and silence toggle. It enters with a clip-path reveal from the top (520ms, `cubic-bezier(0.16, 1, 0.3, 1)`) while the band color crossfades (420ms, same curve). Both are turned off under `prefers-reduced-motion`. This is the world's only motion moment.
 
 ### Tide Chart (signature)
 The cook drawn as a tide chart in SVG.
@@ -338,7 +368,24 @@ A tide-table list: label on the left at 15px medium, value on the right at the t
 The cook's stages as a wrapping row of 14px semibold words. The current stage is ink with a 2px underline at 6px offset; the others are muted, and future ones drop to 75% opacity.
 
 ### Menu and Dialog
-The overflow menu is a 180px table-stock panel (12px radius, menu shadow) with 44px items. The end-cook dialog is a native `<dialog>` (14px radius, 24px padding, dialog shadow) with focus on "Keep cooking" by default and the destructive "End cook" as the primary button.
+The overflow menu is a 180px table-stock panel (12px radius, menu shadow) with 44px items. The end-cook dialog is a native `<dialog>` (14px radius, 24px padding, dialog shadow) with focus on "Keep cooking" by default and the destructive "End cook" as the primary button. Both buttons are at the action size (17px).
+
+### History Table
+Finished cooks as a printed table, newest first. It is a real `<table>` with a visually hidden caption.
+- **Desktop (from 768px):** Columns Date / Cook / Duration / Target / Peak under a header row of 14px semibold labels and a 1.5px ink rule; duration, target and peak are right-aligned. Rows are 12px top and bottom with a 1px hairline under each. The date is 15px ink; the cook is its cut at the action size (17px semibold) over a 13px muted "kg · lb · cooker" line.
+- **Phones:** The header is hidden and the body opens with the 1.5px ink rule. Each row reflows into a two-column grid: the date across the top (13px muted), then the cut and its detail line on the left with the duration on the right, then "Peak N° of T°" across the bottom with the peak note beside it.
+- **Figures:** Duration, target and peak use the figure face (22px bold, 80% width, tabular) at every width.
+- **Peak note:** 13px muted under the peak (desktop) or beside it (phones): "on target" within ±1 display degree, otherwise "N° over" or "N° short". Never colored.
+- **No readings:** A cook with no readings shows a muted 15px "No readings" for duration and "None" for peak on desktop, and a muted "Target T°" in place of the peak line on phones.
+
+### Screen States
+Empty, loading and error are honest sentences in the content area, 40px from the band, no illustration.
+- **Loading:** One 15px muted status line ("Loading past cooks…").
+- **Error:** The message in 15px semibold ink beside a bold 20px warning-circle icon, then a secondary "Try again" button. No red.
+- **Empty:** A section-size title (22px bold, 85% width), a 15px muted explanation capped at 52ch, then a secondary button to the next step ("Start a cook").
+
+### Settings
+A single column capped at 640px of hairline-separated sections (Temperature, Pull alarm sound, Account), each with a section-size heading. Choices are the segmented control in two columns with the legend visually hidden, followed by muted 14px helper text that says what the setting does. Account shows "Signed in as" in 15px with the name bold, a muted 14px note if a cook is running, and a secondary Sign out button with its icon.
 
 ### Estimate Details
 A native `<details>` disclosure behind a hairline rule: a 48px summary row with a caret that rotates when open, a short explanation (max 60ch), and label/value rows separated by hairlines.
@@ -350,7 +397,8 @@ A native `<details>` disclosure behind a hairline rule: a 48px summary row with 
 - **Do** set big numbers in Archivo condensed (66–80% width), heavy, with tabular figures.
 - **Do** separate content with hairline rules (1px hairline-grey, 1.5px ink for a table's top rule) and space.
 - **Do** put lost or stale data in the band, at band-level readability.
-- **Do** show problems in ink: lost data in the band, form errors as semibold ink text with a bold warning icon and a 2.5px ink ring on the field.
+- **Do** show problems in ink: lost data in the band, form errors as semibold ink text with a bold warning icon and a 2.5px ink ring on the field, screen errors as semibold ink text with a warning icon and a secondary "Try again".
+- **Do** wrap every new signed-in screen in the shell (navigation, band with title, content); only the live cook screen has its own band.
 - **Do** mark a selection with an ink fill and ground-colored text (segmented options, preset chips).
 - **Do** keep touch targets at least 44px, and primary actions 48–56px.
 - **Do** use Phosphor icons (`@phosphor-icons/react`), regular weight, with fill for the active tab.

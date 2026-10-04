@@ -10,6 +10,7 @@ import {
   formatDuration,
   stallStartedAt,
   isStale,
+  parseServerTime,
 } from "./cookModel";
 import { TelemetryPayload } from "../../types";
 
@@ -134,5 +135,21 @@ describe("stallStartedAt", () => {
 
   it("is null when the latest reading is not stalled", () => {
     expect(stallStartedAt([reading({ stall_detected: true }), reading()])).toBeNull();
+  });
+});
+
+describe("parseServerTime", () => {
+  it("reads a zoneless server timestamp as UTC, never as local time", () => {
+    expect(parseServerTime("2026-10-04T14:44:01")).toBe(Date.UTC(2026, 9, 4, 14, 44, 1));
+  });
+
+  it("respects an explicit zone", () => {
+    expect(parseServerTime("2026-10-04T14:44:01+00:00")).toBe(Date.UTC(2026, 9, 4, 14, 44, 1));
+    expect(parseServerTime("2026-10-04T10:44:01-04:00")).toBe(Date.UTC(2026, 9, 4, 14, 44, 1));
+    expect(parseServerTime("2026-10-04T14:44:01.5Z")).toBe(Date.UTC(2026, 9, 4, 14, 44, 1, 500));
+  });
+
+  it("returns NaN for garbage", () => {
+    expect(Number.isNaN(parseServerTime("not a time"))).toBe(true);
   });
 });

@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-10-04T14:11:51.351859+00:00",
+  "generatedAt": "2026-10-04T15:02:13.010598+00:00",
   "title": "Design System: FireBoard Pitmaster",
   "extensions": {
     "colorMeta": {
@@ -328,29 +328,33 @@
         "displayName": "Table Figure",
         "purpose": "Right-aligned times and values in forecast rows."
       },
+      "figure": {
+        "displayName": "Figure",
+        "purpose": "22px bold, 80% width, tabular: setup summary values and history row figures at every width."
+      },
       "title": {
         "displayName": "Title",
         "purpose": "Dialog headings."
       },
       "section": {
         "displayName": "Section",
-        "purpose": "Setup section headings (22px bold, 85% width)."
+        "purpose": "Section headings on setup and settings, empty-state titles (22px bold, 85% width)."
       },
       "body": {
         "displayName": "Body",
-        "purpose": "Labels, notes, row labels, regular button text (15-16px)."
+        "purpose": "Row labels, notes, status and error messages, segment labels, secondary button text (15px)."
       },
       "action": {
         "displayName": "Action",
-        "purpose": "17px: band title (semibold), large primary buttons (bold), text-field values (semibold)."
+        "purpose": "17px: band title on every screen, every primary button and Keep cooking, the pull explanation, history cut names, text-field values."
       },
       "label": {
         "displayName": "Label",
-        "purpose": "Stage line, pit reading, details rows."
+        "purpose": "Stage line, pit reading, details rows, field labels, history column headers, settings helper text (14px)."
       },
       "caption": {
         "displayName": "Caption",
-        "purpose": "Chart captions, row notes, tab labels, axis text (11-13px)."
+        "purpose": "Chart captions, row notes, field hints, history date/detail lines, tab labels (13px semibold); axis text 11-12px."
       }
     },
     "shadows": [
@@ -407,15 +411,15 @@
       "refersTo": "button-primary",
       "description": "Navy fill for the main action: Finish cook, End cook.",
       "html": "<button class=\"ds-btn-primary\">Finish cook</button>",
-      "css": ":host{--tide-band:#f2c230;--tide-on-band:#13233a;--tide-ground:#f5f6f2;--tide-ink:#13233a;--tide-muted:#566273;--tide-rule:#cdd2d8;--tide-blue:#2e6db4;--tide-pull:#c8372d;--tide-on-pull:#fff7f5;--tide-field:#ffffff;font-family:Archivo,system-ui,sans-serif;font-variant-numeric:tabular-nums;}.ds-btn-primary{min-height:48px;padding:0 20px;border:none;border-radius:10px;background:var(--tide-ink);color:var(--tide-ground);font:700 16px Archivo,system-ui,sans-serif;cursor:pointer;}.ds-btn-primary:hover{opacity:.9;}.ds-btn-primary:focus-visible{outline:2px solid var(--tide-blue);outline-offset:2px;}"
+      "css": ":host{--tide-band:#f2c230;--tide-on-band:#13233a;--tide-ground:#f5f6f2;--tide-ink:#13233a;--tide-muted:#566273;--tide-rule:#cdd2d8;--tide-blue:#2e6db4;--tide-pull:#c8372d;--tide-on-pull:#fff7f5;--tide-field:#ffffff;font-family:Archivo,system-ui,sans-serif;font-variant-numeric:tabular-nums;}.ds-btn-primary{min-height:48px;padding:0 20px;border:none;border-radius:10px;background:var(--tide-ink);color:var(--tide-ground);font:700 17px Archivo,system-ui,sans-serif;cursor:pointer;}.ds-btn-primary:hover{opacity:.9;}.ds-btn-primary:focus-visible{outline:2px solid var(--tide-blue);outline-offset:2px;}"
     },
     {
       "name": "Secondary Button",
       "kind": "button",
       "refersTo": "button-secondary",
-      "description": "Ring-only button for the safe choice, such as Keep cooking.",
-      "html": "<button class=\"ds-btn-secondary\">Keep cooking</button>",
-      "css": ":host{--tide-band:#f2c230;--tide-on-band:#13233a;--tide-ground:#f5f6f2;--tide-ink:#13233a;--tide-muted:#566273;--tide-rule:#cdd2d8;--tide-blue:#2e6db4;--tide-pull:#c8372d;--tide-on-pull:#fff7f5;--tide-field:#ffffff;font-family:Archivo,system-ui,sans-serif;font-variant-numeric:tabular-nums;}.ds-btn-secondary{min-height:48px;padding:0 20px;border:none;border-radius:10px;background:transparent;color:var(--tide-ink);box-shadow:0 0 0 1.5px var(--tide-rule);font:600 16px Archivo,system-ui,sans-serif;cursor:pointer;}.ds-btn-secondary:hover{box-shadow:0 0 0 1.5px var(--tide-ink);}.ds-btn-secondary:focus-visible{outline:2px solid var(--tide-blue);outline-offset:2px;}"
+      "description": "Ring-only 48px button for the next or safe step: Try again, Start a cook, Sign out (with icon). 15px semibold; ring turns ink on hover.",
+      "html": "<button class=\"ds-btn-secondary\"><svg width=\"20\" height=\"20\" viewBox=\"0 0 256 256\" fill=\"currentColor\" aria-hidden=\"true\"><path d=\"M120,216a8,8,0,0,1-8,8H48a8,8,0,0,1-8-8V40a8,8,0,0,1,8-8h64a8,8,0,0,1,0,16H56V208h56A8,8,0,0,1,120,216Zm109.66-93.66-40-40a8,8,0,0,0-11.32,11.32L204.69,120H112a8,8,0,0,0,0,16h92.69l-26.35,26.34a8,8,0,0,0,11.32,11.32l40-40A8,8,0,0,0,229.66,122.34Z\"/></svg>Sign out</button>",
+      "css": ":host{--tide-band:#f2c230;--tide-on-band:#13233a;--tide-ground:#f5f6f2;--tide-ink:#13233a;--tide-muted:#566273;--tide-rule:#cdd2d8;--tide-blue:#2e6db4;--tide-pull:#c8372d;--tide-on-pull:#fff7f5;--tide-field:#ffffff;font-family:Archivo,system-ui,sans-serif;font-variant-numeric:tabular-nums;}.ds-btn-secondary{display:inline-flex;align-items:center;gap:8px;min-height:48px;padding:0 20px;border:none;border-radius:10px;background:transparent;color:var(--tide-ink);box-shadow:0 0 0 1.5px var(--tide-rule);font:600 15px Archivo,system-ui,sans-serif;cursor:pointer;}.ds-btn-secondary:hover{box-shadow:0 0 0 1.5px var(--tide-ink);}.ds-btn-secondary:focus-visible{outline:2px solid var(--tide-blue);outline-offset:2px;}"
     },
     {
       "name": "Large Primary Button",
@@ -431,13 +435,13 @@
       "refersTo": "band-pull",
       "description": "The red band takeover with the pull action and silence toggle.",
       "html": "<div class=\"ds-pull\" role=\"alert\"><p class=\"ds-pull-head\">Pull now</p><p class=\"ds-pull-text\">Core is 94°. Expect it to coast about 3° higher during the rest.</p><div class=\"ds-pull-row\"><button class=\"ds-btn-pull\">I pulled it, start rest</button><button class=\"ds-btn-silence\" aria-label=\"Silence alarm\"><svg width=\"24\" height=\"24\" viewBox=\"0 0 256 256\" fill=\"currentColor\"><path d=\"M155.51,24.81a8,8,0,0,0-8.42.88L77.25,80H32A16,16,0,0,0,16,96v64a16,16,0,0,0,16,16H77.25l69.84,54.31A8,8,0,0,0,160,224V32A8,8,0,0,0,155.51,24.81ZM144,207.64,84.91,161.69A7.94,7.94,0,0,0,80,160H32V96H80a7.94,7.94,0,0,0,4.91-1.69L144,48.36Z\"/></svg></button></div></div>",
-      "css": ":host{--tide-band:#f2c230;--tide-on-band:#13233a;--tide-ground:#f5f6f2;--tide-ink:#13233a;--tide-muted:#566273;--tide-rule:#cdd2d8;--tide-blue:#2e6db4;--tide-pull:#c8372d;--tide-on-pull:#fff7f5;--tide-field:#ffffff;font-family:Archivo,system-ui,sans-serif;font-variant-numeric:tabular-nums;}.ds-pull{background:var(--tide-pull);color:var(--tide-on-pull);padding:20px 20px 24px;animation:ds-in 520ms cubic-bezier(0.16,1,0.3,1) both;}@keyframes ds-in{from{clip-path:inset(0 0 100% 0)}to{clip-path:inset(0 0 0 0)}}@media (prefers-reduced-motion:reduce){.ds-pull{animation:none}}.ds-pull-head{margin:0;font-size:clamp(3.75rem,17vw,6rem);font-weight:800;line-height:.88;letter-spacing:-0.02em;font-stretch:66%;}.ds-pull-text{margin:12px 0 0;max-width:42ch;font-size:16px;line-height:1.375;}.ds-pull-row{display:flex;gap:12px;margin-top:20px;}.ds-btn-pull{min-height:56px;padding:0 20px;border:none;border-radius:10px;background:var(--tide-on-pull);color:var(--tide-pull);font:700 17px Archivo,system-ui,sans-serif;cursor:pointer;transition:transform 150ms;}.ds-btn-pull:active{transform:scale(.98);}.ds-btn-silence{width:56px;min-height:56px;display:flex;align-items:center;justify-content:center;border:none;border-radius:10px;background:transparent;color:inherit;box-shadow:0 0 0 1.5px rgb(255 247 245 / .7);cursor:pointer;}.ds-btn-pull:focus-visible,.ds-btn-silence:focus-visible{outline:2px solid var(--tide-on-pull);outline-offset:2px;}"
+      "css": ":host{--tide-band:#f2c230;--tide-on-band:#13233a;--tide-ground:#f5f6f2;--tide-ink:#13233a;--tide-muted:#566273;--tide-rule:#cdd2d8;--tide-blue:#2e6db4;--tide-pull:#c8372d;--tide-on-pull:#fff7f5;--tide-field:#ffffff;font-family:Archivo,system-ui,sans-serif;font-variant-numeric:tabular-nums;}.ds-pull{background:var(--tide-pull);color:var(--tide-on-pull);padding:20px 20px 24px;animation:ds-in 520ms cubic-bezier(0.16,1,0.3,1) both;}@keyframes ds-in{from{clip-path:inset(0 0 100% 0)}to{clip-path:inset(0 0 0 0)}}@media (prefers-reduced-motion:reduce){.ds-pull{animation:none}}.ds-pull-head{margin:0;font-size:clamp(3.75rem,17vw,6rem);font-weight:800;line-height:.88;letter-spacing:-0.02em;font-stretch:66%;}.ds-pull-text{margin:12px 0 0;max-width:42ch;font-size:17px;line-height:1.375;}.ds-pull-row{display:flex;gap:12px;margin-top:20px;}.ds-btn-pull{min-height:56px;padding:0 20px;border:none;border-radius:10px;background:var(--tide-on-pull);color:var(--tide-pull);font:700 17px Archivo,system-ui,sans-serif;cursor:pointer;transition:transform 150ms;}.ds-btn-pull:active{transform:scale(.98);}.ds-btn-silence{width:56px;min-height:56px;display:flex;align-items:center;justify-content:center;border:none;border-radius:10px;background:transparent;color:inherit;box-shadow:0 0 0 1.5px rgb(255 247 245 / .7);cursor:pointer;}.ds-btn-pull:focus-visible,.ds-btn-silence:focus-visible{outline:2px solid var(--tide-on-pull);outline-offset:2px;}"
     },
     {
       "name": "Cook Band",
       "kind": "custom",
       "refersTo": "band",
-      "description": "The almanac-yellow header with the cook name and overflow menu.",
+      "description": "The almanac-yellow header. The live cook's CookBand carries the cook name and overflow menu; every other signed-in screen gets the same band with its title from the TideScreen shell.",
       "html": "<header class=\"ds-band\"><h1 class=\"ds-band-title\">Brisket · 5.4 kg · Offset</h1><button class=\"ds-band-menu\" aria-label=\"Cook options\"><svg width=\"24\" height=\"24\" viewBox=\"0 0 256 256\" fill=\"currentColor\"><circle cx=\"128\" cy=\"60\" r=\"16\"/><circle cx=\"128\" cy=\"128\" r=\"16\"/><circle cx=\"128\" cy=\"196\" r=\"16\"/></svg></button></header>",
       "css": ":host{--tide-band:#f2c230;--tide-on-band:#13233a;--tide-ground:#f5f6f2;--tide-ink:#13233a;--tide-muted:#566273;--tide-rule:#cdd2d8;--tide-blue:#2e6db4;--tide-pull:#c8372d;--tide-on-pull:#fff7f5;--tide-field:#ffffff;font-family:Archivo,system-ui,sans-serif;font-variant-numeric:tabular-nums;}.ds-band{display:flex;justify-content:space-between;align-items:flex-start;padding:18px 20px 16px;background:var(--tide-band);color:var(--tide-on-band);transition:background-color 420ms cubic-bezier(0.16,1,0.3,1),color 420ms cubic-bezier(0.16,1,0.3,1);}.ds-band-title{margin:0;padding-top:8px;font-size:17px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}.ds-band-menu{width:44px;height:44px;margin-right:-8px;display:flex;align-items:center;justify-content:center;border:none;border-radius:9999px;background:transparent;color:inherit;cursor:pointer;}.ds-band-menu:hover{background:rgb(19 35 58 / .08);}.ds-band-menu:focus-visible{outline:2px solid var(--tide-blue);outline-offset:2px;}"
     },
@@ -511,16 +515,32 @@
       "refersTo": "nav-item",
       "description": "Three tabs, Cook / History / Settings: bottom tab bar (phone) / 88px rail (from 768px). Setup lives under Cook when no cook is running. Active tab gets a band-colored marker and filled icon.",
       "html": "<nav class=\"ds-nav\"><button class=\"ds-nav-item is-active\" aria-current=\"page\"><span class=\"ds-mark\"></span><svg width=\"24\" height=\"24\" viewBox=\"0 0 256 256\" fill=\"currentColor\"><path d=\"M152,150.64V40a24,24,0,0,0-48,0V150.64a48,48,0,1,0,48,0Z\"/></svg>Cook</button><button class=\"ds-nav-item\"><svg width=\"24\" height=\"24\" viewBox=\"0 0 256 256\" fill=\"currentColor\"><path d=\"M136,80v43.47l36.12,21.67a8,8,0,0,1-8.24,13.72l-40-24A8,8,0,0,1,120,128V80a8,8,0,0,1,16,0Zm-8-48A95.44,95.44,0,0,0,60.08,60.15C52.81,67.51,46.35,74.59,40,82V64a8,8,0,0,0-16,0v40a8,8,0,0,0,8,8H72a8,8,0,0,0,0-16H49c7.15-8.42,14.27-16.35,22.39-24.57a80,80,0,1,1,1.66,114.75,8,8,0,1,0-11,11.64A96,96,0,1,0,128,32Z\"/></svg>History</button><button class=\"ds-nav-item\"><svg width=\"24\" height=\"24\" viewBox=\"0 0 256 256\" fill=\"currentColor\"><path d=\"M128,80a48,48,0,1,0,48,48A48.05,48.05,0,0,0,128,80Zm0,80a32,32,0,1,1,32-32A32,32,0,0,1,128,160Zm109.94-52.79a8,8,0,0,0-3.89-5.4l-29.83-17-.12-33.62a8,8,0,0,0-2.83-6.08,111.91,111.91,0,0,0-36.72-20.67,8,8,0,0,0-6.46.59L128,41.85,97.88,25a8,8,0,0,0-6.47-.6A112.1,112.1,0,0,0,54.73,45.15a8,8,0,0,0-2.83,6.07l-.15,33.65-29.83,17a8,8,0,0,0-3.89,5.4,106.47,106.47,0,0,0,0,41.56,8,8,0,0,0,3.89,5.4l29.83,17,.12,33.62a8,8,0,0,0,2.83,6.08,111.91,111.91,0,0,0,36.72,20.67,8,8,0,0,0,6.46-.59L128,214.15,158.12,231a7.91,7.91,0,0,0,3.9,1,8.09,8.09,0,0,0,2.57-.42,112.1,112.1,0,0,0,36.68-20.73,8,8,0,0,0,2.83-6.07l.15-33.65,29.83-17a8,8,0,0,0,3.89-5.4A106.47,106.47,0,0,0,237.94,107.21Zm-15,34.91-28.57,16.25a8,8,0,0,0-3,3c-.58,1-1.19,2.06-1.81,3.06a7.94,7.94,0,0,0-1.22,4.21l-.15,32.25a95.89,95.89,0,0,1-25.37,14.3L134,199.13a8,8,0,0,0-3.91-1h-.19c-1.21,0-2.43,0-3.64,0a8.08,8.08,0,0,0-4.1,1l-28.84,16.1A96,96,0,0,1,67.88,201l-.11-32.2a8,8,0,0,0-1.22-4.22c-.62-1-1.23-2-1.8-3.06a8.09,8.09,0,0,0-3-3.06l-28.6-16.29a90.49,90.49,0,0,1,0-28.26L61.67,97.63a8,8,0,0,0,3-3c.58-1,1.19-2.06,1.81-3.06a7.94,7.94,0,0,0,1.22-4.21l.15-32.25a95.89,95.89,0,0,1,25.37-14.3L122,56.87a8,8,0,0,0,4.1,1c1.21,0,2.43,0,3.64,0a8.08,8.08,0,0,0,4.1-1l28.84-16.1A96,96,0,0,1,188.12,55l.11,32.2a8,8,0,0,0,1.22,4.22c.62,1,1.23,2,1.8,3.06a8.09,8.09,0,0,0,3,3.06l28.6,16.29A90.49,90.49,0,0,1,222.9,142.12Z\"/></svg>Settings</button></nav>",
-      "css": ":host{--tide-band:#f2c230;--tide-on-band:#13233a;--tide-ground:#f5f6f2;--tide-ink:#13233a;--tide-muted:#566273;--tide-rule:#cdd2d8;--tide-blue:#2e6db4;--tide-pull:#c8372d;--tide-on-pull:#fff7f5;--tide-field:#ffffff;font-family:Archivo,system-ui,sans-serif;font-variant-numeric:tabular-nums;}.ds-nav{display:flex;border-top:1px solid var(--tide-rule);background:var(--tide-ground);}.ds-nav-item{position:relative;flex:1;min-height:52px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;border:none;background:transparent;color:var(--tide-muted);font:600 12px Archivo,system-ui,sans-serif;cursor:pointer;transition:color 150ms;}.ds-nav-item:hover,.ds-nav-item.is-active{color:var(--tide-ink);}.ds-mark{position:absolute;top:0;width:32px;height:3px;border-radius:0 0 2px 2px;background:var(--tide-band);}.ds-nav-item:focus-visible{outline:2px solid var(--tide-blue);outline-offset:2px;}"
+      "css": ":host{--tide-band:#f2c230;--tide-on-band:#13233a;--tide-ground:#f5f6f2;--tide-ink:#13233a;--tide-muted:#566273;--tide-rule:#cdd2d8;--tide-blue:#2e6db4;--tide-pull:#c8372d;--tide-on-pull:#fff7f5;--tide-field:#ffffff;font-family:Archivo,system-ui,sans-serif;font-variant-numeric:tabular-nums;}.ds-nav{display:flex;border-top:1px solid var(--tide-rule);background:var(--tide-ground);}.ds-nav-item{position:relative;flex:1;min-height:52px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;border:none;background:transparent;color:var(--tide-muted);font:600 13px Archivo,system-ui,sans-serif;cursor:pointer;transition:color 150ms;}.ds-nav-item:hover,.ds-nav-item.is-active{color:var(--tide-ink);}.ds-mark{position:absolute;top:0;width:32px;height:3px;border-radius:0 0 2px 2px;background:var(--tide-band);}.ds-nav-item:focus-visible{outline:2px solid var(--tide-blue);outline-offset:2px;}"
+    },
+    {
+      "name": "History Table",
+      "kind": "custom",
+      "refersTo": "history-row",
+      "description": "Finished cooks as a real table: 1.5px ink rule, hairline rows, duration/target/peak in the 22px 80%-width figure face. Phones reflow each row into a two-column grid with 'Peak N° of T°' and a muted note.",
+      "html": "<table class=\"ds-hist\"><thead><tr><th>Date</th><th>Cook</th><th class=\"r\">Duration</th><th class=\"r\">Target</th><th class=\"r\">Peak</th></tr></thead><tbody><tr><td>Sat, Oct 3</td><td><span class=\"ds-cut\">Brisket flat</span><span class=\"ds-det\">5.4 kg · 11.9 lb · Offset smoker</span></td><td class=\"r ds-fig\">11h 40m</td><td class=\"r ds-fig\">203°</td><td class=\"r\"><span class=\"ds-fig\">205°</span><span class=\"ds-note\">2° over</span></td></tr><tr><td>Sun, Sep 27</td><td><span class=\"ds-cut\">Pork shoulder</span><span class=\"ds-det\">3.6 kg · 7.9 lb · Pellet grill</span></td><td class=\"r ds-muted\">No readings</td><td class=\"r ds-fig\">195°</td><td class=\"r ds-muted\">None</td></tr></tbody></table>",
+      "css": ":host{--tide-band:#f2c230;--tide-on-band:#13233a;--tide-ground:#f5f6f2;--tide-ink:#13233a;--tide-muted:#566273;--tide-rule:#cdd2d8;--tide-blue:#2e6db4;--tide-pull:#c8372d;--tide-on-pull:#fff7f5;--tide-field:#ffffff;font-family:Archivo,system-ui,sans-serif;font-variant-numeric:tabular-nums;}.ds-hist{width:100%;border-collapse:collapse;text-align:left;color:var(--tide-ink);background:var(--tide-ground);}.ds-hist thead tr{border-bottom:1.5px solid var(--tide-ink);}.ds-hist th{padding:8px 16px 8px 0;font-size:14px;font-weight:600;}.ds-hist td{padding:12px 16px 12px 0;border-bottom:1px solid var(--tide-rule);font-size:15px;vertical-align:middle;}.ds-hist .r{text-align:right;}.ds-hist th:last-child,.ds-hist td:last-child{padding-right:0;}.ds-cut{display:block;font-size:17px;font-weight:600;}.ds-det,.ds-note{display:block;font-size:13px;color:var(--tide-muted);}.ds-fig{font-size:22px;font-weight:700;line-height:1.25;font-stretch:80%;}.ds-muted{color:var(--tide-muted);}"
+    },
+    {
+      "name": "Settings Section",
+      "kind": "custom",
+      "refersTo": "settings-column",
+      "description": "A hairline-separated settings section in a 640px column: section heading, two-column segmented control, muted 14px helper text.",
+      "html": "<div class=\"ds-set\"><section><h2>Temperature</h2><div class=\"ds-seg2\"><label><input type=\"radio\" name=\"u\" checked><span>Fahrenheit (°F)</span></label><label><input type=\"radio\" name=\"u\"><span>Celsius (°C)</span></label></div><p class=\"ds-help\">Used everywhere temperatures are shown.</p></section><section><h2>Pull alarm sound</h2><div class=\"ds-seg2\"><label><input type=\"radio\" name=\"a\" checked><span>On</span></label><label><input type=\"radio\" name=\"a\"><span>Off</span></label></div><p class=\"ds-help\">The screen always takes over when it's time to pull. This controls the tone.</p></section></div>",
+      "css": ":host{--tide-band:#f2c230;--tide-on-band:#13233a;--tide-ground:#f5f6f2;--tide-ink:#13233a;--tide-muted:#566273;--tide-rule:#cdd2d8;--tide-blue:#2e6db4;--tide-pull:#c8372d;--tide-on-pull:#fff7f5;--tide-field:#ffffff;font-family:Archivo,system-ui,sans-serif;font-variant-numeric:tabular-nums;}.ds-set{max-width:640px;color:var(--tide-ink);background:var(--tide-ground);}.ds-set section{padding:24px 0 28px;border-top:1px solid var(--tide-rule);}.ds-set section:first-child{border-top:0;}.ds-set h2{margin:0 0 16px;font-size:22px;font-weight:700;line-height:1.25;font-stretch:85%;}.ds-seg2{display:grid;grid-template-columns:1fr 1fr;gap:6px;}.ds-seg2 label{position:relative;}.ds-seg2 input{position:absolute;opacity:0;}.ds-seg2 span{display:flex;min-height:48px;align-items:center;justify-content:center;padding:0 12px;border-radius:10px;box-shadow:0 0 0 1.5px var(--tide-rule);font-size:15px;font-weight:600;cursor:pointer;transition:box-shadow 150ms,background 150ms;}.ds-seg2 span:hover{box-shadow:0 0 0 1.5px var(--tide-ink);}.ds-seg2 input:checked+span{background:var(--tide-ink);color:var(--tide-ground);box-shadow:0 0 0 1.5px var(--tide-ink);}.ds-seg2 input:focus-visible+span{outline:2px solid var(--tide-blue);outline-offset:2px;}.ds-help{margin:12px 0 0;font-size:14px;color:var(--tide-muted);}"
     }
   ],
   "narrative": {
     "northStar": "The Cook's Tide Table",
-    "overview": "The cook is read like a tide forecast. One curve runs over clock time, and the next event is printed as a time of day. The reference is a farmer's almanac and a printed tide table: a yellow header band, cool white paper, navy ink, a blue projected line, and condensed figures set large enough to read from a few feet away at the grill. The screen answers three things in order: where the meat is, when it will be ready, and whether to act. Model detail opens on demand.\n\nDensity is low and vertical. On a phone the screen is one column of type and rules: band, core figure beside the pull target, stage line, full-width tide chart, forecast rows, pit reading, tab bar. On desktop it splits into a figure-and-table column on the left and a tall chart on the right. Nothing sits in a card. Sections are separated by hairline rules and spacing, the way a printed table is.\n\nThe same world carries the second surface, \"Start a cook\". With no cook running, the Cook tab opens a setup form under the same band: titled sections divided by hairlines, large tap targets, and on the right (or pinned at the bottom on a phone) a summary of the cook as it will start, set in the forecast table's rhythm.\n\nTwo palettes share one structure. Daylight is yellow, white and navy for direct sun. After dark the ground turns navy and the figures turn amber. Red is kept for one event, the pull, and when the pull comes the whole band turns red.",
+    "overview": "The cook is read like a tide forecast. One curve runs over clock time, and the next event is printed as a time of day. The reference is a farmer's almanac and a printed tide table: a yellow header band, cool white paper, navy ink, a blue projected line, and condensed figures set large enough to read from a few feet away at the grill. The screen answers three things in order: where the meat is, when it will be ready, and whether to act. Model detail opens on demand.\n\nDensity is low and vertical. On a phone the screen is one column of type and rules: band, core figure beside the pull target, stage line, full-width tide chart, forecast rows, pit reading, tab bar. On desktop it splits into a figure-and-table column on the left and a tall chart on the right. Nothing sits in a card. Sections are separated by hairline rules and spacing, the way a printed table is.\n\nThe same world carries the second surface, \"Start a cook\". With no cook running, the Cook tab opens a setup form under the same band: titled sections divided by hairlines, large tap targets, and on the right (or pinned at the bottom on a phone) a summary of the cook as it will start, set in the forecast table's rhythm.\n\nHistory and Settings live in the same world. Every signed-in screen except the live cook shares one shell: navigation, the yellow band with the screen's title, then the content. History is a printed table of finished cooks, each row's figures in the condensed face; Settings is a short column of hairline-separated sections with the same segmented controls setup uses.\n\nTwo palettes share one structure. Daylight is yellow, white and navy for direct sun. After dark the ground turns navy and the figures turn amber. Red is kept for one event, the pull, and when the pull comes the whole band turns red.",
     "keyCharacteristics": [
       "One condensed grotesk (Archivo, width axis) with tabular figures for everything.",
       "A yellow band at the top that carries the cook name, data problems, and the pull takeover.",
-      "Hairline rules instead of containers; flat surfaces, on the live screen and in setup alike.",
+      "Hairline rules instead of containers; flat surfaces on every screen: live, setup, history and settings.",
       "The tide chart: solid past, dashed projection, now line, red pull line.",
       "Red only for the pull.",
       "Daylight and night palettes swap through the same tokens."
@@ -548,7 +568,7 @@
       },
       {
         "name": "The Rules Not Cards Rule",
-        "body": "Group content with hairline rules and space. The forecast table and the setup summary open with a 1.5px ink rule and separate rows with 1px hairlines; setup sections are divided by a single hairline. Shadows belong to floating layers (menu, dialog) only.",
+        "body": "Group content with hairline rules and space. The forecast table, the setup summary and the history table open with a 1.5px ink rule and separate rows with 1px hairlines; setup and settings sections are divided by a single hairline. Shadows belong to floating layers (menu, dialog) only.",
         "section": "elevation"
       }
     ],
@@ -557,7 +577,8 @@
       "**Do** set big numbers in Archivo condensed (66–80% width), heavy, with tabular figures.",
       "**Do** separate content with hairline rules (1px hairline-grey, 1.5px ink for a table's top rule) and space.",
       "**Do** put lost or stale data in the band, at band-level readability.",
-      "**Do** show problems in ink: lost data in the band, form errors as semibold ink text with a bold warning icon and a 2.5px ink ring on the field.",
+      "**Do** show problems in ink: lost data in the band, form errors as semibold ink text with a bold warning icon and a 2.5px ink ring on the field, screen errors as semibold ink text with a warning icon and a secondary \"Try again\".",
+      "**Do** wrap every new signed-in screen in the shell (navigation, band with title, content); only the live cook screen has its own band.",
       "**Do** mark a selection with an ink fill and ground-colored text (segmented options, preset chips).",
       "**Do** keep touch targets at least 44px, and primary actions 48–56px.",
       "**Do** use Phosphor icons (`@phosphor-icons/react`), regular weight, with fill for the active tab.",

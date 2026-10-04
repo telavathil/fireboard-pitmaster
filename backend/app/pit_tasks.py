@@ -1,7 +1,7 @@
 import httpx
 import uuid
 import time
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Optional
 from celery.utils.log import get_task_logger
 
@@ -237,7 +237,7 @@ def run_predictions(session_id: str, device_id: str, core_temp: float, ambient_t
         "eta_seconds": eta_seconds,
         "carryover_rise": round(carryover_rise, 2),
         "confidence": confidence,
-        "timestamp": datetime.fromtimestamp(timestamp).isoformat()
+        "timestamp": datetime.fromtimestamp(timestamp, tz=timezone.utc).isoformat()
     }
 
     

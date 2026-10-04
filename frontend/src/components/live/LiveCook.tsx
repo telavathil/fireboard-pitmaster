@@ -39,6 +39,7 @@ export default function LiveCook() {
   } = useCookSession();
   const now = useNow(1000);
   const [confirmingEnd, setConfirmingEnd] = useState(false);
+  const [endError, setEndError] = useState<string | null>(null);
 
   if (!activeSession || !stage) {
     return (
@@ -102,7 +103,7 @@ export default function LiveCook() {
             <button
               type="button"
               onClick={() => setConfirmingEnd(true)}
-              className="mt-5 min-h-[52px] w-full rounded-[10px] bg-tide-ink px-5 text-[16px] font-bold text-tide-ground hover:opacity-90"
+              className="mt-5 min-h-[52px] w-full rounded-[10px] bg-tide-ink px-5 text-[17px] font-bold text-tide-ground hover:opacity-90"
             >
               Finish cook
             </button>
@@ -115,10 +116,14 @@ export default function LiveCook() {
       <EndCookDialog
         open={confirmingEnd}
         cookLabel={activeSession.cut_type}
-        onCancel={() => setConfirmingEnd(false)}
-        onConfirm={() => {
+        error={endError}
+        onCancel={() => {
           setConfirmingEnd(false);
-          handleEndCook();
+          setEndError(null);
+        }}
+        onConfirm={async () => {
+          if (await handleEndCook()) return;
+          setEndError("The cook couldn't be ended. Check the connection and try again; it's still recording.");
         }}
       />
     </div>

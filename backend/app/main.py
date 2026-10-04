@@ -1,5 +1,5 @@
 from contextlib import asynccontextmanager
-from fastapi import FastAPI, HTTPException, Depends, status
+from fastapi import FastAPI, HTTPException, Depends, Query, status
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
 from typing import Dict, Any, List
@@ -7,11 +7,11 @@ import uuid
 import json
 import asyncio
 import logging
-from datetime import datetime
+from datetime import datetime, timezone
 
 from app.config import settings
 from app.database import init_db, get_db_connection
-from app.schemas import CookSessionCreate, CookSessionResponse, LoginRequest
+from app.schemas import CookHistoryEntry, CookSessionCreate, CookSessionResponse, LoginRequest
 from app.cache import get_latest_telemetry
 
 # Setup logging
@@ -150,6 +150,52 @@ def get_active_session():
         raise HTTPException(status_code=500, detail="Database read failure.")
     finally:
         conn.close()
+
+def _parse_utc(value: Any) -> Any:
+    """SQLite CURRENT_TIMESTAMP values are UTC without a zone; attach it so clients don't read them as local."""
+    if value is None or isinstance(value, datetime):
+        return value
+    text = str(value)
+    parsed = datetime.fromisoformat(text) if "T" in text else datetime.strptime(text, "%Y-%m-%d %H:%M:%S")
+    return parsed if parsed.tzinfo else parsed.replace(tzinfo=timezone.utc)
+
+
+HISTORY_QUERY = """
+    SELECT s.id, s.device_name, s.meat_type, s.cut_type, s.cooker_type, s.weight_kg, s.thickness_mm,
+           s.target_temp_c, s.created_at AS started_at, MAX(t.timestamp) AS ended_at,
+           MAX(t.core_temp_filtered) AS peak_core_c, COUNT(t.id) AS reading_count
+    FROM cook_sessions s
+    LEFT JOIN telemetry_logs t ON t.session_id = s.id
+    WHERE s.status = 'completed'
+    GROUP BY s.id
+    ORDER BY s.created_at DESC
+    LIMIT ?
+"""
+
+
+@app.get("/api/sessions/history", response_model=List[CookHistoryEntry])
+def get_cook_history(limit: int = Query(50, ge=1, le=200)):
+    """
+    Lists finished cooks, newest first, summarised from their logged readings.
+    """
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    try:
+        cursor.execute(HISTORY_QUERY, (limit,))
+        columns = [col[0] for col in cursor.description]
+        entries = []
+        for row in cursor.fetchall():
+            entry = dict(zip(columns, row))
+            entry["started_at"] = _parse_utc(entry["started_at"])
+            entry["ended_at"] = _parse_utc(entry["ended_at"])
+            entries.append(entry)
+        return entries
+    except Exception as e:
+        logger.error(f"Failed to read cook history: {e}")
+        raise HTTPException(status_code=500, detail="Database read failure.")
+    finally:
+        conn.close()
+
 
 @app.patch("/api/sessions/{session_id}")
 def update_session_status(session_id: str, payload: Dict[str, Any]):

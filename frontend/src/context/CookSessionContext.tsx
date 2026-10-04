@@ -2,7 +2,8 @@
 
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { CookSession, TelemetryPayload } from "../types";
-import { Stage, deriveStage } from "../components/live/cookModel";
+import { BACKEND_URL } from "../lib/api";
+import { Stage, deriveStage, parseServerTime } from "../components/live/cookModel";
 import { SessionPayload } from "../components/setup/setupModel";
 
 interface CookSessionContextType {
@@ -23,8 +24,8 @@ interface CookSessionContextType {
   isCreatingSession: boolean;
   sessionError: string | null;
   startCook: (payload: SessionPayload) => Promise<boolean>;
-  handleUpdateStatus: (status: string) => Promise<void>;
-  handleEndCook: () => void;
+  handleUpdateStatus: (status: string) => Promise<boolean>;
+  handleEndCook: () => Promise<boolean>;
 
   // Navigation
   /** "dashboard" is the Cook tab: setup with no session, the live screen during one. */
@@ -34,14 +35,8 @@ interface CookSessionContextType {
   // Settings
   tempUnit: "F" | "C";
   setTempUnit: (unit: "F" | "C") => void;
-  updateRate: number;
-  setUpdateRate: (rate: number) => void;
-  estimationModel: string;
-  setEstimationModel: (model: string) => void;
   alarmsEnabled: boolean;
   setAlarmsEnabled: (enabled: boolean) => void;
-  probeOffset: string;
-  setProbeOffset: (offset: string) => void;
 
   // Telemetry & Connection
   telemetry: TelemetryPayload | null;
@@ -56,6 +51,25 @@ interface CookSessionContextType {
   currentPhase: number;
   debugPhaseOverride: number | null;
   setDebugPhaseOverride: (p: number | null) => void;
+}
+
+const PREF_KEYS = { unit: "pitmaster_temp_unit", alarms: "pitmaster_alarm_sound" } as const;
+
+function readPref(key: string): string | null {
+  if (typeof window === "undefined") return null;
+  try {
+    return localStorage.getItem(key);
+  } catch {
+    return null;
+  }
+}
+
+function writePref(key: string, value: string) {
+  try {
+    localStorage.setItem(key, value);
+  } catch {
+    // Storage unavailable (private mode); the choice still applies for this visit.
+  }
 }
 
 /** Keeps roughly 12 hours of readings at the backend's 20 s polling cadence. */
@@ -85,11 +99,18 @@ export function CookSessionProvider({ children }: { children: React.ReactNode })
   const [activeTab, setActiveTab] = useState<"dashboard" | "history" | "settings">("dashboard");
 
   // Settings view inputs
-  const [tempUnit, setTempUnit] = useState<"F" | "C">("F");
-  const [updateRate, setUpdateRate] = useState<number>(1);
-  const [estimationModel, setEstimationModel] = useState<string>("thermal_mass");
-  const [alarmsEnabled, setAlarmsEnabled] = useState<boolean>(true);
-  const [probeOffset, setProbeOffset] = useState<string>("0.0");
+  // Display preferences, remembered on this device. Authenticated screens never
+  // server-render, so reading storage in the initializer can't cause a hydration mismatch.
+  const [tempUnit, setTempUnitState] = useState<"F" | "C">(() => (readPref(PREF_KEYS.unit) === "C" ? "C" : "F"));
+  const [alarmsEnabled, setAlarmsEnabledState] = useState<boolean>(() => readPref(PREF_KEYS.alarms) !== "off");
+  const setTempUnit = (unit: "F" | "C") => {
+    setTempUnitState(unit);
+    writePref(PREF_KEYS.unit, unit);
+  };
+  const setAlarmsEnabled = (enabled: boolean) => {
+    setAlarmsEnabledState(enabled);
+    writePref(PREF_KEYS.alarms, enabled ? "on" : "off");
+  };
 
   // Live Telemetry States
   const [telemetry, setTelemetry] = useState<TelemetryPayload | null>(null);
@@ -102,7 +123,7 @@ export function CookSessionProvider({ children }: { children: React.ReactNode })
   // Debug override check via URL query parameters
   const [debugPhaseOverride, setDebugPhaseOverride] = useState<number | null>(null);
 
-  const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:8000";
+  const backendUrl = BACKEND_URL;
 
   // Load token and active session on mount
   useEffect(() => {
@@ -283,8 +304,9 @@ export function CookSessionProvider({ children }: { children: React.ReactNode })
     }
   };
 
-  const handleUpdateStatus = async (newStatus: string) => {
-    if (!activeSession) return;
+  /** Saves a status change. Resolves true once the backend has it; the session is left as-is otherwise. */
+  const handleUpdateStatus = async (newStatus: string): Promise<boolean> => {
+    if (!activeSession) return false;
     try {
       const res = await fetch(`${backendUrl}/api/sessions/${activeSession.id}`, {
         method: "PATCH",
@@ -294,26 +316,28 @@ export function CookSessionProvider({ children }: { children: React.ReactNode })
         },
         body: JSON.stringify({ status: newStatus }),
       });
-      if (res.ok) {
-        const updatedSession = { ...activeSession, status: newStatus };
-        setActiveSession(updatedSession);
-        if (newStatus === "resting") {
-          const startedAt = Date.now();
-          localStorage.setItem(`rest_start_${activeSession.id}`, String(startedAt));
-          setRestStartedAt(startedAt);
-        }
+      if (!res.ok) return false;
+      if (newStatus === "completed") {
+        // A finished cook is never restored as the active session.
+        setActiveSession(null);
+        setTelemetry(null);
+        setHistory([]);
+        return true;
       }
-    } catch (err) {
-      console.error("Failed to update status:", err);
+      setActiveSession({ ...activeSession, status: newStatus });
+      if (newStatus === "resting") {
+        const startedAt = Date.now();
+        localStorage.setItem(`rest_start_${activeSession.id}`, String(startedAt));
+        setRestStartedAt(startedAt);
+      }
+      return true;
+    } catch {
+      return false;
     }
   };
 
-  const handleEndCook = () => {
-    handleUpdateStatus("completed");
-    setActiveSession(null);
-    setTelemetry(null);
-    setHistory([]);
-  };
+  /** Ends the cook only once the backend has saved it, so a failed save never loses a running cook. */
+  const handleEndCook = () => handleUpdateStatus("completed");
 
   // Live cook derivation. Nothing here falls back to invented readings.
   const carryoverC = telemetry?.carryover_rise ?? null;
@@ -326,7 +350,7 @@ export function CookSessionProvider({ children }: { children: React.ReactNode })
   const currentPhase = debugPhaseOverride ?? (stage ? PHASE_BY_STAGE[stage] : 1);
 
   // Carryover peak: the highest core reading since the rest began.
-  const restReadings = restStartedAt !== null ? history.filter((r) => new Date(r.timestamp).getTime() >= restStartedAt) : [];
+  const restReadings = restStartedAt !== null ? history.filter((r) => parseServerTime(r.timestamp) >= restStartedAt) : [];
   const peakRestTempC = restReadings.length > 0 ? Math.max(...restReadings.map((r) => r.core_temp_filtered)) : null;
 
   // Sync state variables onto window for E2E headless validation testing
@@ -358,14 +382,8 @@ export function CookSessionProvider({ children }: { children: React.ReactNode })
         setActiveTab,
         tempUnit,
         setTempUnit,
-        updateRate,
-        setUpdateRate,
-        estimationModel,
-        setEstimationModel,
         alarmsEnabled,
         setAlarmsEnabled,
-        probeOffset,
-        setProbeOffset,
         telemetry,
         history,
         isConnected,

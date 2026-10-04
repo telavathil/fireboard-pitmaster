@@ -50,7 +50,7 @@ function setup(overrides: Record<string, unknown> = {}) {
     tempUnit: "F",
     alarmsEnabled: false,
     handleUpdateStatus: vi.fn(),
-    handleEndCook: vi.fn(),
+    handleEndCook: vi.fn().mockResolvedValue(true),
     activeTab: "dashboard",
     setActiveTab: vi.fn(),
     ...overrides,
@@ -85,6 +85,14 @@ describe("LiveCook", () => {
     expect(ctx.handleEndCook).not.toHaveBeenCalled();
     await userEvent.click(screen.getByRole("button", { name: "End cook", hidden: true }));
     expect(ctx.handleEndCook).toHaveBeenCalledTimes(1);
+  });
+
+  it("keeps the dialog open and says so when ending fails", async () => {
+    setup({ handleEndCook: vi.fn().mockResolvedValue(false) });
+    await userEvent.click(screen.getByRole("button", { name: "Cook options" }));
+    await userEvent.click(screen.getByRole("menuitem", { name: /End cook/ }));
+    await userEvent.click(screen.getByRole("button", { name: "End cook", hidden: true }));
+    expect(await screen.findByText(/couldn't be ended/i)).toBeInTheDocument();
   });
 
   it("never shows an invented temperature without readings", () => {

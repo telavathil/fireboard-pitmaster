@@ -3,9 +3,9 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useCookSession } from "../../context/CookSessionContext";
 import { toUnit } from "../live/cookModel";
-import LiveNav from "../live/LiveNav";
+import TideScreen from "../tide/TideScreen";
 import SetupSummary, { StartBar } from "./SetupSummary";
-import { Segmented, SetupSection, TargetStepper, TextField } from "./SetupFields";
+import { Segmented, SetupSection, TargetStepper, TextField } from "../tide/FormParts";
 import {
   COOKERS,
   DEFAULT_DRAFT,
@@ -89,14 +89,7 @@ export default function SetupScreen() {
   ];
 
   return (
-    <div className="tide-world min-h-[100dvh] md:pl-[88px]">
-      <LiveNav />
-      <header className="tide-band">
-        <div className="mx-auto max-w-[1200px] px-5 pb-4 pt-[max(env(safe-area-inset-top),18px)] md:px-10">
-          <h1 className="pt-2 text-[17px] font-semibold">Start a cook</h1>
-        </div>
-      </header>
-
+    <TideScreen title="Start a cook">
       <form ref={formRef} onSubmit={onSubmit} noValidate className="setup-layout mx-auto max-w-[1200px] px-5 md:px-10">
         <div className="min-w-0">
           <SetupSection title="What's cooking">
@@ -171,6 +164,6 @@ export default function SetupScreen() {
           busy={isCreatingSession}
         />
       </form>
-    </div>
+    </TideScreen>
   );
 }

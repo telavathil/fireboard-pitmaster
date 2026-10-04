@@ -7,10 +7,11 @@ interface EndCookDialogProps {
   cookLabel: string;
   onConfirm: () => void;
   onCancel: () => void;
+  error?: string | null;
 }
 
 /** A protected confirmation: ending a cook stops recording and cannot be undone. */
-export default function EndCookDialog({ open, cookLabel, onConfirm, onCancel }: EndCookDialogProps) {
+export default function EndCookDialog({ open, cookLabel, onConfirm, onCancel, error }: EndCookDialogProps) {
   const ref = useRef<HTMLDialogElement>(null);
 
   useEffect(() => {
@@ -34,19 +35,24 @@ export default function EndCookDialog({ open, cookLabel, onConfirm, onCancel }: 
       <p className="mt-2 text-[15px] leading-relaxed text-tide-muted">
         {cookLabel} stops recording and moves to History. This can&apos;t be undone.
       </p>
+      {error && (
+        <p role="alert" className="mt-3 text-[15px] font-semibold">
+          {error}
+        </p>
+      )}
       <div className="mt-6 flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
         <button
           type="button"
           autoFocus
           onClick={onCancel}
-          className="min-h-[48px] rounded-[10px] px-5 text-[16px] font-semibold ring-[1.5px] ring-tide-rule hover:ring-tide-ink"
+          className="min-h-[48px] rounded-[10px] px-5 text-[17px] font-semibold ring-[1.5px] ring-tide-rule hover:ring-tide-ink"
         >
           Keep cooking
         </button>
         <button
           type="button"
           onClick={onConfirm}
-          className="min-h-[48px] rounded-[10px] bg-tide-ink px-5 text-[16px] font-bold text-tide-ground hover:opacity-90"
+          className="min-h-[48px] rounded-[10px] bg-tide-ink px-5 text-[17px] font-bold text-tide-ground hover:opacity-90"
         >
           End cook
         </button>
