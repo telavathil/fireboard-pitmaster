@@ -9,3 +9,6 @@ frontend/.next/
 frontend/out/
 node_modules/
 .DS_Store
+
+# Secrets (VAPID keys, credentials) - never commit
+.env

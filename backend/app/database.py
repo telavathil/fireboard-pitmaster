@@ -64,6 +64,26 @@ def init_db():
             )
         """)
         
+        # Devices that opted in to pull alerts (Web Push subscriptions).
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS push_subscriptions (
+                endpoint TEXT PRIMARY KEY,
+                p256dh TEXT NOT NULL,
+                auth TEXT NOT NULL,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )
+        """)
+
+        # Alerts already sent, so each cook's pull alert goes out once.
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS push_alerts (
+                session_id TEXT NOT NULL,
+                kind TEXT NOT NULL,
+                sent_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                PRIMARY KEY (session_id, kind)
+            )
+        """)
+
         conn.commit()
         logger.info("Database tables initialized successfully.")
     except Exception as e:

@@ -74,3 +74,17 @@ class CookHistoryEntry(BaseModel):
     ended_at: Optional[datetime] = Field(None, description="Time of the last logged reading (UTC)")
     peak_core_c: Optional[float] = Field(None, description="Highest smoothed core reading, including the rest")
     reading_count: int = 0
+
+
+# Web Push subscriptions (pull alerts)
+class PushKeys(BaseModel):
+    p256dh: str = Field(..., min_length=1, max_length=256)
+    auth: str = Field(..., min_length=1, max_length=64)
+
+
+class PushEndpoint(BaseModel):
+    endpoint: str = Field(..., min_length=12, max_length=2048, pattern=r"^https://")
+
+
+class PushSubscriptionIn(PushEndpoint):
+    keys: PushKeys

@@ -6,6 +6,7 @@ import { useCookSession } from "../../context/CookSessionContext";
 import TideScreen from "../tide/TideScreen";
 import { Segmented, SetupSection } from "../tide/FormParts";
 import { InstallState, getInstallState } from "../pwa/pwa";
+import PullAlertsSetting from "./PullAlertsSetting";
 
 const TEMP_UNITS = [
   { id: "F", label: "Fahrenheit (°F)" },
@@ -50,6 +51,10 @@ export default function SettingsScreen() {
             <p className="mt-3 text-[14px] text-tide-muted">
               The screen always takes over when it&apos;s time to pull. This controls the tone. Browsers may only play it after you&apos;ve tapped the page once.
             </p>
+          </SetupSection>
+
+          <SetupSection title="Pull alerts">
+            <PullAlertsSetting />
           </SetupSection>
 
           <SetupSection title="App">

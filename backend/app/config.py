@@ -18,6 +18,11 @@ class Settings(BaseSettings):
     JWT_ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 1440  # 24 hours
 
+    # Web Push (VAPID). Push stays off until both keys are set; never commit them.
+    VAPID_PUBLIC_KEY: Optional[str] = None
+    VAPID_PRIVATE_KEY: Optional[str] = None
+    VAPID_SUBJECT: str = "mailto:pitmaster@localhost"
+
     # Environment
     ENVIRONMENT: str = "development"
 

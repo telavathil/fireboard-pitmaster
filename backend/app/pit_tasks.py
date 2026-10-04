@@ -17,6 +17,7 @@ from app.cache import (
 )
 from app.math_engine.kalman import CookingKalmanFilter
 from app.math_engine.solver import CookingSolver
+from app.push import maybe_send_pull_alert
 
 
 logger = get_task_logger(__name__)
@@ -190,11 +191,16 @@ def run_predictions(session_id: str, device_id: str, core_temp: float, ambient_t
     thickness_mm = 75.0
     cooker_type = "pellet"
     meat_type = "beef"
+    cut_type = "Your cook"
+    session_status = None
     try:
-        cursor.execute("SELECT weight_kg, thickness_mm, cooker_type, meat_type FROM cook_sessions WHERE id = ?", (session_id,))
+        cursor.execute(
+            "SELECT weight_kg, thickness_mm, cooker_type, meat_type, cut_type, status FROM cook_sessions WHERE id = ?",
+            (session_id,),
+        )
         row = cursor.fetchone()
         if row:
-            weight_kg, thickness_mm, cooker_type, meat_type = row
+            weight_kg, thickness_mm, cooker_type, meat_type, cut_type, session_status = row
     except Exception as e:
         logger.error(f"Failed to fetch session details from DB: {e}")
     finally:
@@ -243,6 +249,20 @@ def run_predictions(session_id: str, device_id: str, core_temp: float, ambient_t
     
     # Write to Redis Cache for FastAPI SSE Router
     set_latest_telemetry(device_id, 1, payload)
+
+    # Pull alert (Web Push), sent once per cook. A push failure must never stop predictions.
+    if session_status is not None:
+        try:
+            maybe_send_pull_alert(
+                session_id=session_id,
+                cut_type=cut_type,
+                core_c=core_temp_filtered,
+                target_c=target_temp,
+                carryover_c=carryover_rise,
+                status=session_status,
+            )
+        except Exception as e:
+            logger.error(f"Pull alert check failed: {e}")
     
     # Persist log to Turso SQLite database
     conn = get_db_connection()

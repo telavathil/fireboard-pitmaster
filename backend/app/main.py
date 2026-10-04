@@ -11,7 +11,8 @@ from datetime import datetime, timezone
 
 from app.config import settings
 from app.database import init_db, get_db_connection
-from app.schemas import CookHistoryEntry, CookSessionCreate, CookSessionResponse, LoginRequest
+from app.schemas import CookHistoryEntry, CookSessionCreate, CookSessionResponse, LoginRequest, PushEndpoint, PushSubscriptionIn
+from app import push
 from app.cache import get_latest_telemetry
 
 # Setup logging
@@ -231,6 +232,42 @@ def update_session_status(session_id: str, payload: Dict[str, Any]):
         
     return {"status": "success", "message": f"Updated session to {status_val}"}
 
+
+
+@app.get("/api/push/public-key")
+def get_push_public_key():
+    """The VAPID public key browsers need to subscribe. 503 until push is configured."""
+    if not push.push_configured():
+        raise HTTPException(status_code=503, detail="Pull alerts aren't set up on the server yet.")
+    return {"publicKey": settings.VAPID_PUBLIC_KEY}
+
+
+@app.post("/api/push/subscribe", status_code=201)
+def subscribe_push(subscription: PushSubscriptionIn):
+    push.save_subscription(subscription.endpoint, subscription.keys.p256dh, subscription.keys.auth)
+    return {"status": "subscribed"}
+
+
+@app.post("/api/push/unsubscribe")
+def unsubscribe_push(payload: PushEndpoint):
+    push.delete_subscription(payload.endpoint)
+    return {"status": "unsubscribed"}
+
+
+@app.post("/api/push/test")
+def send_test_push(payload: PushEndpoint):
+    """Sends a test alert to one device so the user can confirm alerts arrive."""
+    if not push.push_configured():
+        raise HTTPException(status_code=503, detail="Pull alerts aren't set up on the server yet.")
+    delivered = push.send_to_endpoint(
+        payload.endpoint,
+        {"title": "Pull alerts are on", "body": "This is how a pull alert will look.", "tag": "test", "url": "/"},
+    )
+    if delivered is None:
+        raise HTTPException(status_code=404, detail="This device isn't subscribed.")
+    if not delivered:
+        raise HTTPException(status_code=502, detail="The push service didn't accept the alert.")
+    return {"status": "sent"}
 
 
 async def sse_telemetry_generator(device_id: str, channel_id: int):
