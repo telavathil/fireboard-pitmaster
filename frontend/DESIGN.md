@@ -206,6 +206,10 @@ components:
     backgroundColor: "{colors.table-stock}"
     textColor: "{colors.navy-ink}"
     width: "640px"
+  sign-in-column:
+    backgroundColor: "{colors.table-stock}"
+    textColor: "{colors.navy-ink}"
+    width: "400px"
 ---
 
 # Design System: FireBoard Pitmaster
@@ -220,7 +224,7 @@ Density is low and vertical. On a phone the screen is one column of type and rul
 
 The same world carries the second surface, "Start a cook". With no cook running, the Cook tab opens a setup form under the same band: titled sections divided by hairlines, large tap targets, and on the right (or pinned at the bottom on a phone) a summary of the cook as it will start, set in the forecast table's rhythm.
 
-History and Settings live in the same world. Every signed-in screen except the live cook shares one shell: navigation, the yellow band with the screen's title, then the content. History is a printed table of finished cooks, each row's figures in the condensed face; Settings is a short column of hairline-separated sections with the same segmented controls setup uses.
+History, Settings and the signed-out sign-in screen live in the same world. Every signed-in screen except the live cook shares one shell: navigation, the yellow band with the screen's title, then the content. History is a printed table of finished cooks, each row's figures in the condensed face; Settings is a short column of hairline-separated sections with the same segmented controls setup uses. Signed out, the band carries the product name over one short sign-in form; there is no navigation until you are in.
 
 Two palettes share one structure. Daylight is yellow, white and navy for direct sun. After dark the ground turns navy and the figures turn amber. Red is kept for one event, the pull, and when the pull comes the whole band turns red.
 
@@ -238,13 +242,13 @@ A printed-almanac palette: one warm band color, cool paper, navy ink, one blue f
 
 ### Primary
 - **Almanac Yellow** (almanac-yellow): The header band behind the cook name and its menu, the text-selection color, and the active-tab marker. It is the screen's one large field of color.
-- **Tide Blue** (tide-blue): The dashed projection on the chart and the focus outline. It means "the model's forecast" or "where keyboard focus is", nothing else.
+- **Tide Blue** (tide-blue): The dashed projection on the chart, the focus outline, the focused text-field ring and the resting text caret. It means "the model's forecast" or "where keyboard focus is", nothing else.
 
 ### Secondary
 - **Pull Red** (pull-red, with on-pull for text on it): The pull and only the pull. During the pull stage the band, and with it the active-tab marker, turn red. Elsewhere red appears only as the pull value in the forecast table and the dashed pull line on the chart.
 
 ### Neutral
-- **Navy Ink** (navy-ink): Body text, the core figure, the past curve on the chart, the now line, the heavy top rule of the forecast table, and the fill of primary buttons. Also the text on the yellow band.
+- **Navy Ink** (navy-ink): Body text, the core figure, the past curve on the chart, the now line, the heavy top rule of the forecast table, and the fill of primary buttons. Also the text on the yellow band, and the text and caret of an autofilled field.
 - **Table Stock** (table-stock): The page ground, the menu and dialog surface, and the text on navy buttons.
 - **Slate Muted** (slate-muted): Notes, captions, chart labels, past and future stages, and the dimmed core figure when a reading can't be trusted.
 - **Hairline Grey** (hairline-grey): Row dividers, setup section dividers, chart gridlines and baseline, nav borders, and the 1.5px ring on secondary buttons, unselected segments, chips, step buttons and text fields.
@@ -256,7 +260,14 @@ Under `prefers-color-scheme: dark` the same tokens take night values: night-grou
 ### Named Rules
 **The One Red Rule.** Red belongs to the pull. It shows up as the band during the pull stage, the pull row value, and the pull line on the chart. Never use it for errors, warnings, stale data or decoration. Problems speak in ink: weight, a heavier ring and a warning icon (form errors), or the band itself (lost data).
 
-**The Token Swap Rule.** Every color is read from a `--tide-*` custom property, so daylight, night and pull are token changes on `.tide-world`, never per-component overrides.
+**The Token Swap Rule.** Every color is read from a `--tide-*` custom property, so daylight, night and pull are token changes on `.tide-world`, never per-component overrides. `.tide-world` is on `<body>` and Archivo is the only face loaded; there is no other styling in the project.
+
+### Browser Surfaces
+Surfaces the browser paints itself are pulled back into the world, all scoped to `.tide-world` in `globals.css`:
+- **Selection:** Band color with on-band text, so selected text looks like a strip of the band.
+- **Focus:** A 2px tide-blue outline at 2px offset on every `:focus-visible` element.
+- **Caret:** Tide blue by default.
+- **Autofill:** `:-webkit-autofill` / `:autofill` inputs keep the field surface and ink: text fill and caret are set to ink, the browser's background is held off by a very long background-color/color transition, and box-shadow is left alone so the field's own ring still shows.
 
 ## Typography
 
@@ -272,8 +283,8 @@ Under `prefers-color-scheme: dark` the same tokens take night values: night-grou
 - **Table figure** (700, 28px, line-height 1, width 76%): Right-aligned times and values in the forecast rows.
 - **Figure** (700, 22px, line-height 1.25, width 80%): The secondary figure face. Setup summary values, and the duration, target and peak in every history row, at every width including phones.
 - **Title** (700, 24px, width 85%): Dialog headings.
-- **Section** (700, 22px, line-height 1.25, width 85%): Section headings on setup ("What's cooking", "Size", "Target") and settings ("Temperature", "Pull alarm sound", "Account"), and the title of an empty-state message.
-- **Action** (17px; 600 for text, 700 for buttons): The band title on every screen, every primary button (End cook, Finish cook, Start cook, the pull), the end-cook dialog's Keep cooking (semibold), the pull explanation (regular), the cut name in a history row, and the value typed into a text field. The size that must read at arm's length without being a figure.
+- **Section** (700, 22px, line-height 1.25, width 85%): Section headings on setup ("What's cooking", "Size", "Target") and settings ("Temperature", "Pull alarm sound", "Account"), the "Sign in" heading, and the title of an empty-state message.
+- **Action** (17px; 600 for text, 700 for buttons): The band title on every screen (the product name when signed out), every primary button (End cook, Finish cook, Start cook, the pull), the end-cook dialog's Keep cooking (semibold), the pull explanation (regular), the cut name in a history row, and the value typed into a text field. The size that must read at arm's length without being a figure.
 - **Body** (400 to 600, 15px, line-height 1.375–1.625): Row labels, notes, status and error messages, segment labels (semibold), secondary button text (semibold). Explanatory paragraphs cap at 42–60ch.
 - **Label** (400 to 600, 14px): The stage line, pit reading, details rows, field labels and legends, history column headers, preset chips, compact segments, form errors (all semibold), and settings helper text (regular, muted).
 - **Caption** (400 to 600, 13px; chart text 11–12px): Chart captions, row notes, field hints, the history date and detail lines on phones, the peak note, and tab labels (13px semibold).
@@ -292,6 +303,8 @@ From 900px the grid splits into two columns, `minmax(320px, 5fr)` and `minmax(0,
 Setup uses its own grid on the same gutters and maximum width. It is one column on phones; from 900px it splits `minmax(0, 7fr)` / `minmax(300px, 5fr)` with a 48px gap, the reverse of the live split: the form is the wide column and the summary aside sits on the right, sticky 24px from the top. Sections run 24px above and 28px below their content, with a hairline between them; fields inside a section are 20px apart and pair up side by side from 640px. Below 900px the summary's button is hidden and a start bar takes its place: fixed above the tab bar (53px plus the safe-area inset; at the bottom edge beside the rail from 768px), table-stock with a hairline top edge, carrying a one-line recap and the Start cook button. The summary keeps enough bottom padding that the start bar never covers it.
 
 History and Settings sit on the same gutters and 1200px maximum, with bottom padding (112px on phones, 48px from 768px) so the tab bar never covers the last row. The history table starts 24px under the band. Settings content is capped at 640px; its sections use setup's section rhythm (24px above, 28px below, hairline between).
+
+The sign-in screen uses the same gutters and 1200px container with 32px above the form (48px from 768px); the form is a 400px column, left-aligned in the container rather than centered.
 
 Navigation is a bottom tab bar on phones (with safe-area padding) and an 88px left rail from 768px. The band respects the top safe-area inset. The details block carries extra bottom padding on phones so the tab bar never covers it.
 
@@ -324,8 +337,8 @@ Solid, plain and large enough for a greasy thumb.
 
 ### Inputs / Fields
 Plain, roomy and written in ink.
-- **Text field:** Label above (14px semibold), then a field at least 52px tall with 10px corners, the field surface, 16px side padding, and the typed value at the action size (17px semibold). Placeholders are regular weight in slate-muted. At rest a 1.5px hairline ring; on focus a 2px tide-blue ring. A unit segmented control can sit inside the row to the right of the field.
-- **Hint and error:** A hint sits below in 13px muted text. An error sits below it in 14px semibold ink with a bold 18px warning-circle icon, and the field's ring thickens to 2.5px ink. No red, under the One Red Rule. After a failed submit, focus moves to the first invalid field.
+- **Text field:** Label above (14px semibold), then a field at least 52px tall with 10px corners, the field surface, 16px side padding, and the typed value at the action size (17px semibold). Placeholders are regular weight in slate-muted. At rest a 1.5px hairline ring; on focus a 2px tide-blue ring. Fields that hold credentials carry autocomplete semantics (`username`, `current-password`, `type="password"`); other fields default to `autocomplete="off"`. A unit segmented control can sit inside the row to the right of the field.
+- **Hint and error:** A hint sits below in 13px muted text. An error sits below it in 14px semibold ink with a bold 18px warning-circle icon, and the field's ring thickens to 2.5px ink. The ink ring stays while the field is focused; focus then adds the 2px tide-blue outline 2px outside it, so the field reads as both wrong and active. No red, under the One Red Rule. After a failed submit, focus moves to the first invalid field.
 - **Segmented control:** A native radio group with its legend above (or visually hidden for unit pickers). Options are 10px-cornered cells with a 1.5px hairline ring, 48px tall at 15px semibold (44px at 14px when compact, for units). The selected option fills with ink and its text turns ground-colored; keyboard focus shows the tide-blue outline on the visible cell. Laid out as an even row, two columns, or two-then-four columns.
 - **Preset chip:** A 44px full pill with a 1.5px hairline ring, 14px semibold "Name · target°". Pressed state (`aria-pressed`) is an ink fill with ground-colored text, the same selection grammar as the segmented control.
 
@@ -344,7 +357,16 @@ The narrow-screen stand-in for the summary's button, so starting stays one tap a
 - **States:** Inactive items are slate-muted and turn ink on hover. The active item is ink, its icon switches to the fill weight, and a 3px by 32px band-colored marker sits on the top edge (phone) or left edge (rail).
 
 ### Screen Shell
-Every signed-in screen except the live cook is wrapped in one shell (`src/components/tide/TideScreen.tsx`): the navigation, then the band with the screen title at 17px semibold and optional band content under it (such as a status line), then the screen's content. Setup ("Start a cook"), History and Settings all use it. The live cook screen builds its own band (`CookBand`) because it carries the overflow menu and the red pull takeover. A new screen uses the shell rather than its own header.
+Every signed-in screen except the live cook is wrapped in one shell (`src/components/tide/TideScreen.tsx`): the navigation, then the band with the screen title at 17px semibold and optional band content under it (such as a status line), then the screen's content. Setup ("Start a cook"), History and Settings all use it. The live cook screen builds its own band (`CookBand`) because it carries the overflow menu and the red pull takeover. A new signed-in screen uses the shell rather than its own header. The signed-out sign-in screen is exempt: it has no navigation to show, so it draws the band itself (see Sign-in).
+
+### Sign-in
+The signed-out entry (`src/components/login/LoginScreen.tsx`), inside the world rather than beside it.
+- **Band:** The yellow band with the product name, "FireBoard Pitmaster", as the title at 17px semibold, respecting the top safe-area inset. No navigation and no menu.
+- **Form column:** 400px wide, left-aligned in the 1200px container on the usual gutters.
+- **Heading and lede:** "Sign in" at the section size (22px bold, 85% width), then a 15px muted lede on what keeps running while signed out.
+- **Fields:** Two text fields 20px apart, Username (`autocomplete="username"`) and Password (`type="password"`, `autocomplete="current-password"`). Empty fields are caught before submit with ink field errors, and focus moves to the first invalid field.
+- **Server error:** The reason in 15px semibold ink beside a bold 20px warning-circle icon, announced as an alert. No red, under the One Red Rule.
+- **Button:** The large primary (56px, full column width, 17px bold, 98% press scale). While busy it reads "Signing in…", is disabled and drops to 50% opacity.
 
 ### Band
 The yellow header. On the live screen it holds the cook name (action size, semibold, truncated) and the overflow menu; on every other screen it holds that screen's title at the same size, through the shell. Lost or stale data appears inside the band as a 15px semibold message with a Wi-Fi-off icon, so it reads in sun like the pull does. During the pull the band turns red and the pull alarm opens inside it.
@@ -385,7 +407,7 @@ Empty, loading and error are honest sentences in the content area, 40px from the
 - **Empty:** A section-size title (22px bold, 85% width), a 15px muted explanation capped at 52ch, then a secondary button to the next step ("Start a cook").
 
 ### Settings
-A single column capped at 640px of hairline-separated sections (Temperature, Pull alarm sound, Account), each with a section-size heading. Choices are the segmented control in two columns with the legend visually hidden, followed by muted 14px helper text that says what the setting does. Account shows "Signed in as" in 15px with the name bold, a muted 14px note if a cook is running, and a secondary Sign out button with its icon.
+A single column capped at 640px of hairline-separated sections (Temperature, Pull alarm sound, Account), each with a section-size heading. Choices are the segmented control in two columns with the legend visually hidden, followed by muted 14px helper text that says what the setting does. Account reads "Signed in as {username}" in 15px with the name bold, or "You're signed in." when no username is known, a muted 14px note if a cook is running, and a secondary Sign out button with its icon.
 
 ### Estimate Details
 A native `<details>` disclosure behind a hairline rule: a 48px summary row with a caret that rotates when open, a short explanation (max 60ch), and label/value rows separated by hairlines.
@@ -398,7 +420,7 @@ A native `<details>` disclosure behind a hairline rule: a 48px summary row with 
 - **Do** separate content with hairline rules (1px hairline-grey, 1.5px ink for a table's top rule) and space.
 - **Do** put lost or stale data in the band, at band-level readability.
 - **Do** show problems in ink: lost data in the band, form errors as semibold ink text with a bold warning icon and a 2.5px ink ring on the field, screen errors as semibold ink text with a warning icon and a secondary "Try again".
-- **Do** wrap every new signed-in screen in the shell (navigation, band with title, content); only the live cook screen has its own band.
+- **Do** wrap every new signed-in screen in the shell (navigation, band with title, content); only the live cook screen has its own band, and the signed-out sign-in screen draws the band with the product name and no navigation.
 - **Do** mark a selection with an ink fill and ground-colored text (segmented options, preset chips).
 - **Do** keep touch targets at least 44px, and primary actions 48–56px.
 - **Do** use Phosphor icons (`@phosphor-icons/react`), regular weight, with fill for the active tab.

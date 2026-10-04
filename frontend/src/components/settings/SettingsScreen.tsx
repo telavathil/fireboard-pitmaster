@@ -45,7 +45,13 @@ export default function SettingsScreen() {
 
           <SetupSection title="Account">
             <p className="text-[15px]">
-              Signed in as <b className="font-bold">{username || "your FireBoard account"}</b>
+              {username ? (
+                <>
+                  Signed in as <b className="font-bold">{username}</b>
+                </>
+              ) : (
+                "You're signed in."
+              )}
             </p>
             {activeSession && (
               <p className="mt-2 text-[14px] text-tide-muted">A cook is running. Signing out stops pull alerts on this device.</p>

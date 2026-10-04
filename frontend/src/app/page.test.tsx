@@ -10,6 +10,7 @@ vi.mock("../components/history/HistoryScreen", () => ({ default: () => <div>Mock
 vi.mock("../components/settings/SettingsScreen", () => ({ default: () => <div>MockSettingsScreen</div> }));
 vi.mock("../components/setup/SetupScreen", () => ({ default: () => <div>MockSetupScreen</div> }));
 vi.mock("../components/live/LiveCook", () => ({ default: () => <div>MockLiveCook</div> }));
+vi.mock("../components/login/LoginScreen", () => ({ default: () => <div>MockLoginScreen</div> }));
 
 vi.mock("../context/CookSessionContext", () => ({
   CookSessionProvider: ({ children }: { children: React.ReactNode }) => children,
@@ -37,7 +38,7 @@ describe("Dashboard routing (page.tsx)", () => {
   it("shows the login panel when there is no token", () => {
     setSession({ token: null });
     render(<Dashboard />);
-    expect(screen.getByText(/HEARTH COMMAND/i)).toBeInTheDocument();
+    expect(screen.getByText("MockLoginScreen")).toBeInTheDocument();
   });
 
   it("shows the setup screen on the Cook tab when nothing is cooking", () => {

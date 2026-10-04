@@ -30,7 +30,7 @@ The FireBoard app shows what the probes read now. Pitmaster predicts what happen
 ## Capabilities and Constraints
 
 - Frontend: Next.js 16 (App Router, React 19), Tailwind v4. Backend: FastAPI, Celery, Redis, Turso.
-- Login uses FireBoard credentials; one active session at a time.
+- Login is a placeholder: the backend accepts any non-empty username and password and returns a mock token; it does not verify a FireBoard account (the poller uses FireBoard credentials from server config). One active session at a time.
 - `?phase=N` is a debug override that only exercises view rendering; `backend/scripts/fast_forward_cook.py` drives a real simulated cook through the full pipeline.
 - The backend flags telemetry as `stale` when polling fails; the spec requires a visible alert when data is more than 60 s old.
 - Units: the backend works in °C; the UI offers °F and °C.

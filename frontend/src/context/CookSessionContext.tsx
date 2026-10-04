@@ -255,10 +255,10 @@ export function CookSessionProvider({ children }: { children: React.ReactNode })
         fetchActiveSession(data.access_token);
       } else {
         const errData = await res.json();
-        setAuthError(errData.detail || "Login failed. Please check your credentials.");
+        setAuthError(errData.detail || "Sign-in failed. Check your username and password.");
       }
     } catch (err) {
-      setAuthError("Network error. Could not connect to API server.");
+      setAuthError("Couldn't reach the server. Check that the backend is running, then try again.");
     } finally {
       setIsLoggingIn(false);
     }

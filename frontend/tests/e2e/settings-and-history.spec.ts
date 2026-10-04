@@ -53,5 +53,5 @@ test("Settings: sign out returns to the sign-in screen", async ({ page }) => {
   await navLink(page, "Settings").click();
   await expect(page.getByText(/Signed in as/)).toContainText("demo");
   await page.getByRole("button", { name: "Sign out" }).click();
-  await expect(page.getByRole("button", { name: "SIGN IN" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Sign in", exact: true })).toBeVisible();
 });

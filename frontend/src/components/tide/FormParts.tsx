@@ -72,11 +72,12 @@ interface TextFieldProps {
   hint?: string;
   placeholder?: string;
   inputMode?: "decimal" | "text";
+  type?: "text" | "password";
   autoComplete?: string;
   trailing?: React.ReactNode;
 }
 
-export function TextField({ label, value, onChange, error, hint, placeholder, inputMode = "text", autoComplete = "off", trailing }: TextFieldProps) {
+export function TextField({ label, value, onChange, error, hint, placeholder, inputMode = "text", type = "text", autoComplete = "off", trailing }: TextFieldProps) {
   const id = useId();
   const describedBy = [hint ? `${id}-hint` : null, error ? `${id}-error` : null].filter(Boolean).join(" ") || undefined;
   return (
@@ -87,6 +88,7 @@ export function TextField({ label, value, onChange, error, hint, placeholder, in
       <div className="flex items-stretch gap-2">
         <input
           id={id}
+          type={type}
           value={value}
           onChange={(e) => onChange(e.target.value)}
           inputMode={inputMode}
@@ -94,8 +96,11 @@ export function TextField({ label, value, onChange, error, hint, placeholder, in
           placeholder={placeholder}
           aria-invalid={error ? true : undefined}
           aria-describedby={describedBy}
-          className={`min-h-[52px] w-full min-w-0 rounded-[10px] bg-tide-field px-4 text-[17px] font-semibold text-tide-ink outline-none placeholder:font-normal placeholder:text-tide-muted focus-visible:ring-2 focus-visible:ring-tide-blue ${
-            error ? "ring-[2.5px] ring-tide-ink" : "ring-[1.5px] ring-tide-rule"
+          className={`min-h-[52px] w-full min-w-0 rounded-[10px] bg-tide-field px-4 text-[17px] font-semibold text-tide-ink outline-none placeholder:font-normal placeholder:text-tide-muted ${
+            // An invalid field keeps its ink ring while focused; focus adds a blue outline outside it.
+            error
+              ? "ring-[2.5px] ring-tide-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-tide-blue"
+              : "ring-[1.5px] ring-tide-rule focus-visible:ring-2 focus-visible:ring-tide-blue"
           }`}
         />
         {trailing}

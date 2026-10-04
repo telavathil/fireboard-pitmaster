@@ -1,100 +1,16 @@
 "use client";
 
-import React from "react";
 import { CookSessionProvider, useCookSession } from "../context/CookSessionContext";
 import HistoryScreen from "../components/history/HistoryScreen";
 import SettingsScreen from "../components/settings/SettingsScreen";
 import SetupScreen from "../components/setup/SetupScreen";
 import LiveCook from "../components/live/LiveCook";
+import LoginScreen from "../components/login/LoginScreen";
 
 function DashboardContent() {
-  const {
-    token,
-    username,
-    setUsername,
-    password,
-    setPassword,
-    authError,
-    isLoggingIn,
-    handleLogin,
-    activeSession,
-    activeTab,
-    debugPhaseOverride,
-  } = useCookSession();
+  const { token, activeSession, activeTab, debugPhaseOverride } = useCookSession();
 
-  // Render Login Panel if not authenticated
-  if (!token) {
-    return (
-      <div className="flex-grow flex items-center justify-center px-sm py-xl min-h-screen bg-[#0E0E0F]">
-        <div className="glass-card max-w-[28rem] w-full p-md relative overflow-hidden border border-outline-variant/30">
-          <div className="absolute w-32 h-32 bg-primary/10 blur-[50px] -top-10 -right-10 rounded-full"></div>
-          <div className="flex items-center gap-sm mb-sm">
-            <span className="material-symbols-outlined text-primary text-3xl animate-pulse" style={{ fontVariationSettings: "'FILL' 1" }}>
-              local_fire_department
-            </span>
-            <h1 className="font-headline-lg text-headline-md tracking-wider text-primary uppercase leading-none">HEARTH COMMAND</h1>
-          </div>
-          
-          <p className="font-body-md text-sm text-on-surface-variant mb-md opacity-85 leading-snug">
-            Authenticate to connect your FireBoard probe nodes and load real-time thermal model equations.
-          </p>
-
-          <form onSubmit={handleLogin} className="space-y-sm">
-            <div>
-              <label
-                htmlFor="login-username"
-                className="block font-label-mono text-xs uppercase tracking-wider text-on-surface-variant opacity-75 mb-1"
-              >
-                Username
-              </label>
-              <input
-                id="login-username"
-                type="text"
-                required
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                className="forge-input py-xs text-sm"
-                placeholder="your_fireboard_username"
-              />
-            </div>
-
-            <div>
-              <label
-                htmlFor="login-password"
-                className="block font-label-mono text-xs uppercase tracking-wider text-on-surface-variant opacity-75 mb-1"
-              >
-                Password
-              </label>
-              <input
-                id="login-password"
-                type="password"
-                required
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="forge-input py-xs text-sm"
-                placeholder="••••••••"
-              />
-            </div>
-
-            {authError && (
-              <div className="text-error text-xs font-label-mono bg-error-container/10 border border-error-container/20 p-xs flex items-center gap-xs">
-                <span className="material-symbols-outlined text-sm">error</span>
-                <span>{authError}</span>
-              </div>
-            )}
-
-            <button
-              type="submit"
-              disabled={isLoggingIn}
-              className="action-btn action-btn-primary py-sm"
-            >
-              {isLoggingIn ? "AUTHENTICATING..." : "SIGN IN"}
-            </button>
-          </form>
-        </div>
-      </div>
-    );
-  }
+  if (!token) return <LoginScreen />;
 
   // Every signed-in screen owns its whole viewport (its own band and navigation).
   if (activeTab === "history") return <HistoryScreen />;
