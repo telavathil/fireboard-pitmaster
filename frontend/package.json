@@ -7,8 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "test:nav": "node tests/verify_navigation.js",
-    "test:phases": "node tests/verify_phases.js",
+    "test:nav": "node tests/verify_navigation.mjs",
+    "test:phases": "node tests/verify_phases.mjs",
     "test": "vitest run",
     "test:watch": "vitest",
     "test:e2e": "playwright test"

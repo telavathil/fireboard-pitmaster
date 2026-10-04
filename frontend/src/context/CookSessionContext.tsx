@@ -1,6 +1,6 @@
 "use client";
 
-import React, { createContext, useContext, useState, useEffect } from "react";
+import React, { createContext, useCallback, useContext, useEffect, useRef, useState } from "react";
 import { CookSession, TelemetryPayload } from "../types";
 import { BACKEND_URL } from "../lib/api";
 import { Stage, deriveStage, parseServerTime } from "../components/live/cookModel";
@@ -72,6 +72,42 @@ function writePref(key: string, value: string) {
   }
 }
 
+const TOKEN_KEY = "pitmaster_token";
+const USERNAME_KEY = "pitmaster_username";
+
+/** A saved sign-in counts only when both the token and username are present. */
+function readSavedAuth(): { token: string; username: string } | null {
+  const token = readPref(TOKEN_KEY);
+  const username = readPref(USERNAME_KEY);
+  return token && username ? { token, username } : null;
+}
+
+/** `?phase=N` forces a stage for design review; it only exercises rendering. */
+function readPhaseOverride(): number | null {
+  if (typeof window === "undefined") return null;
+  const value = new URLSearchParams(window.location.search).get("phase");
+  const phase = value ? parseInt(value, 10) : Number.NaN;
+  return Number.isFinite(phase) ? phase : null;
+}
+
+/** When the rest began on this device; if the pull was never logged here, the rest clock starts now. */
+function restStartFor(sessionId: string): number {
+  const key = `rest_start_${sessionId}`;
+  const saved = Number(readPref(key));
+  if (saved > 0) return saved;
+  const now = Date.now();
+  writePref(key, String(now));
+  return now;
+}
+
+declare global {
+  interface Window {
+    /** Exposed for Playwright e2e checks. */
+    activeTab?: string;
+    currentPhase?: number;
+  }
+}
+
 /** Keeps roughly 12 hours of readings at the backend's 20 s polling cadence. */
 const MAX_HISTORY_POINTS = 2160;
 
@@ -81,16 +117,17 @@ const STAGE_BY_PHASE: Record<number, Stage> = { 2: "stabilizing", 3: "stall", 4:
 const CookSessionContext = createContext<CookSessionContextType | undefined>(undefined);
 
 export function CookSessionProvider({ children }: { children: React.ReactNode }) {
-  // Authentication State
-  const [token, setToken] = useState<string | null>(null);
-  const [username, setUsername] = useState<string>("");
+  // The provider mounts client-side only (see page.tsx), so saved state is read directly at init.
+  const [savedAuth] = useState(readSavedAuth);
+  const [token, setToken] = useState<string | null>(savedAuth?.token ?? null);
+  const [username, setUsername] = useState<string>(savedAuth?.username ?? "");
   const [password, setPassword] = useState<string>("");
   const [authError, setAuthError] = useState<string | null>(null);
   const [isLoggingIn, setIsLoggingIn] = useState<boolean>(false);
 
   // Cook Session State
   const [activeSession, setActiveSession] = useState<CookSession | null>(null);
-  const [isLoadingSession, setIsLoadingSession] = useState<boolean>(true);
+  const [isLoadingSession, setIsLoadingSession] = useState<boolean>(savedAuth !== null);
   const [isCreatingSession, setIsCreatingSession] = useState<boolean>(false);
 
   const [sessionError, setSessionError] = useState<string | null>(null);
@@ -115,125 +152,66 @@ export function CookSessionProvider({ children }: { children: React.ReactNode })
   // Live Telemetry States
   const [telemetry, setTelemetry] = useState<TelemetryPayload | null>(null);
   const [history, setHistory] = useState<TelemetryPayload[]>([]);
-  const [isConnected, setIsConnected] = useState<boolean>(false);
+  const [connectionLost, setConnectionLost] = useState<boolean>(false);
 
-  // Rest tracking (set when the cook is pulled; persisted per session in localStorage)
-  const [restStartedAt, setRestStartedAt] = useState<number | null>(null);
+  // When the current rest began (persisted per session in localStorage).
+  const [restStart, setRestStart] = useState<number | null>(null);
 
-  // Debug override check via URL query parameters
-  const [debugPhaseOverride, setDebugPhaseOverride] = useState<number | null>(null);
+  const [debugPhaseOverride, setDebugPhaseOverride] = useState<number | null>(readPhaseOverride);
 
   const backendUrl = BACKEND_URL;
 
-  // Load token and active session on mount
-  useEffect(() => {
-    const savedToken = localStorage.getItem("pitmaster_token");
-    const savedUser = localStorage.getItem("pitmaster_username");
-    
-    if (savedToken && savedUser) {
-      setToken(savedToken);
-      setUsername(savedUser);
-      fetchActiveSession(savedToken);
-    } else {
-      setIsLoadingSession(false);
-    }
-  }, []);
-
-  // Starting or ending a cook returns to the Cook tab (setup or live screen).
-  useEffect(() => {
-    setActiveTab("dashboard");
-  }, [activeSession ? activeSession.id : null]);
-
-  // Restore when the rest began. If the pull was never logged on this device,
-  // the rest clock starts now rather than at an invented time.
-  useEffect(() => {
-    if (activeSession?.status !== "resting") {
-      setRestStartedAt(null);
-      return;
-    }
-    const key = `rest_start_${activeSession.id}`;
-    const saved = Number(localStorage.getItem(key));
-    const startedAt = saved > 0 ? saved : Date.now();
-    if (!(saved > 0)) localStorage.setItem(key, String(startedAt));
-    setRestStartedAt(startedAt);
-  }, [activeSession?.id, activeSession?.status]);
-
-  // Check URL phase override
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      const params = new URLSearchParams(window.location.search);
-      const p = params.get("phase");
-      if (p) {
-        const phaseNum = parseInt(p, 10);
-        setDebugPhaseOverride(phaseNum);
-        setActiveTab("dashboard");
-      }
-    }
-  }, []);
-
-  const fetchActiveSession = async (authToken: string) => {
+  const fetchActiveSession = useCallback(async (authToken: string) => {
     try {
-      const res = await fetch(`${backendUrl}/api/sessions/active`, {
-        headers: {
-          Authorization: `Bearer ${authToken}`,
-        },
+      const res = await fetch(`${BACKEND_URL}/api/sessions/active`, {
+        headers: { Authorization: `Bearer ${authToken}` },
       });
-      if (res.ok) {
-        const data = await res.json();
-        setActiveSession(data);
-      } else {
-        setActiveSession(null);
-      }
-    } catch (err) {
-      console.error("Failed to fetch active session:", err);
+      const data: CookSession | null = res.ok ? await res.json() : null;
+      setActiveSession(data);
+      if (data?.status === "resting") setRestStart(restStartFor(data.id));
+    } catch {
+      // Backend unreachable: stay signed in; the setup screen's start action reports the problem.
     } finally {
       setIsLoadingSession(false);
     }
-  };
+  }, []);
 
-  // SSE Stream Handler for Telemetry
+  // Load the active cook once for a saved sign-in.
+  const initialToken = useRef(savedAuth?.token ?? null);
   useEffect(() => {
-    if (!activeSession) {
-      setTelemetry(null);
-      setHistory([]);
-      setIsConnected(false);
-      return;
-    }
+    if (initialToken.current) void fetchActiveSession(initialToken.current);
+  }, [fetchActiveSession]);
 
-    const sseUrl = `${backendUrl}/api/telemetry/stream/${activeSession.device_id}/1`;
-    const eventSource = new EventSource(sseUrl);
-
-    setIsConnected(true);
-
-    // A reconnected stream clears the lost-connection state on its next message.
-    eventSource.onopen = () => setIsConnected(true);
+  // Live telemetry for the active cook. EventSource reconnects on its own;
+  // the UI shows a lost connection only after a real error.
+  const streamDeviceId = activeSession?.device_id ?? null;
+  const streamSessionId = activeSession?.id ?? null;
+  useEffect(() => {
+    if (!streamDeviceId) return;
+    const eventSource = new EventSource(`${BACKEND_URL}/api/telemetry/stream/${streamDeviceId}/1`);
+    eventSource.onopen = () => setConnectionLost(false);
     eventSource.onmessage = (event) => {
-      setIsConnected(true);
+      setConnectionLost(false);
       try {
         const payload: TelemetryPayload = JSON.parse(event.data);
         setTelemetry(payload);
-        
         // Maintain a rolling history covering the whole cook
         setHistory((prev) => {
-          if (prev.length > 0 && prev[prev.length - 1].timestamp === payload.timestamp) {
-            return prev;
-          }
-          const updated = [...prev, payload];
-          return updated.slice(-MAX_HISTORY_POINTS);
+          if (prev.length > 0 && prev[prev.length - 1].timestamp === payload.timestamp) return prev;
+          return [...prev, payload].slice(-MAX_HISTORY_POINTS);
         });
       } catch {
         // Ignore a malformed frame; the next reading replaces it.
       }
     };
-
-    // EventSource reconnects on its own; the UI shows the lost connection meanwhile.
-    eventSource.onerror = () => setIsConnected(false);
-
+    eventSource.onerror = () => setConnectionLost(true);
     return () => {
       eventSource.close();
-      setIsConnected(false);
+      setConnectionLost(false);
+      setTelemetry(null);
+      setHistory([]);
     };
-  }, [activeSession]);
+  }, [streamDeviceId, streamSessionId]);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -249,15 +227,15 @@ export function CookSessionProvider({ children }: { children: React.ReactNode })
 
       if (res.ok) {
         const data = await res.json();
-        localStorage.setItem("pitmaster_token", data.access_token);
-        localStorage.setItem("pitmaster_username", username);
+        writePref(TOKEN_KEY, data.access_token);
+        writePref(USERNAME_KEY, username);
         setToken(data.access_token);
         fetchActiveSession(data.access_token);
       } else {
         const errData = await res.json();
         setAuthError(errData.detail || "Sign-in failed. Check your username and password.");
       }
-    } catch (err) {
+    } catch {
       setAuthError("Couldn't reach the server. Check that the backend is running, then try again.");
     } finally {
       setIsLoggingIn(false);
@@ -265,12 +243,15 @@ export function CookSessionProvider({ children }: { children: React.ReactNode })
   };
 
   const handleLogout = () => {
-    localStorage.removeItem("pitmaster_token");
-    localStorage.removeItem("pitmaster_username");
+    try {
+      localStorage.removeItem(TOKEN_KEY);
+      localStorage.removeItem(USERNAME_KEY);
+    } catch {
+      // Storage unavailable; the in-memory sign-out below still applies.
+    }
     setToken(null);
     setActiveSession(null);
-    setTelemetry(null);
-    setHistory([]);
+    setActiveTab("dashboard");
   };
 
   /** Creates a cook from a validated setup payload. Resolves true when the session started. */
@@ -291,6 +272,7 @@ export function CookSessionProvider({ children }: { children: React.ReactNode })
       if (res.ok) {
         const data = await res.json();
         setActiveSession(data);
+        setActiveTab("dashboard");
         return true;
       }
       const errData = await res.json().catch(() => ({}));
@@ -320,15 +302,14 @@ export function CookSessionProvider({ children }: { children: React.ReactNode })
       if (newStatus === "completed") {
         // A finished cook is never restored as the active session.
         setActiveSession(null);
-        setTelemetry(null);
-        setHistory([]);
+        setActiveTab("dashboard");
         return true;
       }
       setActiveSession({ ...activeSession, status: newStatus });
       if (newStatus === "resting") {
         const startedAt = Date.now();
-        localStorage.setItem(`rest_start_${activeSession.id}`, String(startedAt));
-        setRestStartedAt(startedAt);
+        writePref(`rest_start_${activeSession.id}`, String(startedAt));
+        setRestStart(startedAt);
       }
       return true;
     } catch {
@@ -349,15 +330,18 @@ export function CookSessionProvider({ children }: { children: React.ReactNode })
       : null);
   const currentPhase = debugPhaseOverride ?? (stage ? PHASE_BY_STAGE[stage] : 1);
 
+  const restStartedAt = activeSession?.status === "resting" ? restStart : null;
+  const isConnected = !connectionLost;
+
   // Carryover peak: the highest core reading since the rest began.
   const restReadings = restStartedAt !== null ? history.filter((r) => parseServerTime(r.timestamp) >= restStartedAt) : [];
   const peakRestTempC = restReadings.length > 0 ? Math.max(...restReadings.map((r) => r.core_temp_filtered)) : null;
 
-  // Sync state variables onto window for E2E headless validation testing
-  if (typeof window !== "undefined") {
-    (window as any).activeTab = activeTab;
-    (window as any).currentPhase = currentPhase;
-  }
+  // Expose navigation state for Playwright e2e checks.
+  useEffect(() => {
+    window.activeTab = activeTab;
+    window.currentPhase = currentPhase;
+  }, [activeTab, currentPhase]);
 
   return (
     <CookSessionContext.Provider

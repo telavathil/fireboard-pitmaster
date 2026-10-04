@@ -1,5 +1,6 @@
 "use client";
 
+import { useSyncExternalStore } from "react";
 import { CookSessionProvider, useCookSession } from "../context/CookSessionContext";
 import HistoryScreen from "../components/history/HistoryScreen";
 import SettingsScreen from "../components/settings/SettingsScreen";
@@ -18,7 +19,18 @@ function DashboardContent() {
   return activeSession || debugPhaseOverride !== null ? <LiveCook /> : <SetupScreen />;
 }
 
+const noopSubscribe = () => () => {};
+
+/** True once running in the browser; false during server rendering and hydration. */
+function useIsClient() {
+  return useSyncExternalStore(noopSubscribe, () => true, () => false);
+}
+
 export default function Dashboard() {
+  // The app reads its saved sign-in and preferences from localStorage, so it
+  // mounts client-side only; the server renders the ground colour alone.
+  const isClient = useIsClient();
+  if (!isClient) return null;
   return (
     <CookSessionProvider>
       <DashboardContent />
