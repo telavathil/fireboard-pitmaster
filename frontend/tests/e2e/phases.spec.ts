@@ -21,46 +21,49 @@ async function gotoPhase(page: import("@playwright/test").Page, phase: number) {
   // the async fetchActiveSession() call fired on mount - wait for that to
   // resolve too, or actions like LOG WEIGHT & PULL silently no-op against
   // a still-null activeSession.
-  await page.getByRole("button", { name: "END SESSION" }).waitFor({ timeout: 10000 });
+  await page.getByRole("region", { name: "Core temperature" }).waitFor({ timeout: 10000 });
 }
 
-test("?phase=2 renders the Stabilizing view", async ({ page }) => {
+function currentStage(page: import("@playwright/test").Page) {
+  return page.getByRole("list", { name: "Cook stages" }).locator('[aria-current="step"]');
+}
+
+test("?phase=2 shows the learning stage without inventing an estimate", async ({ page }) => {
   await gotoPhase(page, 2);
-  await expect(page.getByRole("heading", { name: "Live Thermal Analysis" })).toBeVisible();
+  await expect(currentStage(page)).toHaveText("Learning");
 });
 
-test("?phase=3: FORCE BREAKOUT (SPRITZ) increments the spritz counter", async ({ page }) => {
+test("?phase=3 shows the stall stage", async ({ page }) => {
   await gotoPhase(page, 3);
-  await expect(page.getByText("0 TIMES")).toBeVisible();
-  await page.getByRole("button", { name: /FORCE BREAKOUT/ }).click();
-  await expect(page.getByText("1 TIMES")).toBeVisible();
+  await expect(currentStage(page)).toHaveText("Stall");
 });
 
-test("?phase=4: SILENCE ALARM disables itself and relabels", async ({ page }) => {
+test("?phase=4: the pull takes over and the alarm can be silenced", async ({ page }) => {
   await gotoPhase(page, 4);
-  await page.getByRole("button", { name: "SILENCE ALARM" }).click();
-  const silencedBtn = page.getByRole("button", { name: "ALARM SILENCED" });
-  await expect(silencedBtn).toBeVisible();
-  await expect(silencedBtn).toBeDisabled();
+  await expect(page.getByRole("alert").filter({ hasText: "Pull now" })).toBeVisible();
+  const silence = page.getByRole("button", { name: "Silence alarm" });
+  await silence.click();
+  await expect(page.getByRole("button", { name: "Turn alarm sound back on" })).toHaveAttribute("aria-pressed", "true");
 });
 
-test("?phase=4: LOG WEIGHT & PULL patches the session status to resting", async ({ page, request }) => {
+test("?phase=4: I pulled it patches the session status to resting", async ({ page, request }) => {
   await gotoPhase(page, 4);
-  await page.getByRole("button", { name: "LOG WEIGHT & PULL" }).click();
+  await page.getByRole("button", { name: "I pulled it, start rest" }).click();
   await expect
     .poll(async () => (await request.get("http://localhost:8000/api/sessions/active")).json().then((d) => d.status))
     .toBe("resting");
 });
 
-test("?phase=5: Begin Carving ends the cook", async ({ page }) => {
+test("?phase=5: Finish cook ends the cook after confirmation", async ({ page }) => {
   await gotoPhase(page, 5);
-  await page.getByRole("button", { name: /Begin Carving/ }).click();
+  await page.getByRole("button", { name: "Finish cook" }).click();
+  await page.getByRole("dialog").getByRole("button", { name: "End cook" }).click();
   await page.goto("/");
   await page.waitForLoadState("domcontentloaded");
   await expect(page.getByText("STANDBY MODE")).toBeVisible();
 });
 
-test("?phase=6 renders the active-cook view", async ({ page }) => {
+test("?phase=6 shows the cooking stage", async ({ page }) => {
   await gotoPhase(page, 6);
-  await expect(page.getByRole("heading", { name: "Thermal Evolution" })).toBeVisible();
+  await expect(currentStage(page)).toHaveText("Cooking");
 });

@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Bebas_Neue, Source_Sans_3, JetBrains_Mono } from "next/font/google";
+import { Archivo, Bebas_Neue, Source_Sans_3, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 
 const bebasNeue = Bebas_Neue({
@@ -18,6 +18,13 @@ const jetbrainsMono = JetBrains_Mono({
   subsets: ["latin"],
 });
 
+// Live cook screen face: a condensed-capable grotesk with tabular figures.
+const archivo = Archivo({
+  variable: "--font-archivo",
+  subsets: ["latin"],
+  axes: ["wdth"],
+});
+
 export const metadata: Metadata = {
   title: "FireBoard Pitmaster | Live Session",
   description: "Predictive BBQ Cooking Telemetry and Physics-Based State Estimation",
@@ -31,7 +38,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${bebasNeue.variable} ${sourceSans3.variable} ${jetbrainsMono.variable} h-full antialiased dark`}
+      className={`${archivo.variable} ${bebasNeue.variable} ${sourceSans3.variable} ${jetbrainsMono.variable} h-full antialiased dark`}
     >
       <head>
         <link

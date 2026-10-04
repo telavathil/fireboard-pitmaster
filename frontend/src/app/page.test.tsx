@@ -12,11 +12,7 @@ vi.mock("../components/EmptyDashboard", () => ({ default: () => <div>MockEmptyDa
 vi.mock("../components/HistoryView", () => ({ default: () => <div>MockHistoryView</div> }));
 vi.mock("../components/SettingsView", () => ({ default: () => <div>MockSettingsView</div> }));
 vi.mock("../components/Phase1Setup", () => ({ default: () => <div>MockPhase1Setup</div> }));
-vi.mock("../components/Phase2Stabilizing", () => ({ default: () => <div>MockPhase2</div> }));
-vi.mock("../components/Phase3Stall", () => ({ default: () => <div>MockPhase3</div> }));
-vi.mock("../components/Phase4Pull", () => ({ default: () => <div>MockPhase4</div> }));
-vi.mock("../components/Phase5Resting", () => ({ default: () => <div>MockPhase5</div> }));
-vi.mock("../components/Phase6Active", () => ({ default: () => <div>MockPhase6</div> }));
+vi.mock("../components/live/LiveCook", () => ({ default: () => <div>MockLiveCook</div> }));
 
 vi.mock("../context/CookSessionContext", () => ({
   CookSessionProvider: ({ children }: { children: React.ReactNode }) => children,
@@ -61,17 +57,18 @@ describe("Dashboard routing (page.tsx)", () => {
     expect(screen.queryByText("MockPhase1Setup")).not.toBeInTheDocument();
   });
 
-  it("shows the debug-overridden phase view on the dashboard tab even with no active session", () => {
+  it("shows the live cook screen on the dashboard tab for a debug phase override", () => {
     setSession({ token: "t", activeTab: "dashboard", activeSession: null, currentPhase: 3, debugPhaseOverride: 3 });
     render(<Dashboard />);
-    expect(screen.getByText("MockPhase3")).toBeInTheDocument();
+    expect(screen.getByText("MockLiveCook")).toBeInTheDocument();
   });
 
-  it("shows the correct phase view on the dashboard tab for an active session", () => {
+  it("shows the live cook screen, without the old shell, for an active session", () => {
     const activeSession = { id: "s1", status: "bare" };
     setSession({ token: "t", activeTab: "dashboard", activeSession, currentPhase: 4, debugPhaseOverride: null });
     render(<Dashboard />);
-    expect(screen.getByText("MockPhase4")).toBeInTheDocument();
+    expect(screen.getByText("MockLiveCook")).toBeInTheDocument();
+    expect(screen.queryByText("MockSidebar")).not.toBeInTheDocument();
   });
 
   it("shows HistoryView on the history tab regardless of session/phase state", () => {

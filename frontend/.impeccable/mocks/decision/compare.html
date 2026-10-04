@@ -1,0 +1,273 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tide Table vs Forecast Desk</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&family=Public+Sans:wght@400..800&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/@phosphor-icons/web@2.1.1"></script>
+<style>
+  :root { --page: #E4E6EA; --page-ink: #1E242C; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--page); color: var(--page-ink); font-family: "Public Sans", system-ui, sans-serif; padding: 32px 16px 64px; }
+  h1 { font-size: 22px; font-weight: 700; max-width: 1320px; margin: 0 auto 6px; }
+  .lede { max-width: 1320px; margin: 0 auto 28px; font-size: 15px; line-height: 1.5; color: #4A525C; }
+  .row { max-width: 1320px; margin: 0 auto 40px; }
+  .row h2 { font-size: 17px; font-weight: 700; margin-bottom: 4px; }
+  .row p.sub { font-size: 14px; color: #4A525C; margin-bottom: 16px; max-width: 70ch; line-height: 1.45; }
+  .phones { display: grid; grid-template-columns: repeat(auto-fit, minmax(330px, 1fr)); gap: 24px; justify-items: center; }
+  figure { display: flex; flex-direction: column; gap: 10px; align-items: center; }
+  figcaption { font-size: 13px; font-weight: 600; color: #4A525C; }
+  .phone { width: 360px; height: 780px; border-radius: 28px; overflow: hidden; position: relative; display: flex; flex-direction: column; box-shadow: 0 12px 40px rgba(30, 36, 44, 0.18); }
+  .tabbar { margin-top: auto; display: grid; grid-template-columns: repeat(4, 1fr); padding: 8px 0 18px; }
+  .tab { display: flex; flex-direction: column; align-items: center; gap: 2px; font-size: 11px; font-weight: 600; }
+  .tab i { font-size: 22px; }
+  svg text { font-variant-numeric: tabular-nums; }
+
+  /* ---------- TIDE TABLE ---------- */
+  .tide { --band: #F2C230; --ground: #F5F6F2; --ink: #13233A; --muted: #6B7686; --rule: #CDD2D8; --tideblue: #2E6DB4; --pull: #C8372D;
+    background: var(--ground); color: var(--ink); font-family: "Archivo", sans-serif; font-variant-numeric: tabular-nums; }
+  .tide .band { background: var(--band); padding: 18px 20px 14px; display: flex; justify-content: space-between; align-items: flex-start; }
+  .tide .band .app { font-size: 12px; font-weight: 700; letter-spacing: 0.02em; }
+  .tide .band .cook { font-size: 15px; font-weight: 600; margin-top: 2px; }
+  .tide .band i { font-size: 22px; }
+  .tide .hero { padding: 16px 20px 6px; display: grid; grid-template-columns: auto 1fr; align-items: end; column-gap: 14px; }
+  .tide .core { font-size: 112px; line-height: 0.82; font-weight: 800; font-stretch: 70%; letter-spacing: -0.02em; }
+  .tide .pullto { padding-bottom: 6px; }
+  .tide .pullto .t { white-space: nowrap; font-size: 26px; font-weight: 700; font-stretch: 80%; }
+  .tide .pullto .d { font-size: 14px; color: var(--muted); margin-top: 2px; }
+  .tide .stages { display: flex; gap: 14px; padding: 10px 20px 4px; font-size: 13px; font-weight: 600; color: #A3ABB6; }
+  .tide .stages .on { color: var(--ink); text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 4px; }
+  .tide .chart { padding: 6px 10px 0; }
+  .tide .table { margin: 4px 20px 0; border-top: 1.5px solid var(--ink); }
+  .tide .tr { display: grid; grid-template-columns: 1fr auto; align-items: baseline; padding: 9px 0; border-bottom: 1px solid var(--rule); }
+  .tide .tr .m { font-size: 14px; font-weight: 500; }
+  .tide .tr .tm { font-size: 24px; font-weight: 700; font-stretch: 78%; text-align: right; }
+  .tide .tr .rg { grid-column: 2; font-size: 11px; color: var(--muted); text-align: right; }
+  .tide .tr.pull .tm { color: var(--pull); }
+  .tide .meta { display: flex; justify-content: space-between; padding: 10px 20px 0; font-size: 13px; color: var(--muted); }
+  .tide .meta b { color: var(--ink); font-weight: 700; }
+  .tide .tabbar { border-top: 1px solid var(--rule); color: #8B95A3; }
+  .tide .tab.on { color: var(--ink); }
+  /* pull state: the band turns pull-red */
+  .tide.pullnow .band { background: var(--pull); color: #FFF7F5; }
+  .tide .alarm { background: var(--pull); color: #FFF7F5; padding: 6px 20px 22px; }
+  .tide .alarm .big { font-size: 64px; font-weight: 800; font-stretch: 68%; line-height: 0.9; }
+  .tide .alarm .why { font-size: 15px; margin-top: 8px; line-height: 1.35; }
+  .tide .alarm .btns { display: grid; grid-template-columns: 1fr auto; gap: 10px; margin-top: 16px; }
+  .tide .btn { border: 0; font: inherit; font-weight: 700; font-size: 16px; padding: 14px 16px; border-radius: 10px; cursor: pointer; }
+  .tide .btn.primary { background: #FFF7F5; color: var(--pull); }
+  .tide .btn.ghost { background: transparent; color: #FFF7F5; box-shadow: inset 0 0 0 1.5px rgba(255,247,245,0.7); }
+
+  /* ---------- FORECAST DESK ---------- */
+  .fd { --ground: #FFFFFF; --ink: #1B2733; --muted: #5E6B78; --rule: #E2E6EA; --teal: #2A9D8F; --amber: #E9A23B; --red: #D1495B;
+    background: var(--ground); color: var(--ink); font-family: "Public Sans", sans-serif; font-variant-numeric: tabular-nums; }
+  .fd .top { padding: 18px 20px 12px; display: flex; justify-content: space-between; align-items: center; }
+  .fd .top .app { font-size: 12px; font-weight: 700; color: var(--muted); }
+  .fd .top .cook { font-size: 16px; font-weight: 700; }
+  .fd .top i { font-size: 22px; color: var(--muted); }
+  .fd .advisory { margin: 0 16px; border-left: 5px solid var(--amber); background: #FDF3E1; padding: 10px 12px; border-radius: 4px; }
+  .fd .advisory .k { font-size: 12px; font-weight: 800; letter-spacing: 0.04em; text-transform: uppercase; color: #8A5A0B; }
+  .fd .advisory .v { font-size: 14px; margin-top: 2px; line-height: 1.35; }
+  .fd .hero { padding: 16px 20px 4px; display: flex; align-items: baseline; gap: 14px; }
+  .fd .core { font-size: 76px; font-weight: 800; line-height: 1; letter-spacing: -0.03em; }
+  .fd .pt .t { font-size: 20px; font-weight: 700; white-space: nowrap; }
+  .fd .pt .d { font-size: 14px; color: var(--muted); }
+  .fd .chart { padding: 4px 10px 0; }
+  .fd .window { margin: 2px 20px 0; display: flex; justify-content: space-between; align-items: baseline; padding: 10px 0; border-top: 1px solid var(--rule); }
+  .fd .window .k { font-size: 13px; color: var(--muted); }
+  .fd .window .v { font-size: 20px; font-weight: 800; text-align: right; } .fd .window .v small { display: block; }
+  .fd .window .v small { font-size: 13px; font-weight: 600; color: var(--muted); }
+  .fd .list { margin: 0 20px; }
+  .fd .li { display: flex; justify-content: space-between; padding: 8px 0; border-top: 1px solid var(--rule); font-size: 14px; }
+  .fd .li b { font-weight: 700; }
+  .fd .meta { display: flex; justify-content: space-between; padding: 10px 20px 0; font-size: 13px; color: var(--muted); }
+  .fd .meta b { color: var(--ink); }
+  .fd .tabbar { border-top: 1px solid var(--rule); color: #8B95A3; }
+  .fd .tab.on { color: var(--teal); }
+  .fd .warning { margin: 0 16px; background: var(--red); color: #FFF; padding: 14px 14px 16px; border-radius: 6px; }
+  .fd .warning .k { font-size: 12px; font-weight: 800; letter-spacing: 0.05em; text-transform: uppercase; display: flex; align-items: center; gap: 6px; }
+  .fd .warning .big { font-size: 40px; font-weight: 800; line-height: 1.05; margin-top: 4px; }
+  .fd .warning .why { font-size: 14px; margin-top: 6px; line-height: 1.35; }
+  .fd .warning .btns { display: grid; grid-template-columns: 1fr auto; gap: 10px; margin-top: 14px; }
+  .fd .btn { border: 0; font: inherit; font-weight: 700; font-size: 15px; padding: 13px 14px; border-radius: 6px; cursor: pointer; }
+  .fd .btn.primary { background: #FFF; color: var(--red); }
+  .fd .btn.ghost { background: transparent; color: #FFF; box-shadow: inset 0 0 0 1.5px rgba(255,255,255,0.75); }
+
+  .notes { max-width: 1320px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px; }
+  .notes section { background: #F4F5F7; border-radius: 12px; padding: 18px 20px; }
+  .notes h3 { font-size: 16px; margin-bottom: 8px; }
+  .notes ul { padding-left: 18px; font-size: 14px; line-height: 1.5; color: #39414B; }
+  .notes li + li { margin-top: 4px; }
+  @media (max-width: 420px) { .phone { transform: scale(0.9); transform-origin: top center; margin-bottom: -78px; } }
+</style>
+</head>
+<body>
+<h1>The Cook's Tide Table vs Forecast Desk</h1>
+<p class="lede">Same cook in both: a 5.4 kg brisket flat on a kamado, target 195°F. The top row shows 12:30 PM, in the stall. The bottom row shows 6:38 PM, the pull moment. These are HTML sketches, not final designs: they show each direction's structure, palette, type and signature chart. Example data only.</p>
+
+<div class="row">
+  <h2>In the stall, 12:30 PM</h2>
+  <p class="sub">The hard moment for a prediction: the temperature isn't moving, so the app has to say how long the stall will last and how sure it is.</p>
+  <div class="phones">
+
+    <figure>
+      <div class="phone tide" aria-label="Tide Table, stall state">
+        <div class="band"><div><div class="app">FireBoard Pitmaster</div><div class="cook">Brisket flat · 5.4 kg · Kamado</div></div><i class="ph ph-dots-three-vertical"></i></div>
+        <div class="hero"><div class="core">168°</div><div class="pullto"><div class="t">→ 195° pull</div><div class="d">27° to go</div></div></div>
+        <div class="stages"><span>Stabilize</span><span>Cook</span><span class="on">Stall</span><span>Pull</span><span>Rest</span></div>
+        <div class="chart">
+          <svg viewBox="0 0 340 170" width="340" height="170" role="img" aria-label="Temperature curve with forecast">
+            <line x1="0" y1="22.4" x2="340" y2="22.4" stroke="#C8372D" stroke-width="1" stroke-dasharray="3 3"/>
+            <text x="338" y="16" text-anchor="end" font-size="10" fill="#C8372D" font-family="Archivo">195° pull</text>
+            <polygon points="157.9,44.6 198.3,39.6 242.9,27.6 307.6,14 331.9,9 331.9,27 307.6,30.8 242.9,38.6 198.3,44.6" fill="#2E6DB4" opacity="0.16"/>
+            <polyline points="0,150 24.3,125.3 48.6,100.6 72.9,77.5 97.1,59.4 121.4,49.5 145.7,46.2 157.9,44.6" fill="none" stroke="#13233A" stroke-width="2.5" stroke-linejoin="round"/>
+            <polyline points="157.9,44.6 198.3,42.1 242.9,33.1 307.6,22.4 331.9,18.2" fill="none" stroke="#2E6DB4" stroke-width="2.5" stroke-dasharray="1 0" stroke-linejoin="round"/>
+            <line x1="157.9" y1="4" x2="157.9" y2="152" stroke="#13233A" stroke-width="1"/>
+            <text x="160" y="160" font-size="10" fill="#13233A" font-family="Archivo" font-weight="700">now</text>
+            <line x1="198.3" y1="42.1" x2="198.3" y2="152" stroke="#2E6DB4" stroke-width="1" opacity="0.5"/>
+            <circle cx="307.6" cy="22.4" r="4.5" fill="#C8372D"/>
+            <line x1="0" y1="152" x2="340" y2="152" stroke="#CDD2D8"/>
+            <text x="0" y="166" font-size="10" fill="#6B7686" font-family="Archivo">6 AM</text>
+            <text x="97" y="166" font-size="10" fill="#6B7686" font-family="Archivo">10</text>
+            <text x="194" y="166" font-size="10" fill="#6B7686" font-family="Archivo">2 PM</text>
+            <text x="291" y="166" font-size="10" fill="#6B7686" font-family="Archivo">6</text>
+          </svg>
+        </div>
+        <div class="table">
+          <div class="tr"><span class="m">Stall ends</span><span class="tm">2:10 PM</span><span class="rg">±25 min</span></div>
+          <div class="tr pull"><span class="m">Pull at 195°</span><span class="tm">6:40 PM</span><span class="rg">±35 min</span></div>
+          <div class="tr"><span class="m">Slice after rest</span><span class="tm">7:40 PM</span><span class="rg">±40 min</span></div>
+        </div>
+        <div class="meta"><span>Pit <b>226°F</b></span><span>Updated 12 s ago</span></div>
+        <div class="tabbar"><div class="tab on"><i class="ph-fill ph-thermometer-simple"></i>Cook</div><div class="tab"><i class="ph ph-plug"></i>Probes</div><div class="tab"><i class="ph ph-clock-counter-clockwise"></i>History</div><div class="tab"><i class="ph ph-gear-six"></i>Settings</div></div>
+      </div>
+      <figcaption>The Cook's Tide Table (the roll)</figcaption>
+    </figure>
+
+    <figure>
+      <div class="phone fd" aria-label="Forecast Desk, stall state">
+        <div class="top"><div><div class="app">FireBoard Pitmaster</div><div class="cook">Brisket flat · 5.4 kg</div></div><i class="ph ph-dots-three-vertical"></i></div>
+        <div class="advisory"><div class="k">Stall advisory</div><div class="v">Temperature holding near 168°. Expected to climb again around 2:10 PM.</div></div>
+        <div class="hero"><div class="core">168°F</div><div class="pt"><div class="t">Pull 195°F</div><div class="d">27° to go</div></div></div>
+        <div class="chart">
+          <svg viewBox="0 0 340 170" width="340" height="170" role="img" aria-label="Forecast cone from now to pull">
+            <rect x="293" y="4" width="29" height="148" fill="#D1495B" opacity="0.10"/>
+            <line x1="0" y1="22.4" x2="340" y2="22.4" stroke="#D1495B" stroke-width="1" stroke-dasharray="3 3"/>
+            <text x="4" y="16" font-size="10" fill="#D1495B" font-family="Public Sans" font-weight="700">195°F pull</text>
+            <polygon points="157.9,44.6 198.3,38 242.9,24 293,8 340,4 340,34 322,22.4 242.9,40 198.3,46 " fill="#2A9D8F" opacity="0.22"/>
+            <polyline points="157.9,44.6 198.3,42.1 242.9,33.1 307.6,22.4" fill="none" stroke="#2A9D8F" stroke-width="2" stroke-dasharray="5 4"/>
+            <polyline points="0,150 24.3,125.3 48.6,100.6 72.9,77.5 97.1,59.4 121.4,49.5 145.7,46.2 157.9,44.6" fill="none" stroke="#1B2733" stroke-width="2.5" stroke-linejoin="round"/>
+            <circle cx="157.9" cy="44.6" r="4" fill="#1B2733"/>
+            <text x="150" y="62" font-size="10" fill="#1B2733" font-family="Public Sans" font-weight="700">now</text>
+            <line x1="0" y1="152" x2="340" y2="152" stroke="#E2E6EA"/>
+            <text x="0" y="166" font-size="10" fill="#5E6B78" font-family="Public Sans">6 AM</text>
+            <text x="97" y="166" font-size="10" fill="#5E6B78" font-family="Public Sans">10</text>
+            <text x="194" y="166" font-size="10" fill="#5E6B78" font-family="Public Sans">2 PM</text>
+            <text x="291" y="166" font-size="10" fill="#5E6B78" font-family="Public Sans">6</text>
+          </svg>
+        </div>
+        <div class="window"><span class="k">Likely pull window</span><span class="v">6:05–7:15 PM <small>most likely 6:40</small></span></div>
+        <div class="list">
+          <div class="li"><span>Stall ends</span><b>~2:10 PM</b></div>
+          <div class="li"><span>Slice after rest</span><b>~7:40 PM</b></div>
+        </div>
+        <div class="meta"><span>Pit <b>226°F</b></span><span>Updated 12 s ago</span></div>
+        <div class="tabbar"><div class="tab on"><i class="ph-fill ph-thermometer-simple"></i>Cook</div><div class="tab"><i class="ph ph-plug"></i>Probes</div><div class="tab"><i class="ph ph-clock-counter-clockwise"></i>History</div><div class="tab"><i class="ph ph-gear-six"></i>Settings</div></div>
+      </div>
+      <figcaption>Forecast Desk (your pick on the page)</figcaption>
+    </figure>
+
+  </div>
+</div>
+
+<div class="row">
+  <h2>The pull moment, 6:38 PM</h2>
+  <p class="sub">The most important state in the product. It has to be unmistakable at a glance from across the yard, and the main action has to be the obvious button.</p>
+  <div class="phones">
+
+    <figure>
+      <div class="phone tide pullnow" aria-label="Tide Table, pull state">
+        <div class="band"><div><div class="app">FireBoard Pitmaster</div><div class="cook">Brisket flat · 5.4 kg · Kamado</div></div><i class="ph ph-dots-three-vertical"></i></div>
+        <div class="alarm">
+          <div class="big">Pull now</div>
+          <div class="why">Core is 194°. It will coast to about 203° during the rest.</div>
+          <div class="btns"><button class="btn primary">I pulled it, start rest</button><button class="btn ghost" aria-label="Silence alarm"><i class="ph ph-speaker-slash"></i></button></div>
+        </div>
+        <div class="stages"><span>Stabilize</span><span>Cook</span><span>Stall</span><span class="on">Pull</span><span>Rest</span></div>
+        <div class="chart">
+          <svg viewBox="0 0 340 150" width="340" height="150" role="img" aria-label="Temperature curve reaching pull">
+            <line x1="0" y1="22.4" x2="340" y2="22.4" stroke="#C8372D" stroke-width="1" stroke-dasharray="3 3"/>
+            <polyline points="0,130 24.3,108 48.6,86 72.9,66 97.1,50 121.4,41 145.7,38 198.3,35 242.9,28 306.8,23" fill="none" stroke="#13233A" stroke-width="2.5" stroke-linejoin="round"/>
+            <polyline points="306.8,23 331.9,15" fill="none" stroke="#2E6DB4" stroke-width="2.5"/>
+            <circle cx="306.8" cy="23" r="6" fill="#C8372D"/>
+            <line x1="0" y1="132" x2="340" y2="132" stroke="#CDD2D8"/>
+            <text x="0" y="146" font-size="10" fill="#6B7686" font-family="Archivo">6 AM</text>
+            <text x="291" y="146" font-size="10" fill="#6B7686" font-family="Archivo">6 PM</text>
+          </svg>
+        </div>
+        <div class="table">
+          <div class="tr"><span class="m">Rest peak</span><span class="tm">~203°</span><span class="rg">in 25 min</span></div>
+          <div class="tr"><span class="m">Slice after rest</span><span class="tm">7:40 PM</span><span class="rg">±15 min</span></div>
+        </div>
+        <div class="tabbar"><div class="tab on"><i class="ph-fill ph-thermometer-simple"></i>Cook</div><div class="tab"><i class="ph ph-plug"></i>Probes</div><div class="tab"><i class="ph ph-clock-counter-clockwise"></i>History</div><div class="tab"><i class="ph ph-gear-six"></i>Settings</div></div>
+      </div>
+      <figcaption>Tide Table: the yellow band turns red and takes over</figcaption>
+    </figure>
+
+    <figure>
+      <div class="phone fd" aria-label="Forecast Desk, pull state">
+        <div class="top"><div><div class="app">FireBoard Pitmaster</div><div class="cook">Brisket flat · 5.4 kg</div></div><i class="ph ph-dots-three-vertical"></i></div>
+        <div class="warning">
+          <div class="k"><i class="ph-fill ph-warning"></i>Pull warning</div>
+          <div class="big">Pull now</div>
+          <div class="why">Core is 194°F. It will coast to about 203°F during the rest.</div>
+          <div class="btns"><button class="btn primary">I pulled it, start rest</button><button class="btn ghost" aria-label="Silence alarm"><i class="ph ph-speaker-slash"></i></button></div>
+        </div>
+        <div class="hero"><div class="core">194°F</div><div class="pt"><div class="t">Pull 195°F</div><div class="d">1° to go</div></div></div>
+        <div class="chart">
+          <svg viewBox="0 0 340 140" width="340" height="140" role="img" aria-label="Forecast cone collapsed at pull">
+            <rect x="300" y="4" width="14" height="118" fill="#D1495B" opacity="0.14"/>
+            <line x1="0" y1="22.4" x2="340" y2="22.4" stroke="#D1495B" stroke-width="1" stroke-dasharray="3 3"/>
+            <polyline points="0,120 24.3,100 48.6,80 72.9,62 97.1,48 121.4,40 145.7,37 198.3,34 242.9,28 306.8,23" fill="none" stroke="#1B2733" stroke-width="2.5" stroke-linejoin="round"/>
+            <circle cx="306.8" cy="23" r="5" fill="#D1495B"/>
+            <line x1="0" y1="122" x2="340" y2="122" stroke="#E2E6EA"/>
+            <text x="0" y="136" font-size="10" fill="#5E6B78" font-family="Public Sans">6 AM</text>
+            <text x="291" y="136" font-size="10" fill="#5E6B78" font-family="Public Sans">6 PM</text>
+          </svg>
+        </div>
+        <div class="list">
+          <div class="li"><span>Rest peak</span><b>~203°F in 25 min</b></div>
+          <div class="li"><span>Slice after rest</span><b>~7:40 PM</b></div>
+        </div>
+        <div class="tabbar"><div class="tab on"><i class="ph-fill ph-thermometer-simple"></i>Cook</div><div class="tab"><i class="ph ph-plug"></i>Probes</div><div class="tab"><i class="ph ph-clock-counter-clockwise"></i>History</div><div class="tab"><i class="ph ph-gear-six"></i>Settings</div></div>
+      </div>
+      <figcaption>Forecast Desk: a red warning banner on top</figcaption>
+    </figure>
+
+  </div>
+</div>
+
+<div class="notes">
+  <section>
+    <h3>The Cook's Tide Table</h3>
+    <ul>
+      <li>Distinctive: a yellow band and condensed figures don't look like any thermometer app.</li>
+      <li>Answers "when?" first: the table of predicted times is the core of the screen.</li>
+      <li>The core temp is the biggest thing on screen, readable from a distance.</li>
+      <li>Risk: the almanac's small print can creep back in.</li>
+    </ul>
+  </section>
+  <section>
+    <h3>Forecast Desk</h3>
+    <ul>
+      <li>Shows uncertainty most honestly: the cone visibly widens into the future.</li>
+      <li>Advisory and warning banners are a familiar, instantly read alert language.</li>
+      <li>Calmer and more conventional: closer to a well-made weather or chart app.</li>
+      <li>Risk: familiar; less of a recognizable identity.</li>
+    </ul>
+  </section>
+</div>
+</body>
+</html>

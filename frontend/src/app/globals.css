@@ -114,10 +114,6 @@ body {
   background: rgba(20, 20, 22, 0.85);
 }
 
-.text-glow-ember {
-  text-shadow: 0 0 20px rgba(255, 77, 0, 0.6);
-}
-
 .ember-glow {
   box-shadow: 0 0 30px rgba(255, 77, 0, 0.3);
 }
@@ -145,38 +141,6 @@ body {
   background-size: 20px 20px;
 }
 
-.stall-banner {
-  background: linear-gradient(90deg, rgba(255, 77, 0, 0.15) 0%, rgba(255, 77, 0, 0.02) 100%);
-  border-left: 4px solid #FF4D00;
-}
-
-.stall-zone-bg {
-  background: repeating-linear-gradient(
-    45deg,
-    rgba(255, 181, 158, 0.05),
-    rgba(255, 181, 158, 0.05) 10px,
-    transparent 10px,
-    transparent 20px
-  );
-}
-
-.progress-ring__circle {
-  transition: stroke-dashoffset 0.35s;
-  transform: rotate(-90deg);
-  transform-origin: 50% 50%;
-}
-
-.shimmer {
-  background: linear-gradient(90deg, #1c1b1c 25%, #2a2a2b 50%, #1c1b1c 75%);
-  background-size: 200% 100%;
-  animation: shimmer-anim 1.5s infinite;
-}
-
-@keyframes shimmer-anim {
-  0% { background-position: -200% 0; }
-  100% { background-position: 200% 0; }
-}
-
 .pulsing-ring {
   animation: pulse-ring-anim 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
@@ -193,13 +157,6 @@ body {
 
 .animate-heat {
   animation: pulse-heat-anim 4s ease-in-out infinite;
-}
-
-.chart-grid {
-  background-image: 
-    linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
-  background-size: 40px 40px;
 }
 
 @utility dashboard-sidebar {
@@ -308,39 +265,111 @@ body {
   }
 }
 
-@utility action-btn-secondary {
-  background-color: var(--color-secondary-fixed);
-  color: var(--color-on-secondary-fixed);
-  box-shadow: 0 10px 15px -3px rgba(255, 225, 109, 0.1), 0 4px 6px -4px rgba(255, 225, 109, 0.1);
-  
-  &:hover {
-    box-shadow: 0 20px 25px -5px rgba(255, 225, 109, 0.2), 0 8px 10px -6px rgba(255, 225, 109, 0.2);
+/* ------------------------------------------------------------------
+   Live cook screen: "The Cook's Tide Table" world.
+   Daylight palette by default; night-vision palette after dark.
+   Red belongs to the pull, and nothing else.
+   ------------------------------------------------------------------ */
+@theme inline {
+  --color-tide-band: var(--tide-band);
+  --color-tide-on-band: var(--tide-on-band);
+  --color-tide-ground: var(--tide-ground);
+  --color-tide-ink: var(--tide-ink);
+  --color-tide-muted: var(--tide-muted);
+  --color-tide-rule: var(--tide-rule);
+  --color-tide-blue: var(--tide-blue);
+  --color-tide-pull: var(--tide-pull);
+  --color-tide-on-pull: var(--tide-on-pull);
+  --font-tide: var(--font-archivo), system-ui, sans-serif;
+}
+
+.tide-world {
+  --tide-band: #f2c230;
+  --tide-on-band: #13233a;
+  --tide-ground: #f5f6f2;
+  --tide-ink: #13233a;
+  --tide-muted: #566273;
+  --tide-rule: #cdd2d8;
+  --tide-blue: #2e6db4;
+  --tide-blue-soft: rgb(46 109 180 / 0.16);
+  --tide-pull: #c8372d;
+  --tide-on-pull: #fff7f5;
+  background: var(--tide-ground);
+  color: var(--tide-ink);
+  font-family: var(--font-archivo), system-ui, sans-serif;
+  font-variant-numeric: tabular-nums;
+  caret-color: var(--tide-blue);
+  scrollbar-color: var(--tide-rule) transparent;
+}
+
+@media (prefers-color-scheme: dark) {
+  .tide-world {
+    --tide-band: #1d2a44;
+    --tide-on-band: #f2b544;
+    --tide-ground: #0d1524;
+    --tide-ink: #f2b544;
+    --tide-muted: #a3a089;
+    --tide-rule: #2a3754;
+    --tide-blue: #7fa8de;
+    --tide-blue-soft: rgb(127 168 222 / 0.16);
+    --tide-pull: #d9443a;
+    --tide-on-pull: #fff3f1;
   }
 }
 
-@utility action-btn-accent {
-  background-color: var(--color-primary);
-  color: var(--color-on-primary);
-  box-shadow: 0 10px 15px -3px rgba(255, 181, 158, 0.2);
+.tide-world ::selection {
+  background: var(--tide-band);
+  color: var(--tide-on-band);
 }
 
-@utility action-btn-outline {
-  border: 1px solid var(--color-outline-variant);
-  color: var(--color-on-surface);
-  font-family: var(--font-label-mono);
-  font-size: var(--font-size-label-mono);
-  letter-spacing: 0.05em;
-  padding-block: var(--spacing-sm);
-  text-transform: uppercase;
-  cursor: pointer;
-  background-color: transparent;
-  transition: all 0.1s;
-  
-  &:hover {
-    border-color: var(--color-outline);
-    background-color: var(--color-surface-container-low);
-  }
-  &:active {
-    transform: scale(0.95);
+.tide-world :focus-visible {
+  outline: 2px solid var(--tide-blue);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+.tide-world.is-pull {
+  --tide-band: var(--tide-pull);
+  --tide-on-band: var(--tide-on-pull);
+}
+
+.tide-band {
+  background: var(--tide-band);
+  color: var(--tide-on-band);
+  transition: background-color 420ms cubic-bezier(0.16, 1, 0.3, 1), color 420ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* The one authored moment: the pull takes over the band. */
+.tide-alarm {
+  animation: tide-alarm-in 520ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes tide-alarm-in {
+  from { clip-path: inset(0 0 100% 0); }
+  to { clip-path: inset(0 0 0 0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tide-band { transition: none; }
+  .tide-alarm { animation: none; }
+}
+
+.tide-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-areas: "readout" "stages" "chart" "table" "meta" "details";
+}
+
+@media (min-width: 900px) {
+  .tide-layout {
+    grid-template-columns: minmax(320px, 5fr) minmax(0, 7fr);
+    grid-template-areas:
+      "readout chart"
+      "stages chart"
+      "table chart"
+      "meta chart"
+      "details chart";
+    grid-template-rows: auto auto auto auto 1fr;
+    column-gap: 48px;
   }
 }

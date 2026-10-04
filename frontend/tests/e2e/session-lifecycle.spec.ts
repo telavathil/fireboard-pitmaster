@@ -33,8 +33,8 @@ test("submitting Pre-Cook Setup creates a session and navigates to the dashboard
   await expect
     .poll(() => page.evaluate(() => (window as unknown as { activeTab?: string }).activeTab))
     .toBe("dashboard");
-  await expect(page.getByRole("button", { name: "END ACTIVE COOK" })).toBeVisible();
-  await expect(page.getByRole("button", { name: "END SESSION" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Cook options" })).toBeVisible();
+  await expect(page.getByRole("region", { name: "Core temperature" })).toBeVisible();
 });
 
 test("ending an active cook returns to a sessionless state", async ({ page }) => {
@@ -43,7 +43,18 @@ test("ending an active cook returns to a sessionless state", async ({ page }) =>
     .poll(() => page.evaluate(() => (window as unknown as { activeTab?: string }).activeTab))
     .toBe("dashboard");
 
-  await page.getByRole("button", { name: "END ACTIVE COOK" }).click();
+  await page.getByRole("button", { name: "Cook options" }).click();
+  await page.getByRole("menuitem", { name: /End cook/ }).click();
+  await page.getByRole("dialog").getByRole("button", { name: "End cook" }).click();
   await expect(page.getByText("STANDBY MODE")).toBeVisible();
-  await expect(page.getByRole("button", { name: "END ACTIVE COOK" })).not.toBeVisible();
+  await expect(page.getByRole("button", { name: "Cook options" })).not.toBeVisible();
+});
+
+test("cancelling the end-cook confirmation keeps the cook running", async ({ page }) => {
+  await page.getByRole("button", { name: "INITIALIZE THERMAL MODEL" }).click();
+  await page.getByRole("button", { name: "Cook options" }).click();
+  await page.getByRole("menuitem", { name: /End cook/ }).click();
+  await page.getByRole("dialog").getByRole("button", { name: "Keep cooking" }).click();
+  await expect(page.getByRole("dialog")).not.toBeVisible();
+  await expect(page.getByRole("region", { name: "Core temperature" })).toBeVisible();
 });

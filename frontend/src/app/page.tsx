@@ -8,11 +8,7 @@ import EmptyDashboard from "../components/EmptyDashboard";
 import HistoryView from "../components/HistoryView";
 import SettingsView from "../components/SettingsView";
 import Phase1Setup from "../components/Phase1Setup";
-import Phase2Stabilizing from "../components/Phase2Stabilizing";
-import Phase3Stall from "../components/Phase3Stall";
-import Phase4Pull from "../components/Phase4Pull";
-import Phase5Resting from "../components/Phase5Resting";
-import Phase6Active from "../components/Phase6Active";
+import LiveCook from "../components/live/LiveCook";
 
 function DashboardContent() {
   const {
@@ -104,6 +100,11 @@ function DashboardContent() {
     );
   }
 
+  // The live cook screen owns its whole viewport (its own band and navigation).
+  if (activeTab === "dashboard" && (activeSession || debugPhaseOverride !== null)) {
+    return <LiveCook />;
+  }
+
   // Shared layout shell
   const outerClasses = `min-h-screen bg-[#0E0E0F] text-on-surface font-body-md flex${currentPhase === 1 ? " brushed-metal" : ""}`;
   
@@ -111,8 +112,6 @@ function DashboardContent() {
   let mainClasses = "ml-0 md:ml-64 mt-20 p-sm md:p-md min-h-[calc(100vh-5rem)] pb-24 md:pb-md bg-background overflow-y-auto";
   if (activeTab === "dashboard" && !activeSession && debugPhaseOverride === null) {
     mainClasses += " flex flex-col items-center justify-center";
-  } else if (activeTab === "dashboard" && currentPhase === 4) {
-    mainClasses += " flex flex-col gap-md";
   } else {
     mainClasses += " grid grid-cols-12 content-start gap-md";
   }
@@ -134,23 +133,7 @@ function DashboardContent() {
               return <Phase1Setup />;
             }
             if (activeTab === "dashboard") {
-              if (!activeSession && debugPhaseOverride === null) {
-                return <EmptyDashboard />;
-              }
-              if (currentPhase === 2) {
-                return <Phase2Stabilizing />;
-              }
-              if (currentPhase === 3) {
-                return <Phase3Stall />;
-              }
-              if (currentPhase === 4) {
-                return <Phase4Pull />;
-              }
-              if (currentPhase === 5) {
-                return <Phase5Resting />;
-              }
-              // Phase 6 Active Cook
-              return <Phase6Active />;
+              return <EmptyDashboard />;
             }
             return null;
           })()}

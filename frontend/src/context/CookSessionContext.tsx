@@ -2,8 +2,7 @@
 
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { CookSession, TelemetryPayload } from "../types";
-import { formatEta, formatStopwatch, getMeatLabel } from "../lib/formatters";
-import { getSvgPathF, getSvgPathAmbientF } from "../lib/chartPaths";
+import { Stage, deriveStage } from "../components/live/cookModel";
 
 interface CookSessionContextType {
   // Auth State
@@ -65,33 +64,21 @@ interface CookSessionContextType {
   history: TelemetryPayload[];
   isConnected: boolean;
 
-  // Stall & Rest Simulated States
-  moistureBudget: number;
-  spritzCount: number;
-  handleSpritz: () => void;
-  restDurationSeconds: number;
-  peakRestTempC: number;
-  pullTimeSeconds: number;
-
-  // Derived Values
-  coreTempF: number;
-  targetTempFDisplay: number;
-  carryoverRiseF: number;
-  pullTempF: number;
+  // Live cook (derived only from real session and telemetry data)
+  stage: Stage | null;
+  carryoverC: number | null;
+  restStartedAt: number | null;
+  peakRestTempC: number | null;
   currentPhase: number;
-  progressPercent: number;
   debugPhaseOverride: number | null;
   setDebugPhaseOverride: (p: number | null) => void;
-
-  // Helpers
-  formatEta: (seconds: number) => string;
-  formatStopwatch: (totalSeconds: number) => string;
-  getMeatLabel: (meat: string) => string;
-  getSvgPathF: (data: TelemetryPayload[], minValF: number, maxValF: number) => string;
-  getSvgPathAmbientF: (data: TelemetryPayload[], minValF: number, maxValF: number) => string;
-  minTempF: number;
-  maxTempF: number;
 }
+
+/** Keeps roughly 12 hours of readings at the backend's 20 s polling cadence. */
+const MAX_HISTORY_POINTS = 2160;
+
+const PHASE_BY_STAGE: Record<Stage, number> = { stabilizing: 2, stall: 3, pull: 4, rest: 5, cooking: 6 };
+const STAGE_BY_PHASE: Record<number, Stage> = { 2: "stabilizing", 3: "stall", 4: "pull", 5: "rest", 6: "cooking" };
 
 const CookSessionContext = createContext<CookSessionContextType | undefined>(undefined);
 
@@ -134,12 +121,8 @@ export function CookSessionProvider({ children }: { children: React.ReactNode })
   const [history, setHistory] = useState<TelemetryPayload[]>([]);
   const [isConnected, setIsConnected] = useState<boolean>(false);
 
-  // Phase 3 & 5 UI Simulated/Derived States
-  const [moistureBudget, setMoistureBudget] = useState<number>(85);
-  const [spritzCount, setSpritzCount] = useState<number>(0);
-  const [restDurationSeconds, setRestDurationSeconds] = useState<number>(18 * 60 + 27); // default starting time matching design: 18:27
-  const [peakRestTempC, setPeakRestTempC] = useState<number>(93.2);
-  const [pullTimeSeconds, setPullTimeSeconds] = useState<number>(3 * 60 + 1);
+  // Rest tracking (set when the cook is pulled; persisted per session in localStorage)
+  const [restStartedAt, setRestStartedAt] = useState<number | null>(null);
 
   // Debug override check via URL query parameters
   const [debugPhaseOverride, setDebugPhaseOverride] = useState<number | null>(null);
@@ -169,53 +152,19 @@ export function CookSessionProvider({ children }: { children: React.ReactNode })
     }
   }, [activeSession ? activeSession.id : null]);
 
-  // Sync Rest Duration timer (counts up during Phase 5)
+  // Restore when the rest began. If the pull was never logged on this device,
+  // the rest clock starts now rather than at an invented time.
   useEffect(() => {
-    let interval: NodeJS.Timeout;
-    if (activeSession?.status === "resting") {
-      const restStart = localStorage.getItem(`rest_start_${activeSession.id}`);
-      const startTime = restStart ? parseInt(restStart, 10) : new Date().getTime() - (18 * 60 + 27) * 1000;
-      if (!restStart) {
-        localStorage.setItem(`rest_start_${activeSession.id}`, startTime.toString());
-      }
-      
-      interval = setInterval(() => {
-        setRestDurationSeconds(Math.floor((new Date().getTime() - startTime) / 1000));
-      }, 1000);
+    if (activeSession?.status !== "resting") {
+      setRestStartedAt(null);
+      return;
     }
-    return () => clearInterval(interval);
-  }, [activeSession]);
-
-  // Pull timer countdown in Phase 4
-  useEffect(() => {
-    let interval: NodeJS.Timeout;
-    if (activeSession && telemetry && currentCoreFiltered >= (currentTarget - carryoverRise) && activeSession.status === "bare") {
-      interval = setInterval(() => {
-        setPullTimeSeconds((prev) => Math.max(0, prev - 1));
-      }, 1000);
-    }
-    return () => clearInterval(interval);
-  }, [activeSession, telemetry]);
-
-  // Keep track of peak temperature during resting
-  useEffect(() => {
-    if (activeSession?.status === "resting" && telemetry) {
-      setPeakRestTempC((prev) => Math.max(prev, telemetry.core_temp_filtered));
-    }
-  }, [activeSession, telemetry]);
-
-  // Simulate Moisture Budget depletion in Stall phase
-  useEffect(() => {
-    let interval: NodeJS.Timeout;
-    if (activeSession && telemetry?.stall_detected && activeSession.status === "bare") {
-      interval = setInterval(() => {
-        setMoistureBudget((prev) => Math.max(15, prev - 1));
-      }, 12000);
-    } else if (!telemetry?.stall_detected) {
-      setMoistureBudget(85);
-    }
-    return () => clearInterval(interval);
-  }, [activeSession, telemetry]);
+    const key = `rest_start_${activeSession.id}`;
+    const saved = Number(localStorage.getItem(key));
+    const startedAt = saved > 0 ? saved : Date.now();
+    if (!(saved > 0)) localStorage.setItem(key, String(startedAt));
+    setRestStartedAt(startedAt);
+  }, [activeSession?.id, activeSession?.status]);
 
   // Check URL phase override
   useEffect(() => {
@@ -244,9 +193,6 @@ export function CookSessionProvider({ children }: { children: React.ReactNode })
       if (res.ok) {
         const data = await res.json();
         setActiveSession(data);
-        if (data.status === "resting") {
-          setPeakRestTempC(data.target_temp_c + 0.2);
-        }
       } else {
         setActiveSession(null);
       }
@@ -267,33 +213,33 @@ export function CookSessionProvider({ children }: { children: React.ReactNode })
     }
 
     const sseUrl = `${backendUrl}/api/telemetry/stream/${activeSession.device_id}/1`;
-    console.log("Connecting to SSE telemetry stream:", sseUrl);
     const eventSource = new EventSource(sseUrl);
 
     setIsConnected(true);
 
+    // A reconnected stream clears the lost-connection state on its next message.
+    eventSource.onopen = () => setIsConnected(true);
     eventSource.onmessage = (event) => {
+      setIsConnected(true);
       try {
         const payload: TelemetryPayload = JSON.parse(event.data);
         setTelemetry(payload);
         
-        // Maintain rolling history of the last 30 telemetry points
+        // Maintain a rolling history covering the whole cook
         setHistory((prev) => {
           if (prev.length > 0 && prev[prev.length - 1].timestamp === payload.timestamp) {
             return prev;
           }
           const updated = [...prev, payload];
-          return updated.slice(-30);
+          return updated.slice(-MAX_HISTORY_POINTS);
         });
-      } catch (err) {
-        console.error("Failed to parse SSE payload:", err);
+      } catch {
+        // Ignore a malformed frame; the next reading replaces it.
       }
     };
 
-    eventSource.onerror = (err) => {
-      console.error("SSE stream experienced an error:", err);
-      setIsConnected(false);
-    };
+    // EventSource reconnects on its own; the UI shows the lost connection meanwhile.
+    eventSource.onerror = () => setIsConnected(false);
 
     return () => {
       eventSource.close();
@@ -372,10 +318,6 @@ export function CookSessionProvider({ children }: { children: React.ReactNode })
       if (res.ok) {
         const data = await res.json();
         setActiveSession(data);
-        setMoistureBudget(85);
-        setSpritzCount(0);
-        setPeakRestTempC(93.2);
-        setPullTimeSeconds(3 * 60 + 1);
       } else {
         const errData = await res.json();
         setSessionError(errData.detail || "Failed to create session.");
@@ -402,8 +344,9 @@ export function CookSessionProvider({ children }: { children: React.ReactNode })
         const updatedSession = { ...activeSession, status: newStatus };
         setActiveSession(updatedSession);
         if (newStatus === "resting") {
-          localStorage.setItem(`rest_start_${activeSession.id}`, new Date().getTime().toString());
-          setPeakRestTempC(telemetry?.core_temp_filtered || activeSession.target_temp_c);
+          const startedAt = Date.now();
+          localStorage.setItem(`rest_start_${activeSession.id}`, String(startedAt));
+          setRestStartedAt(startedAt);
         }
       }
     } catch (err) {
@@ -418,55 +361,25 @@ export function CookSessionProvider({ children }: { children: React.ReactNode })
     setHistory([]);
   };
 
-  const handleSpritz = () => {
-    setSpritzCount((prev) => prev + 1);
-    setMoistureBudget((prev) => Math.min(95, prev + 8));
-  };
-
   const applyPresetF = (meat: string, cut: string, targetF: number) => {
     setMeatType(meat);
     setCutType(cut);
     setTargetTempF(targetF);
   };
 
-  // Temperature Conversions / Calculations
-  const currentCoreRaw = telemetry ? telemetry.core_temp_raw : 15.0;
-  const currentCoreFiltered = telemetry ? telemetry.core_temp_filtered : currentCoreRaw;
-  const currentTarget = activeSession ? activeSession.target_temp_c : 95.0;
-  const carryoverRise = telemetry?.carryover_rise || 4.2;
+  // Live cook derivation. Nothing here falls back to invented readings.
+  const carryoverC = telemetry?.carryover_rise ?? null;
+  const overrideStage = debugPhaseOverride !== null ? STAGE_BY_PHASE[debugPhaseOverride] ?? null : null;
+  const stage: Stage | null =
+    overrideStage ??
+    (activeSession
+      ? deriveStage({ status: activeSession.status, telemetry, targetC: activeSession.target_temp_c, carryoverC })
+      : null);
+  const currentPhase = debugPhaseOverride ?? (stage ? PHASE_BY_STAGE[stage] : 1);
 
-  const coreTempF = Math.round(currentCoreFiltered * 9/5 + 32);
-  const targetTempFDisplay = activeSession ? Math.round(currentTarget * 9/5 + 32) : targetTempF;
-  const carryoverRiseF = Math.round(carryoverRise * 9/5);
-  const pullTempF = targetTempFDisplay - carryoverRiseF;
-
-  // SVG Gauge progress
-  const progressPercent = Math.max(
-    0,
-    Math.min(100, ((currentCoreFiltered - 4.0) / (currentTarget - 4.0)) * 100)
-  );
-
-  const minTempF = 40;
-  const maxTempF = 250;
-
-  // Render logic currentPhase
-  let currentPhase = 1;
-  if (debugPhaseOverride !== null) {
-    currentPhase = debugPhaseOverride;
-  } else if (!activeSession) {
-    currentPhase = 1;
-  } else if (activeSession?.status === "resting") {
-    currentPhase = 5;
-  } else if (telemetry && currentCoreFiltered >= (currentTarget - carryoverRise)) {
-    currentPhase = 4;
-  } else if (!telemetry || telemetry.confidence === "low" || telemetry.confidence === "none") {
-    currentPhase = 2;
-  } else if (telemetry.stall_detected) {
-    currentPhase = 3;
-  } else {
-    currentPhase = 6; // Regular Active Cook
-  }
-
+  // Carryover peak: the highest core reading since the rest began.
+  const restReadings = restStartedAt !== null ? history.filter((r) => new Date(r.timestamp).getTime() >= restStartedAt) : [];
+  const peakRestTempC = restReadings.length > 0 ? Math.max(...restReadings.map((r) => r.core_temp_filtered)) : null;
 
   // Sync state variables onto window for E2E headless validation testing
   if (typeof window !== "undefined") {
@@ -524,27 +437,13 @@ export function CookSessionProvider({ children }: { children: React.ReactNode })
         telemetry,
         history,
         isConnected,
-        moistureBudget,
-        spritzCount,
-        handleSpritz,
-        restDurationSeconds,
+        stage,
+        carryoverC,
+        restStartedAt,
         peakRestTempC,
-        pullTimeSeconds,
-        coreTempF,
-        targetTempFDisplay,
-        carryoverRiseF,
-        pullTempF,
         currentPhase,
-        progressPercent,
         debugPhaseOverride,
         setDebugPhaseOverride,
-        formatEta,
-        formatStopwatch,
-        getMeatLabel,
-        getSvgPathF,
-        getSvgPathAmbientF,
-        minTempF,
-        maxTempF,
       }}
     >
       {children}
