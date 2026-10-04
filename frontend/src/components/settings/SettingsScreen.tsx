@@ -1,10 +1,11 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import { SignOut } from "@phosphor-icons/react";
 import { useCookSession } from "../../context/CookSessionContext";
 import TideScreen from "../tide/TideScreen";
 import { Segmented, SetupSection } from "../tide/FormParts";
+import { InstallState, getInstallState } from "../pwa/pwa";
 
 const TEMP_UNITS = [
   { id: "F", label: "Fahrenheit (°F)" },
@@ -16,8 +17,16 @@ const ALARM_OPTIONS = [
   { id: "off", label: "Off" },
 ] as const;
 
+const INSTALL_COPY: Record<InstallState, string> = {
+  installed: "Installed on this device.",
+  ios: "To install on iPhone or iPad, tap Share, then Add to Home Screen. It opens full screen with its own icon.",
+  browser: "To install, use your browser's Install app option (in Chrome, it's in the menu or the address bar). It opens in its own window.",
+};
+
 export default function SettingsScreen() {
   const { tempUnit, setTempUnit, alarmsEnabled, setAlarmsEnabled, username, activeSession, handleLogout } = useCookSession();
+  // Settings renders client-side only, so the window can be read at init.
+  const [installState] = useState<InstallState>(() => getInstallState(window));
 
   return (
     <TideScreen title="Settings">
@@ -41,6 +50,10 @@ export default function SettingsScreen() {
             <p className="mt-3 text-[14px] text-tide-muted">
               The screen always takes over when it&apos;s time to pull. This controls the tone. Browsers may only play it after you&apos;ve tapped the page once.
             </p>
+          </SetupSection>
+
+          <SetupSection title="App">
+            <p className="text-[15px]">{INSTALL_COPY[installState]}</p>
           </SetupSection>
 
           <SetupSection title="Account">

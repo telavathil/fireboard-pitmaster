@@ -1,12 +1,13 @@
 "use client";
 
-import { useSyncExternalStore } from "react";
+import { useEffect, useSyncExternalStore } from "react";
 import { CookSessionProvider, useCookSession } from "../context/CookSessionContext";
 import HistoryScreen from "../components/history/HistoryScreen";
 import SettingsScreen from "../components/settings/SettingsScreen";
 import SetupScreen from "../components/setup/SetupScreen";
 import LiveCook from "../components/live/LiveCook";
 import LoginScreen from "../components/login/LoginScreen";
+import { registerServiceWorker } from "../components/pwa/pwa";
 
 function DashboardContent() {
   const { token, activeSession, activeTab, debugPhaseOverride } = useCookSession();
@@ -30,6 +31,10 @@ export default function Dashboard() {
   // The app reads its saved sign-in and preferences from localStorage, so it
   // mounts client-side only; the server renders the ground colour alone.
   const isClient = useIsClient();
+  // The service worker makes the app installable and will deliver pull alerts.
+  useEffect(() => {
+    void registerServiceWorker();
+  }, []);
   if (!isClient) return null;
   return (
     <CookSessionProvider>

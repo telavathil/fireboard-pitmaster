@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <!-- Maskable variant: same mark scaled into the central 80% safe zone. -->
+  <rect width="512" height="512" fill="#f2c230"/>
+  <g transform="translate(76.8 76.8) scale(0.7)">
+    <path d="M104 392 C 140 300 178 262 228 256 L 296 251 C 338 248 358 196 396 150"
+          fill="none" stroke="#13233a" stroke-width="40" stroke-linecap="round" stroke-linejoin="round"/>
+    <circle cx="396" cy="150" r="38" fill="#c8372d"/>
+  </g>
+</svg>

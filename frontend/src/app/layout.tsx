@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Archivo } from "next/font/google";
 import "./globals.css";
 
@@ -12,6 +12,20 @@ const archivo = Archivo({
 export const metadata: Metadata = {
   title: "FireBoard Pitmaster",
   description: "Predictive cook times and pull alerts from your FireBoard probes.",
+  applicationName: "FireBoard Pitmaster",
+  appleWebApp: { capable: true, title: "Pitmaster", statusBarStyle: "default" },
+};
+
+// The band colour by day and by night; viewport-fit=cover lets the band run under the notch
+// (screens already pad with env(safe-area-inset-*)).
+export const viewport: Viewport = {
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#f2c230" },
+    { media: "(prefers-color-scheme: dark)", color: "#1d2a44" },
+  ],
+  viewportFit: "cover",
+  width: "device-width",
+  initialScale: 1,
 };
 
 export default function RootLayout({
