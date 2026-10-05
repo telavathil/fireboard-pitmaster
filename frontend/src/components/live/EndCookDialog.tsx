@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useRef } from "react";
+import { PRESS } from "../tide/press";
 
 interface EndCookDialogProps {
   open: boolean;
@@ -45,14 +46,14 @@ export default function EndCookDialog({ open, cookLabel, onConfirm, onCancel, er
           type="button"
           autoFocus
           onClick={onCancel}
-          className="min-h-[48px] rounded-[10px] px-5 text-[17px] font-semibold ring-[1.5px] ring-tide-rule hover:ring-tide-ink"
+          className={`${PRESS} min-h-[48px] rounded-[10px] px-5 text-[17px] font-semibold ring-[1.5px] ring-tide-rule hover:ring-tide-ink`}
         >
           Keep cooking
         </button>
         <button
           type="button"
           onClick={onConfirm}
-          className="min-h-[48px] rounded-[10px] bg-tide-ink px-5 text-[17px] font-bold text-tide-ground hover:opacity-90"
+          className={`${PRESS} min-h-[48px] rounded-[10px] bg-tide-ink px-5 text-[17px] font-bold text-tide-ground hover:opacity-90`}
         >
           End cook
         </button>

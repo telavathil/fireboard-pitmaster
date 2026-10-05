@@ -425,6 +425,7 @@ A native `<details>` disclosure behind a hairline rule: a 48px summary row with 
 - **Do** keep touch targets at least 44px, and primary actions 48–56px.
 - **Do** use Phosphor icons (`@phosphor-icons/react`), regular weight, with fill for the active tab.
 - **Do** honor `prefers-reduced-motion` for any transition.
+- **Do** give every button press feedback with `PRESS` (or `PRESS_SMALL` for chips and icon buttons) from `src/components/tide/press.ts`; never hand-type a press scale.
 
 ### Don't:
 - **Don't** use red for anything but the pull.
