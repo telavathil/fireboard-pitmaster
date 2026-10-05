@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import { SignOut } from "@phosphor-icons/react";
 import { useCookSession } from "../../context/CookSessionContext";
 import TideScreen from "../tide/TideScreen";
+import { PRESS } from "../tide/press";
 import { Segmented, SetupSection } from "../tide/FormParts";
 import { InstallState, getInstallState } from "../pwa/pwa";
 import PullAlertsSetting from "./PullAlertsSetting";
@@ -77,7 +78,7 @@ export default function SettingsScreen() {
             <button
               type="button"
               onClick={handleLogout}
-              className="mt-4 flex min-h-[48px] items-center gap-2 rounded-[10px] px-5 text-[15px] font-semibold ring-[1.5px] ring-tide-rule hover:ring-tide-ink"
+              className={`${PRESS} mt-4 flex min-h-[48px] items-center gap-2 rounded-[10px] px-5 text-[15px] font-semibold ring-[1.5px] ring-tide-rule hover:ring-tide-ink`}
             >
               <SignOut size={20} aria-hidden="true" />
               Sign out

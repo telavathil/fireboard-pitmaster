@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import { SpeakerHigh, SpeakerSlash } from "@phosphor-icons/react";
 import { usePullAlarm } from "./hooks";
-import { PRESS } from "../tide/press";
+import { PRESS, PRESS_SMALL } from "../tide/press";
 
 interface PullAlarmProps {
   explanation: string;
@@ -38,7 +38,7 @@ export default function PullAlarm({ explanation, audible, onPulled, error }: Pul
           onClick={() => setSilenced((v) => !v)}
           aria-pressed={silenced}
           aria-label={silenced ? "Turn alarm sound back on" : "Silence alarm"}
-          className="flex min-h-[56px] w-14 items-center justify-center rounded-[10px] ring-[1.5px] ring-current/70"
+          className={`${PRESS_SMALL} flex min-h-[56px] w-14 items-center justify-center rounded-[10px] ring-[1.5px] ring-current/70`}
         >
           {silenced ? <SpeakerSlash size={24} aria-hidden="true" /> : <SpeakerHigh size={24} aria-hidden="true" />}
         </button>

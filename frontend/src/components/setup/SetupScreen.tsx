@@ -4,6 +4,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { useCookSession } from "../../context/CookSessionContext";
 import { toUnit } from "../live/cookModel";
 import TideScreen from "../tide/TideScreen";
+import { PRESS_SMALL } from "../tide/press";
 import SetupSummary, { StartBar } from "./SetupSummary";
 import { Segmented, SetupSection, TargetStepper, TextField } from "../tide/FormParts";
 import {
@@ -100,7 +101,7 @@ export default function SetupScreen() {
                   type="button"
                   aria-pressed={activePreset?.id === preset.id}
                   onClick={() => update(applyPreset(draft, preset))}
-                  className="min-h-[44px] rounded-full px-4 text-[14px] font-semibold ring-[1.5px] ring-tide-rule hover:ring-tide-ink aria-pressed:bg-tide-ink aria-pressed:text-tide-ground aria-pressed:ring-tide-ink"
+                  className={`${PRESS_SMALL} min-h-[44px] rounded-full px-4 text-[14px] font-semibold ring-[1.5px] ring-tide-rule hover:ring-tide-ink aria-pressed:bg-tide-ink aria-pressed:text-tide-ground aria-pressed:ring-tide-ink`}
                 >
                   {preset.label} · {toUnit(preset.targetC, tempUnit)}°
                 </button>

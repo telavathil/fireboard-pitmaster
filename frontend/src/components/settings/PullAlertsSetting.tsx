@@ -31,7 +31,7 @@ const COPY: Record<PushState | "checking", string> = {
 const primary =
   `${PRESS} min-h-[56px] rounded-[10px] bg-tide-ink px-5 text-[17px] font-bold text-tide-ground hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50`;
 const secondary =
-  "min-h-[48px] rounded-[10px] px-5 text-[15px] font-semibold ring-[1.5px] ring-tide-rule hover:ring-tide-ink disabled:cursor-not-allowed disabled:opacity-50";
+  `${PRESS} min-h-[48px] rounded-[10px] px-5 text-[15px] font-semibold ring-[1.5px] ring-tide-rule hover:ring-tide-ink disabled:cursor-not-allowed disabled:opacity-50`;
 
 /** Opt-in for pull alerts on this device: permission, subscription, and a test alert. */
 export default function PullAlertsSetting() {

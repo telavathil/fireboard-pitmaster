@@ -4,6 +4,7 @@ import React from "react";
 import { WarningCircle } from "@phosphor-icons/react";
 import { useCookSession } from "../../context/CookSessionContext";
 import TideScreen from "../tide/TideScreen";
+import { PRESS } from "../tide/press";
 import { summarizeCook } from "./historyModel";
 import { useCookHistory } from "./useCookHistory";
 
@@ -11,7 +12,7 @@ import { useCookHistory } from "./useCookHistory";
 const FIGURE = "text-[22px] font-bold leading-tight [font-stretch:80%]";
 
 const secondaryButton =
-  "min-h-[48px] rounded-[10px] px-5 text-[15px] font-semibold ring-[1.5px] ring-tide-rule hover:ring-tide-ink";
+  `${PRESS} min-h-[48px] rounded-[10px] px-5 text-[15px] font-semibold ring-[1.5px] ring-tide-rule hover:ring-tide-ink`;
 
 function Message({ title, body, action }: { title: string; body: string; action?: React.ReactNode }) {
   return (
