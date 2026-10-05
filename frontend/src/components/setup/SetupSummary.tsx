@@ -2,9 +2,10 @@
 
 import React from "react";
 import { WarningCircle } from "@phosphor-icons/react";
+import { PRESS } from "../tide/press";
 
 const PrimaryClasses =
-  "min-h-[56px] rounded-[10px] bg-tide-ink px-5 text-[17px] font-bold text-tide-ground transition-transform hover:opacity-90 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50";
+  `${PRESS} min-h-[56px] rounded-[10px] bg-tide-ink px-5 text-[17px] font-bold text-tide-ground hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50`;
 
 interface StartBarProps {
   line: string;

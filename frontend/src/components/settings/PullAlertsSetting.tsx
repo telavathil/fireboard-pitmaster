@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { WarningCircle } from "@phosphor-icons/react";
 import { getInstallState } from "../pwa/pwa";
+import { PRESS } from "../tide/press";
 import {
   PushState,
   derivePushState,
@@ -28,9 +29,9 @@ const COPY: Record<PushState | "checking", string> = {
 };
 
 const primary =
-  "min-h-[56px] rounded-[10px] bg-tide-ink px-5 text-[17px] font-bold text-tide-ground transition-transform hover:opacity-90 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50";
+  `${PRESS} min-h-[56px] rounded-[10px] bg-tide-ink px-5 text-[17px] font-bold text-tide-ground hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50`;
 const secondary =
-  "min-h-[48px] rounded-[10px] px-5 text-[15px] font-semibold ring-[1.5px] ring-tide-rule hover:ring-tide-ink disabled:cursor-not-allowed disabled:opacity-50";
+  `${PRESS} min-h-[48px] rounded-[10px] px-5 text-[15px] font-semibold ring-[1.5px] ring-tide-rule hover:ring-tide-ink disabled:cursor-not-allowed disabled:opacity-50`;
 
 /** Opt-in for pull alerts on this device: permission, subscription, and a test alert. */
 export default function PullAlertsSetting() {

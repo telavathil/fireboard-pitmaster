@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useRef } from "react";
+import { PRESS } from "../tide/press";
 
 interface EndCookDialogProps {
   open: boolean;
@@ -29,7 +30,7 @@ export default function EndCookDialog({ open, cookLabel, onConfirm, onCancel, er
         onCancel();
       }}
       aria-labelledby="end-cook-title"
-      className="m-auto w-[min(92vw,420px)] rounded-[14px] bg-tide-ground p-6 text-tide-ink shadow-[0_18px_50px_rgb(19_35_58/0.28)] backdrop:bg-[rgb(13_21_36/0.55)]"
+      className="tide-dialog m-auto w-[min(92vw,420px)] rounded-[14px] bg-tide-ground p-6 text-tide-ink shadow-[0_18px_50px_rgb(19_35_58/0.28)] backdrop:bg-[rgb(13_21_36/0.55)]"
     >
       <h2 id="end-cook-title" className="text-[24px] font-bold [font-stretch:85%]">End this cook?</h2>
       <p className="mt-2 text-[15px] leading-relaxed text-tide-muted">
@@ -45,14 +46,14 @@ export default function EndCookDialog({ open, cookLabel, onConfirm, onCancel, er
           type="button"
           autoFocus
           onClick={onCancel}
-          className="min-h-[48px] rounded-[10px] px-5 text-[17px] font-semibold ring-[1.5px] ring-tide-rule hover:ring-tide-ink"
+          className={`${PRESS} min-h-[48px] rounded-[10px] px-5 text-[17px] font-semibold ring-[1.5px] ring-tide-rule hover:ring-tide-ink`}
         >
           Keep cooking
         </button>
         <button
           type="button"
           onClick={onConfirm}
-          className="min-h-[48px] rounded-[10px] bg-tide-ink px-5 text-[17px] font-bold text-tide-ground hover:opacity-90"
+          className={`${PRESS} min-h-[48px] rounded-[10px] bg-tide-ink px-5 text-[17px] font-bold text-tide-ground hover:opacity-90`}
         >
           End cook
         </button>

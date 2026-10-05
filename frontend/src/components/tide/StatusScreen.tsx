@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import { PRESS } from "./press";
 
 interface StatusScreenProps {
   message: string;
@@ -24,7 +25,7 @@ export default function StatusScreen({ message, action }: StatusScreenProps) {
           <button
             type="button"
             onClick={action.onClick}
-            className="mt-5 min-h-[48px] rounded-[10px] px-5 text-[15px] font-semibold ring-[1.5px] ring-tide-rule hover:ring-tide-ink"
+            className={`${PRESS} mt-5 min-h-[48px] rounded-[10px] px-5 text-[15px] font-semibold ring-[1.5px] ring-tide-rule hover:ring-tide-ink`}
           >
             {action.label}
           </button>

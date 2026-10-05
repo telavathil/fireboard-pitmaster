@@ -372,7 +372,7 @@ The signed-out entry (`src/components/login/LoginScreen.tsx`), inside the world 
 The yellow header. On the live screen it holds the cook name (action size, semibold, truncated) and the overflow menu; on every other screen it holds that screen's title at the same size, through the shell. Lost or stale data appears inside the band as a 15px semibold message with a Wi-Fi-off icon, so it reads in sun like the pull does. During the pull the band turns red and the pull alarm opens inside it.
 
 ### Pull Alarm
-"Pull now" at alarm size, one sentence on carryover at the action size (17px regular, max 42ch), then the pull button and silence toggle. It enters with a clip-path reveal from the top (520ms, `cubic-bezier(0.16, 1, 0.3, 1)`) while the band color crossfades (420ms, same curve). Both are turned off under `prefers-reduced-motion`. This is the world's only motion moment.
+"Pull now" at alarm size, one sentence on carryover at the action size (17px regular, max 42ch), then the pull button and silence toggle. It enters with a clip-path reveal from the top (520ms, `cubic-bezier(0.16, 1, 0.3, 1)`) while the band color crossfades (420ms, same curve). Both are turned off under `prefers-reduced-motion`. This is the world's one authored motion moment.
 
 ### Tide Chart (signature)
 The cook drawn as a tide chart in SVG.
@@ -390,7 +390,7 @@ A tide-table list: label on the left at 15px medium, value on the right at the t
 The cook's stages as a wrapping row of 14px semibold words. The current stage is ink with a 2px underline at 6px offset; the others are muted, and future ones drop to 75% opacity.
 
 ### Menu and Dialog
-The overflow menu is a 180px table-stock panel (12px radius, menu shadow) with 44px items. The end-cook dialog is a native `<dialog>` (14px radius, 24px padding, dialog shadow) with focus on "Keep cooking" by default and the destructive "End cook" as the primary button. Both buttons are at the action size (17px).
+The overflow menu is a 180px table-stock panel (12px radius, menu shadow) with 44px items. The end-cook dialog is a native `<dialog>` (14px radius, 24px padding, dialog shadow) with focus on "Keep cooking" by default and the destructive "End cook" as the primary button. Both buttons are at the action size (17px). The dialog fades and settles in from 97% scale over 200ms on the world's curve (opacity only under reduced motion), with the backdrop fading alongside; it closes instantly.
 
 ### History Table
 Finished cooks as a printed table, newest first. It is a real `<table>` with a visually hidden caption.
@@ -425,10 +425,11 @@ A native `<details>` disclosure behind a hairline rule: a 48px summary row with 
 - **Do** keep touch targets at least 44px, and primary actions 48–56px.
 - **Do** use Phosphor icons (`@phosphor-icons/react`), regular weight, with fill for the active tab.
 - **Do** honor `prefers-reduced-motion` for any transition.
+- **Do** give every button press feedback with `PRESS` (or `PRESS_SMALL` for chips and icon buttons) from `src/components/tide/press.ts`; never hand-type a press scale.
 
 ### Don't:
 - **Don't** use red for anything but the pull.
 - **Don't** draw a range or confidence band around the projection. The model gives one path, so the chart shows one dashed line.
 - **Don't** put content in cards or give surfaces shadows. Shadows are for the menu and dialog only.
 - **Don't** add a second typeface. Width and weight carry the hierarchy.
-- **Don't** add motion beyond the pull takeover and simple hover or press feedback.
+- **Don't** add motion beyond the pull takeover, the end-cook dialog's entrance, and simple hover or press feedback.

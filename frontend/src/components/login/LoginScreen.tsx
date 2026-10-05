@@ -4,6 +4,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { WarningCircle } from "@phosphor-icons/react";
 import { useCookSession } from "../../context/CookSessionContext";
 import { TextField } from "../tide/FormParts";
+import { PRESS } from "../tide/press";
 
 type LoginErrors = Partial<Record<"username" | "password", string>>;
 
@@ -84,7 +85,7 @@ export default function LoginScreen() {
           <button
             type="submit"
             disabled={isLoggingIn}
-            className="mt-6 min-h-[56px] w-full rounded-[10px] bg-tide-ink px-5 text-[17px] font-bold text-tide-ground transition-transform hover:opacity-90 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50"
+            className={`${PRESS} mt-6 min-h-[56px] w-full rounded-[10px] bg-tide-ink px-5 text-[17px] font-bold text-tide-ground hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50`}
           >
             {isLoggingIn ? "Signing in…" : "Sign in"}
           </button>

@@ -14,6 +14,7 @@ import EndCookDialog from "./EndCookDialog";
 import TideChartView from "./TideChartView";
 import EstimateDetails from "./EstimateDetails";
 import { CoreReadout, DataProblem, ReadingMeta, StageLine, TideTable } from "./LiveSections";
+import { PRESS } from "../tide/press";
 
 function cookLabelOf(session: CookSession): string {
   const cooker = getMeatLabel(session.cooker_type);
@@ -109,7 +110,7 @@ export default function LiveCook() {
             <button
               type="button"
               onClick={() => setConfirmingEnd(true)}
-              className="mt-5 min-h-[52px] w-full rounded-[10px] bg-tide-ink px-5 text-[17px] font-bold text-tide-ground hover:opacity-90"
+              className={`${PRESS} mt-5 min-h-[52px] w-full rounded-[10px] bg-tide-ink px-5 text-[17px] font-bold text-tide-ground hover:opacity-90`}
             >
               Finish cook
             </button>
