@@ -30,7 +30,7 @@ export default function EndCookDialog({ open, cookLabel, onConfirm, onCancel, er
         onCancel();
       }}
       aria-labelledby="end-cook-title"
-      className="m-auto w-[min(92vw,420px)] rounded-[14px] bg-tide-ground p-6 text-tide-ink shadow-[0_18px_50px_rgb(19_35_58/0.28)] backdrop:bg-[rgb(13_21_36/0.55)]"
+      className="tide-dialog m-auto w-[min(92vw,420px)] rounded-[14px] bg-tide-ground p-6 text-tide-ink shadow-[0_18px_50px_rgb(19_35_58/0.28)] backdrop:bg-[rgb(13_21_36/0.55)]"
     >
       <h2 id="end-cook-title" className="text-[24px] font-bold [font-stretch:85%]">End this cook?</h2>
       <p className="mt-2 text-[15px] leading-relaxed text-tide-muted">

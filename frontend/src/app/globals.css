@@ -99,6 +99,29 @@
   .tide-alarm { animation: none; }
 }
 
+/* The end-cook dialog settles in over the band; it closes instantly. */
+.tide-dialog[open] {
+  opacity: 1;
+  transform: scale(1);
+  transition: opacity 200ms cubic-bezier(0.16, 1, 0.3, 1), transform 200ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.tide-dialog[open]::backdrop {
+  opacity: 1;
+  transition: opacity 200ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@starting-style {
+  .tide-dialog[open] { opacity: 0; transform: scale(0.97); }
+  .tide-dialog[open]::backdrop { opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  @starting-style {
+    .tide-dialog[open] { transform: none; }
+  }
+}
+
 .tide-layout {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
