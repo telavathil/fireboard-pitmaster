@@ -2,6 +2,7 @@
 
 import React, { useId } from "react";
 import { Minus, Plus, WarningCircle } from "@phosphor-icons/react";
+import { PRESS_SMALL } from "./press";
 
 export function SetupSection({ title, children }: { title: string; children: React.ReactNode }) {
   return (
@@ -129,7 +130,7 @@ export function TargetStepper({ display, unitControl, onStep, error }: TargetSte
       type="button"
       onClick={() => onStep(delta)}
       aria-label={label}
-      className="flex h-14 w-14 shrink-0 items-center justify-center rounded-[10px] ring-[1.5px] ring-tide-rule hover:ring-tide-ink active:scale-[0.97]"
+      className={`${PRESS_SMALL} flex h-14 w-14 shrink-0 items-center justify-center rounded-[10px] ring-[1.5px] ring-tide-rule hover:ring-tide-ink`}
     >
       {icon}
     </button>
